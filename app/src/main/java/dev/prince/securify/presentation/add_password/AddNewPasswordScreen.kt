@@ -3,7 +3,6 @@ package dev.prince.securify.presentation.add_password
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -25,11 +26,9 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -38,13 +37,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,9 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import dev.prince.securify.R
-import dev.prince.securify.presentation.home.HomeScreen
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -117,8 +112,37 @@ fun AddNewPasswordScreen() {
             )
 
             var expanded by remember { mutableStateOf(false) }
-            var selectedOption : Pair<String, Painter>? by remember { mutableStateOf(null) }
+            var selectedOption: Pair<String, Painter>? by remember { mutableStateOf(null) }
             var dropDownWidth by remember { mutableStateOf(0) }
+
+            var username by rememberSaveable { mutableStateOf("") }
+            val usernameMaxLength = 25
+            var isErrorForUsername by rememberSaveable { mutableStateOf(false) }
+
+            fun validateUsername(username: String) {
+                isErrorForUsername = username.length > usernameMaxLength
+            }
+
+            fun isValidEmail(email: String): Boolean {
+                val emailRegex = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+".toRegex()
+                return email.matches(emailRegex)
+            }
+
+            @Composable
+            fun validateEmail(email: String){
+                if (email.isNotEmpty()) {
+                    if (isValidEmail(email)) {
+                        Text(text = "Email is valid", color = Color.Blue)
+                    } else {
+                        Text(text = "Email is not valid", color = Color.Red)
+                    }
+                }
+            }
+
+            var email by remember { mutableStateOf("") }
+            val emailMaxLength = 30
+
+            val context = LocalContext.current
 
             if (selectedOption != null) {
                 Image(
@@ -166,7 +190,7 @@ fun AddNewPasswordScreen() {
                 )
                 ExposedDropdownMenu(
                     modifier = Modifier
-                        .width(with(LocalDensity.current){dropDownWidth.toDp()})
+                        .width(with(LocalDensity.current) { dropDownWidth.toDp() })
                         .height(280.dp)
                         .background(Color.White),
                     expanded = expanded,
@@ -174,7 +198,7 @@ fun AddNewPasswordScreen() {
                         expanded = false
                     }
                 ) {
-                    optionsWithImages.forEach { (selectionOption,painter) ->
+                    optionsWithImages.forEach { (selectionOption, painter) ->
                         DropdownMenuItem(
                             onClick = {
                                 selectedOption = selectionOption to painter
@@ -199,18 +223,37 @@ fun AddNewPasswordScreen() {
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
-                value = "",
+                value = username,
                 placeholder = {
                     Text("Your Username")
                 },
                 shape = RoundedCornerShape(8.dp),
                 onValueChange = {
-
+                    username = it
+                    validateUsername(username)
+                },
+                isError = isErrorForUsername,
+                supportingText = {
+                    if (isErrorForUsername) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "Limit: ${username.length}/$usernameMaxLength",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                },
+                trailingIcon = {
+                    if (isErrorForUsername)
+                        Icon(
+                            Icons.Filled.Error, "error",
+                            tint = MaterialTheme.colorScheme.error
+                        )
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email
-                )
+                    keyboardType = KeyboardType.Text
+                ),
+                keyboardActions = KeyboardActions { validateUsername(username) },
             )
 
             Text(
@@ -224,9 +267,34 @@ fun AddNewPasswordScreen() {
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
-                value = "",
+                value = email,
                 placeholder = {
                     Text("Your Email ID")
+                },
+                shape = RoundedCornerShape(8.dp),
+                onValueChange = {
+                    email = it
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email
+                )
+            )
+
+            Text(
+                text = "Mobile No.",
+                textAlign = TextAlign.Left,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                value = "",
+                placeholder = {
+                    Text("Your Mobile Number")
                 },
                 shape = RoundedCornerShape(8.dp),
                 onValueChange = {
@@ -234,7 +302,7 @@ fun AddNewPasswordScreen() {
                 },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email
+                    keyboardType = KeyboardType.Number
                 )
             )
 

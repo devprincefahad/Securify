@@ -76,6 +76,14 @@ dependencies {
     implementation ("io.github.raamcosta.compose-destinations:core:1.9.52")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.9.52")
 
+    // Room
+    implementation ("androidx.room:room-runtime:2.5.2")
+    annotationProcessor("androidx.room:room-compiler:2.5.2")
+    ksp("androidx.room:room-compiler:2.5.2")
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation ("androidx.room:room-ktx:2.5.2")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

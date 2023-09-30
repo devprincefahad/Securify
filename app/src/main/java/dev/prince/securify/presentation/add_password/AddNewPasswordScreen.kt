@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -98,53 +99,38 @@ fun AddNewPasswordScreen() {
         ) {
 
             val optionsWithImages = listOf(
-                "Instagram" ,
-                "Facebook",
-                "LinkedIn",
-                "Snapchat",
-                "YouTube",
-                "Netflix",
-                "Discord",
-                "Twitter",
-                "Amazon Prime",
-                "Spotify",
-                "Gmail",
-                "Reddit",
-                "Quora",
-                "Pinterest",
-                "Other"
-            )
-
-            val options = listOf(
-                "Instagram",
-                "Facebook",
-                "LinkedIn",
-                "Snapchat",
-                "YouTube",
-                "Netflix",
-                "Discord",
-                "Twitter",
-                "Amazon Prime",
-                "Spotify",
-                "Gmail",
-                "Reddit",
-                "Quora",
-                "Pinterest",
-                "Other"
+                "Instagram" to painterResource(R.drawable.icon_instagram),
+                "Facebook" to painterResource(R.drawable.icon_facebook),
+                "LinkedIn" to painterResource(R.drawable.icon_linkedin),
+                "Snapchat" to painterResource(R.drawable.icons_snapchat),
+                "YouTube" to painterResource(R.drawable.icon_youtube),
+                "Netflix" to painterResource(R.drawable.icon_netflix),
+                "Discord" to painterResource(R.drawable.icon_discord),
+                "Twitter" to painterResource(R.drawable.icon_twitterx),
+                "Amazon Prime" to painterResource(R.drawable.icon_amazon_prime_video),
+                "Spotify" to painterResource(R.drawable.icon_spotify),
+                "Gmail" to painterResource(R.drawable.icon_gmail),
+                "Reddit" to painterResource(R.drawable.icon_reddit),
+                "Quora" to painterResource(R.drawable.icon_quora),
+                "Pinterest" to painterResource(R.drawable.icon_pinterest),
+                "Other" to painterResource(R.drawable.icon_others)
             )
 
             var expanded by remember { mutableStateOf(false) }
-            var selectedOptionText by remember { mutableStateOf(options[0]) }
+            var selectedOption : Pair<String, Painter>? by remember { mutableStateOf(null) }
             var dropDownWidth by remember { mutableStateOf(0) }
 
-            Image(
+            if (selectedOption != null) {
+                Image(
                     modifier = Modifier
-                        .height(220.dp)
+                        .padding(top = 16.dp, bottom = 16.dp)
+                        .height(160.dp)
                         .fillMaxWidth(),
-            painter = painterResource(R.drawable.icon_facebook),
-            contentDescription = null
-            )
-
+                    painter = selectedOption!!.second,
+                    contentDescription = null
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "Account Name",
                 textAlign = TextAlign.Left,
@@ -169,7 +155,7 @@ fun AddNewPasswordScreen() {
                         }
                         .menuAnchor(),
                     readOnly = true,
-                    value = selectedOptionText,
+                    value = selectedOption?.first ?: "Choose an account",
                     onValueChange = { },
                     shape = RoundedCornerShape(8.dp),
                     trailingIcon = {
@@ -188,10 +174,10 @@ fun AddNewPasswordScreen() {
                         expanded = false
                     }
                 ) {
-                    options.forEach { selectionOption ->
+                    optionsWithImages.forEach { (selectionOption,painter) ->
                         DropdownMenuItem(
                             onClick = {
-                                selectedOptionText = selectionOption
+                                selectedOption = selectionOption to painter
                                 expanded = false
                             },
                             text = {

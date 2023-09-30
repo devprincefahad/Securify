@@ -2,6 +2,7 @@ package dev.prince.securify.presentation.add_password
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +15,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -29,6 +32,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -38,8 +43,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -50,6 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import dev.prince.securify.R
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily
@@ -114,6 +122,11 @@ fun AddNewPasswordScreen() {
             var expanded by remember { mutableStateOf(false) }
             var selectedOption: Pair<String, Painter>? by remember { mutableStateOf(null) }
             var dropDownWidth by remember { mutableStateOf(0) }
+            var textFieldSize by remember { mutableStateOf(Size.Zero) }
+            val icon = if (expanded)
+                Icons.Filled.ArrowDropUp
+            else
+                Icons.Filled.ArrowDropDown
 
             var username by rememberSaveable { mutableStateOf("") }
             val usernameMaxLength = 25
@@ -129,7 +142,7 @@ fun AddNewPasswordScreen() {
             }
 
             @Composable
-            fun validateEmail(email: String){
+            fun validateEmail(email: String) {
                 if (email.isNotEmpty()) {
                     if (isValidEmail(email)) {
                         Text(text = "Email is valid", color = Color.Blue)
@@ -164,33 +177,33 @@ fun AddNewPasswordScreen() {
             Spacer(modifier = Modifier.height(12.dp))
 
             ExposedDropdownMenuBox(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .clickable(onClick = { expanded = true }),
                 expanded = expanded,
-                onExpandedChange = {
-                    expanded = !expanded
-                }
+                onExpandedChange = { expanded = !expanded }
             ) {
 
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
                         .fillMaxWidth()
-                        .onSizeChanged {
-                            dropDownWidth = it.width
+                        .onGloballyPositioned { coordinates ->
+                            textFieldSize = coordinates.size.toSize()
                         }
                         .menuAnchor(),
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = Color.White
+                    ),
                     readOnly = true,
                     value = selectedOption?.first ?: "Choose an account",
                     onValueChange = { },
                     shape = RoundedCornerShape(8.dp),
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(
-                            expanded = expanded
-                        )
-                    }
+                    trailingIcon = { Icon(icon, null) },
                 )
                 ExposedDropdownMenu(
                     modifier = Modifier
-                        .width(with(LocalDensity.current) { dropDownWidth.toDp() })
+                        .fillMaxWidth()
+                        .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
                         .height(280.dp)
                         .background(Color.White),
                     expanded = expanded,

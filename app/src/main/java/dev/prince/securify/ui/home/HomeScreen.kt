@@ -14,7 +14,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.destinations.UnlockScreenDestination
 
-@Destination(start = true)
+@Destination()
 @Composable
 fun HomeScreen(
     navigator: DestinationsNavigator,
@@ -22,11 +22,11 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
 
-    if (viewModel.isUserLoggedIn) {
-        navigator.navigate(UnlockScreenDestination)
-    } else {
-        navigator.navigate(IntroScreenDestination)
-    }
+//    if (!viewModel.isUserLoggedIn) {
+////        navigator.navigate(UnlockScreenDestination)
+////    } else {
+//        navigator.navigate(IntroScreenDestination)
+//    }
     Column {
         Text(
             modifier = Modifier.align(
@@ -36,7 +36,7 @@ fun HomeScreen(
             fontSize = 26.sp
         )
     }
-    Toast.makeText(context, "On home screen", Toast.LENGTH_LONG).show()
+//    Toast.makeText(context, "On home screen", Toast.LENGTH_LONG).show()
 }
 
 //@Preview(showBackground = true)

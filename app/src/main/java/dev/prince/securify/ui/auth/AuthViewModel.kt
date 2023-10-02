@@ -13,6 +13,8 @@ class AuthViewModel @Inject constructor(
 
     val loginKey = pref.getFromSharedPrefs(AUTH_KEY)
 
+    val isUserLoggedIn = !pref.getFromSharedPrefs(AUTH_KEY).isNullOrEmpty()
+
     fun saveUserLoginInfo(value: String) {
         pref.saveToSharedPrefs(AUTH_KEY, value)
     }

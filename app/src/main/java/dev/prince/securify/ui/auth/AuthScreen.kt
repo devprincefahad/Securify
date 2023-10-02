@@ -215,11 +215,15 @@ fun SetupKeyScreen(
 }
 
 @Composable
-@Destination
+@Destination(start = true)
 fun UnlockScreen(
     navigator: DestinationsNavigator,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
+
+    if (!viewModel.isUserLoggedIn) {
+        navigator.navigate(IntroScreenDestination)
+    }
 
     Column(
         modifier = Modifier
@@ -227,11 +231,10 @@ fun UnlockScreen(
             .background(color = Color.Black)
     ) {
 
-        Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(120.dp))
         Image(
             modifier = Modifier
-                .height(220.dp)
+                .height(180.dp)
                 .fillMaxWidth(),
             painter = painterResource(R.drawable.key),
             contentDescription = null
@@ -253,6 +256,7 @@ fun UnlockScreen(
                 verticalArrangement = Arrangement.Center
             ) {
 
+                val context = LocalContext.current
                 var key by rememberSaveable { mutableStateOf("") }
                 var keyVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -291,7 +295,7 @@ fun UnlockScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+//                Spacer(modifier = Modifier.weight(1f))
 
                 Button(
                     modifier = Modifier
@@ -299,7 +303,9 @@ fun UnlockScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     onClick = {
-                        if (key == viewModel.loginKey) {
+                         if (key == viewModel.loginKey) {
+                            Toast.makeText(context, "unlock screen btn clicked", Toast.LENGTH_SHORT)
+                                .show()
                             navigator.navigate(HomeScreenDestination)
                         }
                     },

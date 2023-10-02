@@ -10,5 +10,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val pref: EncryptedSharedPrefHelper
 ) : ViewModel(){
+
     val isUserLoggedIn = !pref.getFromSharedPrefs(AUTH_KEY).isNullOrEmpty()
+
 }

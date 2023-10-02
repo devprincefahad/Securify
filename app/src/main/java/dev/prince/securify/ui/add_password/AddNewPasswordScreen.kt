@@ -1,4 +1,4 @@
-package dev.prince.securify.presentation.add_password
+package dev.prince.securify.ui.add_password
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -58,11 +58,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import com.ramcosta.composedestinations.annotation.Destination
 import dev.prince.securify.R
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Destination
 @Composable
 fun AddNewPasswordScreen() {
 

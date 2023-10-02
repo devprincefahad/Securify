@@ -1,4 +1,4 @@
-package dev.prince.securify.presentation.startup.intro
+package dev.prince.securify.ui.intro
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
@@ -28,17 +28,16 @@ import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.presentation.startup.auth.SetupKeyScreen
-import dev.prince.securify.presentation.startup.auth.UnlockScreen
+import dev.prince.securify.ui.auth.SetupKeyScreen
+import dev.prince.securify.ui.destinations.SetupKeyScreenDestination
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily
-import dev.prince.securify.util.KeyUtils
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Destination(start = true)
+@Destination
 @Composable
 fun IntroScreen(
-    //navigator: DestinationsNavigator
+    navigator: DestinationsNavigator
 ) {
     Box(
         modifier = with(Modifier) {
@@ -57,9 +56,10 @@ fun IntroScreen(
         ) {
 
             Spacer(modifier = Modifier.weight(1f))
+
             Text(
                 modifier = Modifier
-                    .padding(start = 16.dp)
+                    .padding(all = 16.dp)
                     .fillMaxWidth(),
                 text = stringResource(R.string.intro_tagline_1),
                 textAlign = TextAlign.Start,
@@ -68,7 +68,7 @@ fun IntroScreen(
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
-            Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -87,10 +87,9 @@ fun IntroScreen(
                     .fillMaxWidth()
                     .height(60.dp),
                 onClick = {
-//                       KeyUtils.setHasVisitedIntroScreen(context)
-//                        navigator.navigate(
-//                            SetupKeyScreenDestination()
-//                        )
+                        navigator.navigate(
+                            SetupKeyScreenDestination()
+                        )
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -111,8 +110,8 @@ fun IntroScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun IntroScreenPreview() {
-    IntroScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun IntroScreenPreview() {
+//    IntroScreen()
+//}

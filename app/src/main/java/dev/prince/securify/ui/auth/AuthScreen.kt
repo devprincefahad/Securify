@@ -1,5 +1,7 @@
-package dev.prince.securify.presentation.startup.auth
+package dev.prince.securify.ui.auth
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +27,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,14 +46,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
+import dev.prince.securify.ui.destinations.HomeScreenDestination
+import dev.prince.securify.ui.destinations.IntroScreenDestination
+import dev.prince.securify.ui.home.HomeScreen
+import dev.prince.securify.ui.intro.IntroScreen
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily
+import kotlinx.coroutines.delay
 
 @Destination
 @Composable
-fun SetupKeyScreen() {
+fun SetupKeyScreen(
+    navigator: DestinationsNavigator,
+    viewModel: AuthViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,8 +106,8 @@ fun SetupKeyScreen() {
                 verticalArrangement = Arrangement.Center
             ) {
 
-                val key by rememberSaveable { mutableStateOf("") }
-                val confirmKey by rememberSaveable { mutableStateOf("") }
+                var key by rememberSaveable { mutableStateOf("") }
+                var confirmKey by rememberSaveable { mutableStateOf("") }
                 var keyVisible by rememberSaveable { mutableStateOf(false) }
                 var confirmKeyVisible by rememberSaveable { mutableStateOf(false) }
 
@@ -124,7 +139,7 @@ fun SetupKeyScreen() {
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Enter Master key") },
                     value = key,
-                    onValueChange = { /**/ },
+                    onValueChange = { key = it },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
@@ -147,7 +162,9 @@ fun SetupKeyScreen() {
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Confirm Master key") },
                     value = confirmKey,
-                    onValueChange = { /**/ },
+                    onValueChange = {
+                        confirmKey = it
+                    },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
@@ -170,7 +187,15 @@ fun SetupKeyScreen() {
                         .padding(all = 16.dp)
                         .fillMaxWidth()
                         .height(50.dp),
-                    onClick = { /* Do something */ },
+                    onClick = {
+                        Log.d("keytyped", "$key $confirmKey")
+                        if (key == confirmKey) {
+
+                            viewModel.saveUserLoginInfo(confirmKey)
+                            navigator.navigate(HomeScreenDestination)
+
+                        }
+                    },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = LightBlue,
@@ -189,14 +214,19 @@ fun SetupKeyScreen() {
     }
 }
 
-@Destination
 @Composable
-fun UnlockScreen() {
+@Destination
+fun UnlockScreen(
+    navigator: DestinationsNavigator,
+    viewModel: AuthViewModel = hiltViewModel()
+) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.Black)
     ) {
+
         Spacer(modifier = Modifier.weight(1f))
         Spacer(modifier = Modifier.height(120.dp))
         Image(
@@ -223,7 +253,7 @@ fun UnlockScreen() {
                 verticalArrangement = Arrangement.Center
             ) {
 
-                val key by rememberSaveable { mutableStateOf("") }
+                var key by rememberSaveable { mutableStateOf("") }
                 var keyVisible by rememberSaveable { mutableStateOf(false) }
 
                 Text(
@@ -244,7 +274,7 @@ fun UnlockScreen() {
                     modifier = Modifier.fillMaxWidth(),
                     label = { Text("Enter Master key") },
                     value = key,
-                    onValueChange = { /**/ },
+                    onValueChange = { key = it },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
@@ -268,7 +298,11 @@ fun UnlockScreen() {
                         .padding(all = 16.dp)
                         .fillMaxWidth()
                         .height(50.dp),
-                    onClick = { /* Do something */ },
+                    onClick = {
+                        if (key == viewModel.loginKey) {
+                            navigator.navigate(HomeScreenDestination)
+                        }
+                    },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = LightBlue,
@@ -287,16 +321,16 @@ fun UnlockScreen() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SetupKeyScreenPreview() {
-    SetupKeyScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SetupKeyScreenPreview() {
+//    SetupKeyScreen()
+//}
 
-@Preview(showBackground = true)
-@Composable
-fun UnlockScreenPreview() {
-    UnlockScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun UnlockScreenPreview() {
+//    UnlockScreen()
+//}
 
 

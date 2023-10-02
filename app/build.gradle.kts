@@ -8,6 +8,11 @@ plugins {
 
 android {
     namespace = "dev.prince.securify"
+
+    hilt {
+        enableAggregatingTask = true
+    }
+
     compileSdk = 34
 
     defaultConfig {
@@ -65,9 +70,9 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.5.1")
 
     //Dagger - Hilt
-    implementation ("com.google.dagger:hilt-android:2.48")
-    ksp("com.google.dagger:hilt-android-compiler:2.48")
-    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation (libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation (libs.androidx.hilt.navigation.compose)
 
     //Crypto security
     implementation(libs.androidx.security.crypto)

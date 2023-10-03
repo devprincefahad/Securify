@@ -4,5 +4,5 @@
     <string name="intro_tagline_2">You can manage your Passwords Anywhere, Anytime.</string>
     <string name="setup_key_tagline_1">Let\'s make your digital data secured</string>
     <string name="setup_master_key">Setup Master Key</string>
-    <string name="setup_key_tagline_2">Provide a Master Key to secure your credentials with end-to-end encryption</string>
+    <string name="setup_key_tagline_2">Create a Master Key to secure your credentials with end-to-end encryption</string>
 </resources>

@@ -20,9 +20,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
@@ -59,13 +62,14 @@ fun IntroScreen(
 
             Text(
                 modifier = Modifier
-                    .padding(all = 16.dp)
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 text = stringResource(R.string.intro_tagline_1),
                 textAlign = TextAlign.Start,
                 fontSize = 42.sp,
                 fontFamily = poppinsFamily,
                 fontWeight = FontWeight.Bold,
+                style = TextStyle(lineHeight = 20.sp),
                 color = Color.White
             )
 
@@ -80,16 +84,18 @@ fun IntroScreen(
                 fontWeight = FontWeight.Normal,
                 color = Color.LightGray
             )
+
             Spacer(modifier = Modifier.height(46.dp))
+
             Button(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
                     .height(60.dp),
                 onClick = {
-                        navigator.navigate(
-                            SetupKeyScreenDestination()
-                        )
+                    navigator.navigate(
+                        SetupKeyScreenDestination()
+                    )
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -104,8 +110,8 @@ fun IntroScreen(
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(60.dp))
 
+            Spacer(modifier = Modifier.height(60.dp))
         }
     }
 }

@@ -19,7 +19,7 @@ object AppModule {
     fun provideRoomInstance(@ApplicationContext context: Context) = Room.databaseBuilder(
         context,
         SecurifyDatabase::class.java,
-        "password_database"
+        "securify_database"
     ).build()
 
 }

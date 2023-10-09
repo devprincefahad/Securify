@@ -49,8 +49,8 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
-import dev.prince.securify.ui.destinations.HomeScreenDestination
 import dev.prince.securify.ui.destinations.IntroScreenDestination
+import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -80,8 +80,8 @@ fun UnlockScreen(
 
         LaunchedEffect(Unit) {
             viewModel.navigateToHome.collect {
-                navigator.navigate(HomeScreenDestination) {
-                    popUpTo(HomeScreenDestination) {
+                navigator.navigate(PasswordsScreenDestination) {
+                    popUpTo(PasswordsScreenDestination) {
                         inclusive = true
                     }
                 }

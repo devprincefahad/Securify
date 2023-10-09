@@ -34,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +52,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
-import dev.prince.securify.ui.destinations.HomeScreenDestination
+import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily
 import kotlinx.coroutines.launch
@@ -84,8 +83,8 @@ fun SetupKeyScreen(
         }
         LaunchedEffect(Unit) {
             viewModel.navigateToHome.collect {
-                navigator.navigate(HomeScreenDestination) {
-                    popUpTo(HomeScreenDestination) {
+                navigator.navigate(PasswordsScreenDestination) {
+                    popUpTo(PasswordsScreenDestination) {
                         inclusive = true
                     }
                 }

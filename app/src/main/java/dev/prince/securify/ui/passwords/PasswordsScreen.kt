@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.home
+package dev.prince.securify.ui.passwords
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -16,9 +16,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Destination
 @Composable
-fun HomeScreen(
+fun PasswordsScreen(
     navigator: DestinationsNavigator,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: PasswordsViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
@@ -29,7 +29,7 @@ fun HomeScreen(
             modifier = Modifier.align(
                 Alignment.CenterHorizontally
             ),
-            text = "Home screen",
+            text = "Password screen",
             fontSize = 26.sp
         )
     }

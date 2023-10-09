@@ -1,16 +1,12 @@
 package dev.prince.securify.ui.auth
 
-import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ramcosta.composedestinations.navigation.popUpTo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.prince.securify.local.EncryptedSharedPrefHelper
-import dev.prince.securify.ui.destinations.HomeScreenDestination
 import dev.prince.securify.util.AUTH_KEY
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.delay
@@ -19,17 +15,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val pref: EncryptedSharedPrefHelper
+    private val prefs: EncryptedSharedPrefHelper
 ) : ViewModel() {
 
-    private val loginKey = pref.getFromSharedPrefs(AUTH_KEY)
+    // For SharedPrefs
+    private val loginKey = prefs.getFromSharedPrefs(AUTH_KEY)
 
-    val isUserLoggedIn = !pref.getFromSharedPrefs(AUTH_KEY).isNullOrEmpty()
+    val isUserLoggedIn = !prefs.getFromSharedPrefs(AUTH_KEY).isNullOrEmpty()
 
     private fun saveUserLoginInfo(value: String) {
-        pref.saveToSharedPrefs(AUTH_KEY, value)
+        prefs.saveToSharedPrefs(AUTH_KEY, value)
     }
 
+    // For Setup Key Screen
     var key by mutableStateOf("")
     var keyVisible by mutableStateOf(false)
     var isErrorForKey by mutableStateOf(false)
@@ -79,6 +77,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    //For Unlock Screen
     var unlockKey by mutableStateOf("")
     var unlockKeyVisible by mutableStateOf(false)
     var isErrorForUnlock by (mutableStateOf(false))

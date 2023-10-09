@@ -1,7 +1,6 @@
 package dev.prince.securify.ui.intro
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -27,16 +26,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.ui.auth.SetupKeyScreen
-import dev.prince.securify.ui.destinations.HomeScreenDestination
 import dev.prince.securify.ui.destinations.SetupKeyScreenDestination
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.poppinsFamily

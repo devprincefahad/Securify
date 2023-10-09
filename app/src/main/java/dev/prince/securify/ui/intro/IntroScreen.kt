@@ -118,9 +118,3 @@ fun IntroScreen(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun IntroScreenPreview() {
-//    IntroScreen()
-//}

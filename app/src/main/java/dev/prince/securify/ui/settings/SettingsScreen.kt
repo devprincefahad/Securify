@@ -69,6 +69,7 @@ fun SettingsScreen(
                     Text(
                         text = text,
                         fontSize = 18.sp,
+                        color = Color.Black,
                         fontFamily = poppinsFamily,
                         fontWeight = FontWeight.Medium
                     )

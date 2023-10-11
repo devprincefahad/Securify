@@ -3,6 +3,7 @@ package dev.prince.securify.ui.generate
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -30,12 +33,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -68,15 +73,23 @@ fun GenerateScreen(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },
-        topBar = {
+        /*topBar = {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Password Generator"
+                        text = "Password Generator",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = poppinsFamily
                     )
-                }
+                },
+                colors = TopAppBarDefaults
+                    .smallTopAppBarColors(
+                        containerColor = Color.Black
+                    )
             )
-        }
+        }*/
     ) { innerPadding ->
 
         LaunchedEffect(Unit) {
@@ -90,13 +103,20 @@ fun GenerateScreen(
 
         Column(
             modifier = Modifier
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(color = Color.Black),
             verticalArrangement = Arrangement.Center
         ) {
 
             Card(
                 modifier = Modifier
-                    .padding(horizontal = 32.dp)
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 24.dp,
+                        bottom = 16.dp
+                    )
                     .height(160.dp)
                     .fillMaxWidth(),
                 shape = RoundedCornerShape(10.dp),
@@ -116,7 +136,9 @@ fun GenerateScreen(
                     Text(
                         text = viewModel.password,
                         color = Color.Black,
-                        fontSize = 26.sp
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = poppinsFamily
                     )
 
                     Row(
@@ -140,6 +162,10 @@ fun GenerateScreen(
                             )
                         ) {
                             Icon(
+                                modifier = Modifier
+                                    .padding(top = 6.dp, end = 6.dp)
+                                    .height(40.dp)
+                                    .width(40.dp),
                                 imageVector = Icons.Filled.Refresh,
                                 contentDescription = null
                             )
@@ -148,164 +174,189 @@ fun GenerateScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                text = "Options",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
-                fontFamily = poppinsFamily
-            )
-
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    text = "Length",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    fontFamily = poppinsFamily
-                )
-                CustomSlider(
-                    value = viewModel.passwordLength.toFloat(),
-                    onValueChange = { viewModel.passwordLength = it.toInt() },
-                    valueRange = 8f..15f,
-                    interactionSource = interactionSource
-                )
-            }
-
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Lower case",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    fontFamily = poppinsFamily
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Switch(
-                    checked = viewModel.lowerCase,
-                    onCheckedChange = {
-                        viewModel.lowerCase = it
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = Blue,
-                        uncheckedTrackColor = LightBlue,
-                        uncheckedBorderColor = LightBlue,
-                        uncheckedThumbColor = Color.White
-                    )
-                )
-            }
-
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Upper case",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    fontFamily = poppinsFamily
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Switch(
-                    checked = viewModel.upperCase,
-                    onCheckedChange = { viewModel.upperCase = it },
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = Blue,
-                        uncheckedTrackColor = LightBlue,
-                        uncheckedBorderColor = LightBlue,
-                        uncheckedThumbColor = Color.White
-                    )
-                )
-            }
-
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Digits",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    fontFamily = poppinsFamily
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Switch(
-                    checked = viewModel.digits,
-                    onCheckedChange = { viewModel.digits = it },
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = Blue,
-                        uncheckedTrackColor = LightBlue,
-                        uncheckedBorderColor = LightBlue,
-                        uncheckedThumbColor = Color.White
-                    )
-                )
-            }
-
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Special characters",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black,
-                    fontFamily = poppinsFamily
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Switch(
-                    checked = viewModel.specialCharacters,
-                    onCheckedChange = { viewModel.specialCharacters = it },
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = Blue,
-                        uncheckedTrackColor = LightBlue,
-                        uncheckedBorderColor = LightBlue,
-                        uncheckedThumbColor = Color.White
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
+            Card(
                 modifier = Modifier
-                    .padding(
-                        start = 16.dp, end = 16.dp,
-                        bottom = 40.dp
-                    )
                     .fillMaxWidth()
-                    .height(60.dp),
-                onClick = {
-                    clipboardManager.setText(
-                        AnnotatedString((viewModel.password))
-                    )
-                    viewModel.showCopyMsg()
-                },
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Blue,
-                    contentColor = Color.White
+                    .wrapContentHeight()
+                    .clip(
+                        RoundedCornerShape(
+                            topStart = 24.dp, topEnd = 24.dp
+                        )
+                    ),
+                shape = RoundedCornerShape(
+                    bottomStart = 0.dp, bottomEnd = 0.dp
+                ),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
                 )
             ) {
-                Text(
-                    text = "Copy Password",
-                    fontSize = 22.sp,
-                    fontFamily = poppinsFamily,
-                    fontWeight = FontWeight.Bold
-                )
+
+                Column(
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = "Options",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black,
+                        fontFamily = poppinsFamily
+                    )
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text(
+                            text = "Length",
+                            fontSize = 16.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = poppinsFamily
+                        )
+                        CustomSlider(
+                            value = viewModel.passwordLength.toFloat(),
+                            onValueChange = { viewModel.passwordLength = it.toInt() },
+                            valueRange = 8f..15f,
+                            interactionSource = interactionSource
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Lower case",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black,
+                            fontFamily = poppinsFamily
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = viewModel.lowerCase,
+                            onCheckedChange = {
+                                viewModel.lowerCase = it
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedTrackColor = Blue,
+                                uncheckedTrackColor = LightBlue,
+                                uncheckedBorderColor = LightBlue,
+                                uncheckedThumbColor = Color.White
+                            )
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Upper case",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black,
+                            fontFamily = poppinsFamily
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = viewModel.upperCase,
+                            onCheckedChange = { viewModel.upperCase = it },
+                            colors = SwitchDefaults.colors(
+                                checkedTrackColor = Blue,
+                                uncheckedTrackColor = LightBlue,
+                                uncheckedBorderColor = LightBlue,
+                                uncheckedThumbColor = Color.White
+                            )
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Digits",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black,
+                            fontFamily = poppinsFamily
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = viewModel.digits,
+                            onCheckedChange = { viewModel.digits = it },
+                            colors = SwitchDefaults.colors(
+                                checkedTrackColor = Blue,
+                                uncheckedTrackColor = LightBlue,
+                                uncheckedBorderColor = LightBlue,
+                                uncheckedThumbColor = Color.White
+                            )
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Special characters",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black,
+                            fontFamily = poppinsFamily
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = viewModel.specialCharacters,
+                            onCheckedChange = { viewModel.specialCharacters = it },
+                            colors = SwitchDefaults.colors(
+                                checkedTrackColor = Blue,
+                                uncheckedTrackColor = LightBlue,
+                                uncheckedBorderColor = LightBlue,
+                                uncheckedThumbColor = Color.White
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Button(
+                        modifier = Modifier
+                            .padding(
+                                start = 16.dp, end = 16.dp,
+                                bottom = 32.dp
+                            )
+                            .fillMaxWidth()
+                            .height(60.dp),
+                        onClick = {
+                            clipboardManager.setText(
+                                AnnotatedString((viewModel.password))
+                            )
+                            viewModel.showCopyMsg()
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Blue,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "Copy Password",
+                            fontSize = 22.sp,
+                            fontFamily = poppinsFamily,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
             }
+
 
         }
     }

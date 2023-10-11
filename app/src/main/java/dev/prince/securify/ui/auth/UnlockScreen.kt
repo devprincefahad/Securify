@@ -51,7 +51,7 @@ import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
 import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
-import dev.prince.securify.ui.theme.LightBlue
+import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 
 @Composable
@@ -205,7 +205,7 @@ fun UnlockScreen(
                             },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = LightBlue,
+                                containerColor = Blue,
                                 contentColor = Color.White
                             )
                         ) {

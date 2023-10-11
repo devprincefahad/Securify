@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.add_password
+package dev.prince.securify.ui.add
 
 import android.util.Patterns
 import androidx.compose.runtime.getValue
@@ -36,9 +36,9 @@ class AddPasswordViewModel @Inject constructor(
         if (username.isEmpty() && email.isBlank() && mobileNumber.isBlank()) {
             messages.tryEmit("Please provide a username, email, or mobile number.")
         }
-        if (password.length < 6) {
+        /*if (password.length < 6) {
             messages.tryEmit("Password length must be 6 characters or more")
-        }
+        }*/
         if(selectedOption?.first == null){
             messages.tryEmit("Please Choose an account.")
         }

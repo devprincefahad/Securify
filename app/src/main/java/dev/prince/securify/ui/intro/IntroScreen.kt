@@ -32,7 +32,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.ui.destinations.SetupKeyScreenDestination
-import dev.prince.securify.ui.theme.LightBlue
+import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -99,7 +99,7 @@ fun IntroScreen(
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = LightBlue,
+                    containerColor = Blue,
                     contentColor = Color.White
                 )
             ) {

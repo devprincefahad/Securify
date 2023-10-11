@@ -53,9 +53,8 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
-import dev.prince.securify.ui.theme.LightBlue
+import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
-import kotlinx.coroutines.launch
 
 @Destination
 @Composable
@@ -272,7 +271,7 @@ fun SetupKeyScreen(
                         },
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = LightBlue,
+                            containerColor = Blue,
                             contentColor = Color.White
                         )
                     ) {

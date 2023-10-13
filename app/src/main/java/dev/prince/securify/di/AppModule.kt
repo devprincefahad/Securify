@@ -22,4 +22,8 @@ object AppModule {
         "securify_database"
     ).build()
 
+    @Singleton
+    @Provides
+    fun provideAccountDao(db: SecurifyDatabase) = db.accountDao()
+
 }

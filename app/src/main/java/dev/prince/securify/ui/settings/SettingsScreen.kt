@@ -40,6 +40,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.prince.securify.ui.destinations.SetupKeyScreenDestination
+import dev.prince.securify.ui.destinations.UnlockScreenDestination
 import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -47,7 +50,7 @@ import dev.prince.securify.ui.theme.poppinsFamily
 @Destination
 @Composable
 fun SettingsScreen(
-
+    navigator: DestinationsNavigator
 ) {
 
     val context = LocalContext.current
@@ -108,6 +111,11 @@ fun SettingsScreen(
                             if (text == "About Securify") {
                                 showSheet = true
                             }
+                            if (text == "Update Master Key") {
+                                navigator.navigate(
+                                    SetupKeyScreenDestination
+                                )
+                            }
                         }
                     ) {
                         Row(
@@ -143,10 +151,4 @@ fun SettingsScreen(
     BackHandler {
         (context as ComponentActivity).finish()
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SettingsScreenPreview() {
-    SettingsScreen()
 }

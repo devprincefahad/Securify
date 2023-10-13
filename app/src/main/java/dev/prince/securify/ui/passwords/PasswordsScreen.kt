@@ -2,22 +2,19 @@ package dev.prince.securify.ui.passwords
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
@@ -35,9 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,12 +40,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
-import dev.prince.securify.ui.add.TextFieldSeparator
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun PasswordsScreen(
@@ -132,7 +125,7 @@ fun PasswordsScreen(
                         .fillMaxWidth(),
                     value = searchQuery,
                     onValueChange = {
-                        if (it.length <= 25){
+                        if (it.length <= 25) {
                             searchQuery = it
                         }
                     },
@@ -180,20 +173,80 @@ fun PasswordsScreen(
 fun AccountRow(account: AccountEntity) {
     Card(
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 10.dp
+            defaultElevation = 2.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
         ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(8.dp)
+
+        val optionsWithImages = listOf(
+            "Instagram" to painterResource(R.drawable.icon_instagram),
+            "Facebook" to painterResource(R.drawable.icon_facebook),
+            "LinkedIn" to painterResource(R.drawable.icon_linkedin),
+            "Snapchat" to painterResource(R.drawable.icons_snapchat),
+            "YouTube" to painterResource(R.drawable.icon_youtube),
+            "Netflix" to painterResource(R.drawable.icon_netflix),
+            "Discord" to painterResource(R.drawable.icon_discord),
+            "Twitter" to painterResource(R.drawable.icon_twitterx),
+            "Amazon Prime" to painterResource(R.drawable.icon_amazon_prime_video),
+            "Spotify" to painterResource(R.drawable.icon_spotify),
+            "Gmail" to painterResource(R.drawable.icon_gmail),
+            "Reddit" to painterResource(R.drawable.icon_reddit),
+            "Quora" to painterResource(R.drawable.icon_quora),
+            "Pinterest" to painterResource(R.drawable.icon_pinterest),
+            "Other" to painterResource(R.drawable.icon_others)
+        )
+
+        val selectedOption =
+            optionsWithImages.find { it.first.equals(account.accountName, ignoreCase = true) }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         ) {
-            Text(account.accountName)
-            Text(account.userName)
-            Text(account.email)
-            Text(account.mobileNumber)
-            Text(account.password)
+            // Image
+            selectedOption?.second?.let {
+                Image(
+                    painter = it,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                )
+            }
+
+            // Account Name and Details
+            Column(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .weight(1f)
+            ) {
+                Text(
+                    text = account.accountName,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                val displayInfo = when {
+                    !account.email.isNullOrBlank() -> account.email
+                    !account.userName.isNullOrBlank() -> account.userName
+                    else -> account.mobileNumber
+                }
+
+                Text(
+                    text = displayInfo,
+                    color = Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

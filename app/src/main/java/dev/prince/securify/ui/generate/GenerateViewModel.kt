@@ -35,6 +35,10 @@ class GenerateViewModel @Inject constructor() : ViewModel() {
         messages.tryEmit("Password copied to clipboard.")
     }
 
+    fun showUncheckedToggleMsg(){
+        messages.tryEmit("Please toggle at least one option.")
+    }
+
     fun generatePassword(
         length: Int,
         lowerCase: Boolean,
@@ -42,10 +46,6 @@ class GenerateViewModel @Inject constructor() : ViewModel() {
         digits: Boolean,
         specialCharacters: Boolean
     ): String {
-
-        if (!lowerCase && !upperCase && !digits && !specialCharacters) {
-            messages.tryEmit("Please toggle at least one option.")
-        }
 
         val chars = mutableListOf<Char>()
         val symbols = "!@#$%&*+=-~?/_"

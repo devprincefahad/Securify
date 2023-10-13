@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -140,37 +142,6 @@ fun GenerateScreen(
                         fontWeight = FontWeight.Medium,
                         fontFamily = poppinsFamily
                     )
-
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Spacer(modifier = Modifier.weight(1f))
-                        Card(
-                            shape = RoundedCornerShape(10.dp),
-                            onClick = {
-                                viewModel.password = viewModel.generatePassword(
-                                    viewModel.passwordLength,
-                                    viewModel.lowerCase,
-                                    viewModel.upperCase,
-                                    viewModel.digits,
-                                    viewModel.specialCharacters
-                                )
-                            },
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color.White
-                            )
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .padding(top = 6.dp, end = 6.dp)
-                                    .height(40.dp)
-                                    .width(40.dp),
-                                imageVector = Icons.Filled.Refresh,
-                                contentDescription = null
-                            )
-                        }
-                    }
                 }
             }
 
@@ -195,12 +166,12 @@ fun GenerateScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         text = "Options",
-                        fontSize = 22.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Black,
                         fontFamily = poppinsFamily
@@ -213,7 +184,7 @@ fun GenerateScreen(
 
                         Text(
                             text = "Length",
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             color = Color.Black,
                             fontWeight = FontWeight.SemiBold,
                             fontFamily = poppinsFamily
@@ -232,7 +203,7 @@ fun GenerateScreen(
                     ) {
                         Text(
                             text = "Lower case",
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.Black,
                             fontFamily = poppinsFamily
@@ -258,7 +229,7 @@ fun GenerateScreen(
                     ) {
                         Text(
                             text = "Upper case",
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.Black,
                             fontFamily = poppinsFamily
@@ -282,7 +253,7 @@ fun GenerateScreen(
                     ) {
                         Text(
                             text = "Digits",
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.Black,
                             fontFamily = poppinsFamily
@@ -306,7 +277,7 @@ fun GenerateScreen(
                     ) {
                         Text(
                             text = "Special characters",
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.Black,
                             fontFamily = poppinsFamily
@@ -326,38 +297,84 @@ fun GenerateScreen(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    Button(
+                    Row(
                         modifier = Modifier
                             .padding(
-                                start = 16.dp, end = 16.dp,
+                                start = 22.dp,
+                                end = 22.dp,
                                 bottom = 32.dp
                             )
-                            .fillMaxWidth()
-                            .height(60.dp),
-                        onClick = {
-                            clipboardManager.setText(
-                                AnnotatedString((viewModel.password))
-                            )
-                            viewModel.showCopyMsg()
-                        },
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Blue,
-                            contentColor = Color.White
-                        )
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = "Copy Password",
-                            fontSize = 22.sp,
-                            fontFamily = poppinsFamily,
-                            fontWeight = FontWeight.Bold
-                        )
+
+                        Card(
+                            modifier = Modifier
+                                .size(52.dp)
+                                .background(color = Color.Black, shape = CircleShape),
+                            shape = CircleShape,
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 10.dp
+                            ),
+                            onClick = {
+                                if (!(viewModel.lowerCase || viewModel.upperCase ||
+                                            viewModel.digits || viewModel.specialCharacters)
+                                ) {
+                                    viewModel.showUncheckedToggleMsg()
+                                } else {
+                                    viewModel.password = viewModel.generatePassword(
+                                        viewModel.passwordLength,
+                                        viewModel.lowerCase,
+                                        viewModel.upperCase,
+                                        viewModel.digits,
+                                        viewModel.specialCharacters
+                                    )
+                                }
+                            },
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color.Black
+                            )
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(all = 8.dp)
+                                    .size(40.dp),
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                        }
+
+                        Button(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(58.dp)
+                                .padding(
+                                    start = 16.dp
+                                ),
+                            onClick = {
+                                clipboardManager.setText(
+                                    AnnotatedString((viewModel.password))
+                                )
+                                viewModel.showCopyMsg()
+                            },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Blue,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text(
+                                text = "Copy Password",
+                                fontSize = 20.sp,
+                                fontFamily = poppinsFamily,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
-
             }
-
-
         }
     }
 

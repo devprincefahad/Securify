@@ -46,6 +46,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,6 +69,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
+import dev.prince.securify.crypto.CryptoManager
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
@@ -83,36 +85,30 @@ fun AddPasswordScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                colors = topAppBarColors(
-                    containerColor = Color.Black,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                ),
-                title = {
-                    Text(
-                        text = "Add a new Password",
-                        textAlign = TextAlign.Center,
-                        fontSize = 24.sp,
-                        fontFamily = poppinsFamily,
-                        fontWeight = FontWeight.Medium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navigator.navigate(PasswordsScreenDestination)
-                        }) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBackIos,
-                            contentDescription = null
-                        )
-                    }
-                }
-            )
-        },
-        contentColor = Color.Black,
+//        topBar = {
+//            TopAppBar(
+//                title = {
+//                    Text(
+//                        text = "Add a new Password",
+//                        textAlign = TextAlign.Center,
+//                        fontSize = 24.sp,
+//                        fontFamily = poppinsFamily,
+//                        fontWeight = FontWeight.Medium
+//                    )
+//                },
+//                navigationIcon = {
+//                    IconButton(
+//                        onClick = {
+//                            navigator.navigate(PasswordsScreenDestination)
+//                        }) {
+//                        Icon(
+//                            imageVector = Icons.Filled.ArrowBackIos,
+//                            contentDescription = null
+//                        )
+//                    }
+//                }
+//            )
+//        },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         }
@@ -127,12 +123,44 @@ fun AddPasswordScreen(
                 )
             }
         }
-        /*Column(
+
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.Black),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(color = Color.Black)
         ) {
+
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                IconButton(
+                    modifier = Modifier.padding(
+                        top = 14.dp, bottom = 14.dp,
+                        start = 16.dp, end = 12.dp
+                    ),
+                    onClick = {
+                        navigator.navigate(PasswordsScreenDestination)
+                    }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBackIos,
+                        tint = Color.White,
+                        contentDescription = null
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.padding(
+                        top = 18.dp, bottom = 12.dp,
+                        start = 16.dp, end = 16.dp
+                    ),
+                    text = "Add New Password",
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFamily
+                )
+            }
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -145,7 +173,8 @@ fun AddPasswordScreen(
                 ), elevation = CardDefaults.cardElevation(
                     defaultElevation = 80.dp
                 )
-            ) {*/
+            ) {
+
                 Column(
                     modifier = Modifier
                         .verticalScroll(state = scrollState)
@@ -553,7 +582,6 @@ fun AddPasswordScreen(
                             .fillMaxWidth()
                             .height(50.dp),
                         onClick = {
-                            //validate fields and save data to db
                             viewModel.validateAndInsert()
                         },
                         shape = RoundedCornerShape(10.dp),
@@ -569,10 +597,14 @@ fun AddPasswordScreen(
                             fontWeight = FontWeight.Medium
                         )
                     }
+                    if (viewModel.success.value) {
+                        LaunchedEffect(Unit) {
+                            navigator.navigate(PasswordsScreenDestination)
+                        }
+                    }
                 }
-//            }
-//        }
-
+            }
+        }
     }
     BackHandler {
         navigator.navigate(PasswordsScreenDestination)

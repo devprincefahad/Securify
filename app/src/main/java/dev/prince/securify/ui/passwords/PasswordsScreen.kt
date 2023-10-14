@@ -4,6 +4,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,6 +19,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -62,8 +68,7 @@ fun PasswordsScreen(
         account.accountName.contains(searchQuery, ignoreCase = true) ||
                 account.userName.contains(searchQuery, ignoreCase = true) ||
                 account.email.contains(searchQuery, ignoreCase = true) ||
-                account.mobileNumber.contains(searchQuery, ignoreCase = true) ||
-                account.password.contains(searchQuery, ignoreCase = true)
+                account.mobileNumber.contains(searchQuery, ignoreCase = true)
     }
 
     Scaffold(
@@ -88,8 +93,7 @@ fun PasswordsScreen(
 
             Text(
                 modifier = Modifier.padding(
-                    top = 28.dp,
-                    bottom = 8.dp
+                    top = 18.dp, bottom = 12.dp
                 ),
                 text = "My Passwords",
                 color = Color.White,
@@ -204,6 +208,8 @@ fun AccountRow(account: AccountEntity) {
         val selectedOption =
             optionsWithImages.find { it.first.equals(account.accountName, ignoreCase = true) }
 
+        var expanded by remember { mutableStateOf(false) }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -224,7 +230,7 @@ fun AccountRow(account: AccountEntity) {
             // Account Name and Details
             Column(
                 modifier = Modifier
-                    .padding(start = 8.dp)
+                    .padding(start = 14.dp)
                     .weight(1f)
             ) {
                 Text(
@@ -246,6 +252,75 @@ fun AccountRow(account: AccountEntity) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(end = 4.dp)
+            ) {
+
+                IconButton(
+                    onClick = {
+                        // copy password
+                    },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ContentCopy,
+                        contentDescription = null
+                    )
+                }
+
+                Box(
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    IconButton(
+                        onClick = {
+                            expanded = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "Options Icon"
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+
+                        DropdownMenuItem(
+                            text = { Text("Edit") },
+                            onClick = {
+                                // Add edit functionality here
+                                expanded = false
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Edit Icon"
+                                )
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = { Text("Delete") },
+                            onClick = {
+                                // Add delete functionality here
+                                expanded = false
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    }
+                }
             }
         }
     }

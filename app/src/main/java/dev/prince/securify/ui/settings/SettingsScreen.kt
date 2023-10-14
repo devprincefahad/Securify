@@ -69,7 +69,7 @@ fun SettingsScreen(
     ) {
 
         Text(
-            modifier = Modifier.padding(vertical = 28.dp),
+            modifier = Modifier.padding(top = 18.dp, bottom = 12.dp),
             text = "Settings",
             color = Color.White,
             fontSize = 24.sp,

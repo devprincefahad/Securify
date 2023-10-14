@@ -74,24 +74,7 @@ fun GenerateScreen(
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
-        },
-        /*topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = "Password Generator",
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = poppinsFamily
-                    )
-                },
-                colors = TopAppBarDefaults
-                    .smallTopAppBarColors(
-                        containerColor = Color.Black
-                    )
-            )
-        }*/
+        }
     ) { innerPadding ->
 
         LaunchedEffect(Unit) {
@@ -108,15 +91,27 @@ fun GenerateScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
                 .background(color = Color.Black),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Text(
+                modifier = Modifier.padding(
+                    top = 18.dp, bottom = 12.dp
+                ),
+                text = "Password Generator",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = poppinsFamily
+            )
 
             Card(
                 modifier = Modifier
                     .padding(
                         start = 16.dp,
                         end = 16.dp,
-                        top = 24.dp,
+                        top = 12.dp,
                         bottom = 16.dp
                     )
                     .height(160.dp)

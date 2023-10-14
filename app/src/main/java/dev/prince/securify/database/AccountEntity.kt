@@ -10,6 +10,5 @@ data class AccountEntity(
     var accountName: String,
     var userName : String,
     var email : String,
-    var mobileNumber: String,
-    var password : String
+    var mobileNumber: String
 )

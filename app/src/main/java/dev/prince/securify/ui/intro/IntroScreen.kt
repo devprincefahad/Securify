@@ -33,6 +33,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.ui.auth.NavigationSource
+import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -95,7 +96,7 @@ fun IntroScreen(
                     .fillMaxWidth(),
                 onClick = {
                     navigator.navigate(
-                        dev.prince.securify.ui.destinations.SetupKeyScreenDestination(NavigationSource.INTRO)
+                        MasterKeyScreenDestination(NavigationSource.INTRO)
                     )
                 },
                 shape = RoundedCornerShape(16.dp),

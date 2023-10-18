@@ -147,8 +147,7 @@ fun UnlockScreen(
                             value = viewModel.unlockKey,
                             visualTransformation = if (viewModel.unlockKeyVisible) VisualTransformation.None else PasswordVisualTransformation(),
                             onValueChange = {
-                                viewModel.unlockKey = it
-                                viewModel.validateUnlockKey(viewModel.unlockKey)
+                                if (it.length <= 8) viewModel.unlockKey = it
                             },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.Black,
@@ -157,21 +156,16 @@ fun UnlockScreen(
                                 unfocusedBorderColor = Color.Black,
                                 focusedLabelColor = Color.Black,
                                 unfocusedLabelColor = Color.Gray,
-                                cursorColor = Color.Gray,
-                                errorBorderColor = Color.Red,
-                                errorTextColor = Color.Red,
-                                errorSupportingTextColor = Color.Red,
-                                errorLabelColor = Color.Red
+                                cursorColor = Color.Gray
                             ),
                             singleLine = true,
-                            isError = viewModel.isErrorForUnlock,
                             supportingText = {
                                 AnimatedVisibility (viewModel.unlockKey.isNotEmpty()) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
                                         fontFamily = poppinsFamily,
                                         fontWeight = FontWeight.Medium,
-                                        text = "Limit: ${viewModel.unlockKey.length}/${viewModel.maxLength}",
+                                        text = "Limit: ${viewModel.unlockKey.length}/8",
                                     )
                                 }
                             },

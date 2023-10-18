@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.ui.auth.NavigationSource
-import dev.prince.securify.ui.destinations.SetupKeyScreenDestination
+import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -79,7 +79,7 @@ fun SettingsScreen(
             SettingsItem(
                 "Update Master Key",
                 Icons.Outlined.LockOpen,
-                onClick = { navigator.navigate(SetupKeyScreenDestination(NavigationSource.SETTINGS)) }
+                onClick = { navigator.navigate(MasterKeyScreenDestination(NavigationSource.SETTINGS)) }
             ),
             SettingsItem(
             "Share Securify",

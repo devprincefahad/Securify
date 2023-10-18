@@ -1,23 +1,18 @@
-package dev.prince.securify.ui.auth
+package dev.prince.securify.ui.composables
 
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -28,21 +23,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -51,100 +40,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
-import dev.prince.securify.ui.composables.BottomSheetSurface
-import dev.prince.securify.ui.destinations.PasswordsScreenDestination
+import dev.prince.securify.ui.auth.AuthViewModel
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 
-enum class NavigationSource {
-    INTRO,
-    SETTINGS
-}
-
-@Destination
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SetupKeyScreen(
-    navigator: DestinationsNavigator,
-    navigationSource: NavigationSource,
+fun CreateMasterKeySheetContent(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-
-    val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scrollState = rememberScrollState()
-
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        }
-    ) { contentPadding ->
-
-        LaunchedEffect(Unit) {
-            viewModel.messages.collect {
-                snackbarHostState.showSnackbar(
-                    message = it,
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-        LaunchedEffect(Unit) {
-            viewModel.navigateToHome.collect {
-                navigator.navigate(PasswordsScreenDestination) {
-                    popUpTo(PasswordsScreenDestination) {
-                        inclusive = true
-                    }
-                }
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .verticalScroll(state = scrollState)
-                .padding(contentPadding)
-                .fillMaxSize()
-                .background(color = Color.Black),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(28.dp))
-            Text(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 32.dp),
-                text = stringResource(R.string.setup_key_tagline_1),
-                textAlign = TextAlign.Left,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                style = TextStyle(
-                    fontSize = 52.sp,
-                    fontFamily = poppinsFamily,
-                    lineHeight = 52.sp
-                )
-            )
-            Spacer(modifier = Modifier.height(80.dp))
-            SheetContent(navigationSource)
-
-            BackHandler {
-                if (navigationSource == NavigationSource.INTRO) {
-                    (context as ComponentActivity).finish()
-                } else {
-                    navigator.popBackStack()
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SheetContent(
-    navigationSource: NavigationSource,
-    viewModel: AuthViewModel = hiltViewModel()
-) {
-    BottomSheetSurface (
+    BottomSheetSurface(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -153,11 +59,15 @@ private fun SheetContent(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.Center
         ) {
+
+            val keyboard = LocalSoftwareKeyboardController.current
+            val focusManager = LocalFocusManager.current
+
             Text(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
-                text = if (navigationSource == NavigationSource.SETTINGS) stringResource(R.string.update_master_key) else stringResource(R.string.setup_master_key),
+                text = stringResource(R.string.setup_master_key),
                 textAlign = TextAlign.Center,
                 fontSize = 22.sp,
                 fontFamily = poppinsFamily,
@@ -182,15 +92,13 @@ private fun SheetContent(
                 label = { Text("Enter Master key") },
                 value = viewModel.key,
                 onValueChange = {
-                    viewModel.key = it
-                    viewModel.validateKey(viewModel.key)
+                    if (it.length <= 8) viewModel.key = it
                 },
-                isError = viewModel.isErrorForKey,
                 supportingText = {
-                    AnimatedVisibility (viewModel.key.isNotEmpty()) {
+                    AnimatedVisibility(viewModel.key.isNotEmpty()) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "Limit: ${viewModel.key.length}/${viewModel.maxLength}",
+                            text = "Limit: ${viewModel.key.length}/8",
                             fontFamily = poppinsFamily,
                             fontWeight = FontWeight.Medium,
                         )
@@ -205,13 +113,14 @@ private fun SheetContent(
                     unfocusedBorderColor = Color.Black,
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Gray,
-                    cursorColor = Color.Gray,
-                    errorBorderColor = Color.Red,
-                    errorTextColor = Color.Red,
-                    errorSupportingTextColor = Color.Red,
-                    errorLabelColor = Color.Red
+                    cursorColor = Color.Gray
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    }
+                ),
                 trailingIcon = {
                     IconButton(
                         onClick = {
@@ -236,15 +145,13 @@ private fun SheetContent(
                 value = viewModel.confirmKey,
                 visualTransformation = if (viewModel.confirmKeyVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 onValueChange = {
-                    viewModel.confirmKey = it
-                    viewModel.validateConfirmKey(viewModel.confirmKey)
+                    if (it.length <= 8) viewModel.confirmKey = it
                 },
-                isError = viewModel.isErrorForConfirmKey,
                 supportingText = {
-                    AnimatedVisibility (viewModel.confirmKey.isNotEmpty()) {
+                    AnimatedVisibility(viewModel.confirmKey.isNotEmpty()) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = "Limit: ${viewModel.confirmKey.length}/${viewModel.maxLength}",
+                            text = "Limit: ${viewModel.confirmKey.length}/8",
                             fontFamily = poppinsFamily,
                             fontWeight = FontWeight.Medium,
                         )
@@ -258,13 +165,15 @@ private fun SheetContent(
                     unfocusedBorderColor = Color.Black,
                     focusedLabelColor = Color.Black,
                     unfocusedLabelColor = Color.Gray,
-                    cursorColor = Color.Gray,
-                    errorBorderColor = Color.Red,
-                    errorTextColor = Color.Red,
-                    errorSupportingTextColor = Color.Red,
-                    errorLabelColor = Color.Red
+                    cursorColor = Color.Gray
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboard?.hide()
+                        viewModel.validateAndSaveMasterKey()
+                    }
+                ),
                 trailingIcon = {
                     IconButton(onClick = {
                         viewModel.confirmKeyVisible = !viewModel.confirmKeyVisible
@@ -293,7 +202,7 @@ private fun SheetContent(
                     contentColor = Color.White
                 )
             ) {
-                AnimatedContent (viewModel.isLoading, label = "") {
+                AnimatedContent(viewModel.isLoading, label = "") {
                     if (it) {
                         CircularProgressIndicator(
                             color = Color.White,

@@ -29,21 +29,9 @@ class AuthViewModel @Inject constructor(
     // For Setup Key Screen
     var key by mutableStateOf("")
     var keyVisible by mutableStateOf(false)
-    var isErrorForKey by mutableStateOf(false)
 
     var confirmKey by mutableStateOf("")
     var confirmKeyVisible by mutableStateOf(false)
-    var isErrorForConfirmKey by mutableStateOf(false)
-
-    val maxLength = 6
-
-    fun validateKey(key: String) {
-        isErrorForKey = key.length > maxLength
-    }
-
-    fun validateConfirmKey(confirmKey: String) {
-        isErrorForConfirmKey = confirmKey.length > maxLength
-    }
 
     var isLoading by mutableStateOf(false)
 
@@ -61,8 +49,8 @@ class AuthViewModel @Inject constructor(
             messages.tryEmit("Please enter correct Master Key")
             return
         }
-        if (key.length and confirmKey.length > maxLength) {
-            messages.tryEmit("A Master Key can only have 6 characters")
+        if (key.length < 6){
+            messages.tryEmit("A Master Key should at least have 6 characters")
             return
         }
 
@@ -83,12 +71,7 @@ class AuthViewModel @Inject constructor(
     //For Unlock Screen
     var unlockKey by mutableStateOf("")
     var unlockKeyVisible by mutableStateOf(false)
-    var isErrorForUnlock by (mutableStateOf(false))
     var isLoadingForUnlock by (mutableStateOf(false))
-
-    fun validateUnlockKey(unlockKey: String) {
-        isErrorForUnlock = unlockKey.length > maxLength
-    }
 
     fun validateAndOpen() {
         if (unlockKey.isEmpty()) {
@@ -107,4 +90,59 @@ class AuthViewModel @Inject constructor(
             )
         }
     }
+
+
+    //For Update key
+    var oldKey by mutableStateOf("")
+    var oldKeyVisible by mutableStateOf(false)
+
+    var newKey by mutableStateOf("")
+    var newKeyVisible by mutableStateOf(false)
+
+    var confirmNewKey by mutableStateOf("")
+    var confirmNewKeyVisible by mutableStateOf(false)
+
+
+    fun validateAndUpdateMasterKey() {
+
+        if (oldKey.isEmpty()) {
+            messages.tryEmit("Please enter Old Key")
+            return
+        }
+        if (newKey.isEmpty()) {
+            messages.tryEmit("Please enter New Master Key")
+            return
+        }
+        if (confirmNewKey.isEmpty()) {
+            messages.tryEmit("Please enter Confirm Master Key")
+            return
+        }
+        if (newKey != confirmNewKey) {
+            messages.tryEmit("Please enter correct Master Key")
+            return
+        }
+        if (oldKey != loginKey) {
+            messages.tryEmit("Please enter correct old key")
+            return
+        }
+        if (oldKey == newKey) {
+            messages.tryEmit("New Key and Old Key cannot be the same")
+            return
+        }
+
+        val isNotEmpty = oldKey.isNotEmpty() and newKey.isNotEmpty() and confirmNewKey.isNotEmpty()
+        val isOldKeySame = oldKey == loginKey
+        val isKeyNotSame = oldKey != newKey
+
+        if (isNotEmpty and isOldKeySame and isKeyNotSame) {
+            saveUserLoginInfo(newKey)
+            viewModelScope.launch {
+                isLoading = true
+                delay(2000)
+                isLoading = false
+                navigateToHome.tryEmit(Unit)
+            }
+        }
+    }
+
 }

@@ -2,6 +2,12 @@ package dev.prince.securify.ui.passwords
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +53,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
+import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -77,10 +84,11 @@ fun PasswordsScreen(
                 onClick = {
                     navigator.navigate(AddPasswordScreenDestination)
                 },
+                containerColor = Blue,
+                contentColor = Color.White,
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text(text = "Add New Password") },
             )
-
         }
     ) { innerPadding ->
         Column(
@@ -148,7 +156,6 @@ fun PasswordsScreen(
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black,
                         focusedBorderColor = LightBlack,
-                        unfocusedBorderColor = LightBlack,
                         focusedLabelColor = Color.Black,
                         unfocusedLabelColor = Color.Gray,
                         cursorColor = Color.Gray

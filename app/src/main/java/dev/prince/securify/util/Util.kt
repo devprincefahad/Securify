@@ -1,5 +1,11 @@
 package dev.prince.securify.util
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.Destination
 import dev.prince.securify.ui.destinations.IntroScreenDestination
@@ -21,4 +27,12 @@ fun Destination.shouldShowBottomBar(): Boolean {
         SetupKeyScreenDestination,
         AddPasswordScreenDestination
     ))
+}
+
+fun Modifier.clickWithRipple(bounded: Boolean = true, onClick: () -> Unit) = composed {
+    this.clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = rememberRipple(bounded = bounded),
+        onClick = { onClick() }
+    )
 }

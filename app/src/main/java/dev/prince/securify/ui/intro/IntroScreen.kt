@@ -3,6 +3,7 @@ package dev.prince.securify.ui.intro
 import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,7 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.ui.destinations.SetupKeyScreenDestination
+import dev.prince.securify.ui.auth.NavigationSource
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -43,14 +44,13 @@ fun IntroScreen(
 ) {
     val context = LocalContext.current
     Box(
-        modifier = with(Modifier) {
-            fillMaxSize()
-                .paint(
-                    painterResource(id = R.drawable.surviellance),
-                    contentScale = ContentScale.Crop
-                )
-        }
+        modifier = Modifier.fillMaxSize()
     ) {
+        Image(
+            painterResource(id = R.drawable.surviellance),
+            contentDescription = "Background Image",
+            contentScale = ContentScale.Crop
+        )
 
         Column(
             modifier = Modifier
@@ -66,11 +66,13 @@ fun IntroScreen(
                     .fillMaxWidth(),
                 text = stringResource(R.string.intro_tagline_1),
                 textAlign = TextAlign.Start,
-                fontSize = 42.sp,
-                fontFamily = poppinsFamily,
                 fontWeight = FontWeight.Bold,
-                style = TextStyle(lineHeight = 20.sp),
-                color = Color.White
+                color = Color.White,
+                style = TextStyle(
+                    fontSize = 42.sp,
+                    fontFamily = poppinsFamily,
+                    lineHeight = 42.sp
+                )
             )
 
             Text(
@@ -90,11 +92,10 @@ fun IntroScreen(
             Button(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .height(60.dp),
+                    .fillMaxWidth(),
                 onClick = {
                     navigator.navigate(
-                        SetupKeyScreenDestination()
+                        dev.prince.securify.ui.destinations.SetupKeyScreenDestination(NavigationSource.INTRO)
                     )
                 },
                 shape = RoundedCornerShape(16.dp),
@@ -104,10 +105,12 @@ fun IntroScreen(
                 )
             ) {
                 Text(
-                    text = "Get Started",
-                    fontSize = 22.sp,
-                    fontFamily = poppinsFamily,
-                    fontWeight = FontWeight.Bold
+                    text = stringResource(R.string.get_started),
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(
+                        fontSize = 22.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
             }
 

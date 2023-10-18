@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey
 data class AccountEntity(
     @PrimaryKey(autoGenerate = true)
     val id : Int,
-    var accountName: String,
-    var userName : String,
-    var email : String,
-    var mobileNumber: String
+    val accountName: String,
+    val userName : String,
+    val email : String,
+    val mobileNumber: String,
+    val password : String
 )

@@ -1,6 +1,8 @@
 package dev.prince.securify.ui.add
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,10 +22,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -42,26 +43,22 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -69,11 +66,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.crypto.CryptoManager
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.clickWithRipple
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
@@ -85,30 +83,6 @@ fun AddPasswordScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = {
-//                    Text(
-//                        text = "Add a new Password",
-//                        textAlign = TextAlign.Center,
-//                        fontSize = 24.sp,
-//                        fontFamily = poppinsFamily,
-//                        fontWeight = FontWeight.Medium
-//                    )
-//                },
-//                navigationIcon = {
-//                    IconButton(
-//                        onClick = {
-//                            navigator.navigate(PasswordsScreenDestination)
-//                        }) {
-//                        Icon(
-//                            imageVector = Icons.Filled.ArrowBackIos,
-//                            contentDescription = null
-//                        )
-//                    }
-//                }
-//            )
-//        },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         }
@@ -130,23 +104,18 @@ fun AddPasswordScreen(
         ) {
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-
-                IconButton(
-                    modifier = Modifier.padding(
-                        top = 14.dp, bottom = 14.dp,
-                        start = 16.dp, end = 12.dp
-                    ),
-                    onClick = {
+                Spacer(Modifier.width(16.dp))
+                Icon(
+                    imageVector = Icons.Filled.ChevronLeft,
+                    tint = Color.White,
+                    contentDescription = "Go back",
+                    modifier = Modifier.clickWithRipple {
                         navigator.navigate(PasswordsScreenDestination)
-                    }) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBackIos,
-                        tint = Color.White,
-                        contentDescription = null
-                    )
-                }
+                    }
+                )
 
                 Text(
                     modifier = Modifier.padding(
@@ -155,9 +124,11 @@ fun AddPasswordScreen(
                     ),
                     text = "Add New Password",
                     color = Color.White,
-                    fontSize = 24.sp,
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontFamily = poppinsFamily
+                    ),
                     fontWeight = FontWeight.SemiBold,
-                    fontFamily = poppinsFamily
                 )
             }
 
@@ -205,7 +176,7 @@ fun AddPasswordScreen(
                         Image(
                             modifier = Modifier
                                 .padding(top = 16.dp, bottom = 16.dp)
-                                .height(160.dp)
+                                .height(100.dp)
                                 .fillMaxWidth(),
                             painter = viewModel.selectedOption!!.second,
                             contentDescription = null
@@ -215,7 +186,10 @@ fun AddPasswordScreen(
                     Text(
                         text = "Account Name",
                         textAlign = TextAlign.Left,
-                        fontSize = 18.sp,
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontFamily = poppinsFamily
+                        ),
                         modifier = Modifier.padding(start = 16.dp)
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -523,7 +497,7 @@ fun AddPasswordScreen(
                         },
                         shape = RoundedCornerShape(8.dp),
                         onValueChange = {
-                            if (it.length <= 10) {
+                            if (it.length <= 25) {
                                 viewModel.password = it
                             }
                         },
@@ -533,7 +507,7 @@ fun AddPasswordScreen(
                         singleLine = true,
                         supportingText = {
                             Text(
-                                text = "${viewModel.password.length}/10"
+                                text = "${viewModel.password.length}/25"
                             )
                         },
                         visualTransformation = if (viewModel.keyVisible)

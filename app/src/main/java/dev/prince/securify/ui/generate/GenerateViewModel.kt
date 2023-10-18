@@ -1,6 +1,7 @@
 package dev.prince.securify.ui.generate
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,11 +36,21 @@ class GenerateViewModel @Inject constructor() : ViewModel() {
         messages.tryEmit("Password copied to clipboard.")
     }
 
-    fun showUncheckedToggleMsg(){
-        messages.tryEmit("Please toggle at least one option.")
+    fun checkToggleAndSave() {
+        if (!(lowerCase || upperCase || digits || specialCharacters)) {
+            messages.tryEmit("Please toggle at least one option.")
+        } else {
+            password = generatePassword(
+                passwordLength,
+                lowerCase,
+                upperCase,
+                digits,
+                specialCharacters
+            )
+        }
     }
 
-    fun generatePassword(
+    private fun generatePassword(
         length: Int,
         lowerCase: Boolean,
         upperCase: Boolean,

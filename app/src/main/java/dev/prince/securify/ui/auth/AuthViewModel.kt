@@ -6,8 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.prince.securify.local.EncryptedSharedPrefHelper
-import dev.prince.securify.util.AUTH_KEY
+import dev.prince.securify.local.SharedPrefHelper
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -15,16 +14,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val prefs: EncryptedSharedPrefHelper
+    private val prefs: SharedPrefHelper
 ) : ViewModel() {
 
     // For SharedPrefs
-    private val loginKey = prefs.getFromSharedPrefs(AUTH_KEY)
+    private val loginKey = prefs.masterKey
 
-    val isUserLoggedIn = !prefs.getFromSharedPrefs(AUTH_KEY).isNullOrEmpty()
+    val isUserLoggedIn = prefs.masterKey.isNotEmpty()
 
     private fun saveUserLoginInfo(value: String) {
-        prefs.saveToSharedPrefs(AUTH_KEY, value)
+        prefs.masterKey = value
     }
 
     // For Setup Key Screen
@@ -52,27 +51,31 @@ class AuthViewModel @Inject constructor(
 
     val navigateToHome = oneShotFlow<Unit>()
 
-    fun saveMasterKeyValidation() {
+    fun validateAndSaveMasterKey() {
 
         if (key.isEmpty() and confirmKey.isEmpty()) {
             messages.tryEmit("Please enter a Master Key")
+            return
         }
         if (key != confirmKey) {
             messages.tryEmit("Please enter correct Master Key")
+            return
         }
         if (key.length and confirmKey.length > maxLength) {
             messages.tryEmit("A Master Key can only have 6 characters")
+            return
         }
 
-        if (key.isNotEmpty() and confirmKey.isNotEmpty()) {
-            if (key == confirmKey) {
-                saveUserLoginInfo(confirmKey)
-                viewModelScope.launch {
-                    isLoading = true
-                    delay(2000)
-                    isLoading = false
-                    navigateToHome.tryEmit(Unit)
-                }
+        val isNotEmpty = key.isNotEmpty() and confirmKey.isNotEmpty()
+        val isKeySame = key == confirmKey
+
+        if (isNotEmpty and isKeySame) {
+            saveUserLoginInfo(confirmKey)
+            viewModelScope.launch {
+                isLoading = true
+                delay(2000)
+                isLoading = false
+                navigateToHome.tryEmit(Unit)
             }
         }
     }
@@ -87,7 +90,7 @@ class AuthViewModel @Inject constructor(
         isErrorForUnlock = unlockKey.length > maxLength
     }
 
-    fun proceedValidation() {
+    fun validateAndOpen() {
         if (unlockKey.isEmpty()) {
             messages.tryEmit("Please enter a Master Key")
         } else if (unlockKey == loginKey) {

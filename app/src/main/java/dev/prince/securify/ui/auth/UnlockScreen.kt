@@ -1,5 +1,6 @@
 package dev.prince.securify.ui.auth
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,14 +13,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,10 +33,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -46,16 +48,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
+import dev.prince.securify.ui.composables.BottomSheetSurface
 import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-@Destination(start = true)
+@RootNavGraph(start = true)
+@Destination
 fun UnlockScreen(
     navigator: DestinationsNavigator,
     viewModel: AuthViewModel = hiltViewModel()
@@ -88,6 +94,8 @@ fun UnlockScreen(
             }
         }
 
+        val keyboard = LocalSoftwareKeyboardController.current
+
         if (!viewModel.isUserLoggedIn) {
             navigator.navigate(IntroScreenDestination)
         } else {
@@ -107,16 +115,10 @@ fun UnlockScreen(
                     contentDescription = null
                 )
                 Spacer(modifier = Modifier.height(160.dp))
-                Card(
+                BottomSheetSurface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp)
                         .fillMaxHeight()
-                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-                    shape = RoundedCornerShape(bottomStart = 0.dp, bottomEnd = 0.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    )
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
@@ -129,8 +131,10 @@ fun UnlockScreen(
                                 .fillMaxWidth(),
                             text = "Please provide your \nMaster Key",
                             textAlign = TextAlign.Center,
-                            fontSize = 24.sp,
-                            fontFamily = poppinsFamily,
+                            style = TextStyle(
+                                fontSize = 24.sp,
+                                fontFamily = poppinsFamily
+                            ),
                             fontWeight = FontWeight.Medium,
                             color = Color.Black
                         )
@@ -162,17 +166,22 @@ fun UnlockScreen(
                             singleLine = true,
                             isError = viewModel.isErrorForUnlock,
                             supportingText = {
-                                if (viewModel.isErrorForUnlock) {
+                                AnimatedVisibility (viewModel.unlockKey.isNotEmpty()) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
                                         fontFamily = poppinsFamily,
                                         fontWeight = FontWeight.Medium,
-                                        color = Color.Red,
                                         text = "Limit: ${viewModel.unlockKey.length}/${viewModel.maxLength}",
                                     )
                                 }
                             },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    keyboard?.hide()
+                                    viewModel.validateAndOpen()
+                                }
+                            ),
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
@@ -201,7 +210,7 @@ fun UnlockScreen(
                                 .fillMaxWidth()
                                 .height(50.dp),
                             onClick = {
-                                viewModel.proceedValidation()
+                                viewModel.validateAndOpen()
                             },
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(

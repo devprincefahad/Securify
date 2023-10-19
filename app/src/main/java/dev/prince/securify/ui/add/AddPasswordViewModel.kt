@@ -23,10 +23,10 @@ import javax.inject.Inject
 @HiltViewModel
 class AddPasswordViewModel @Inject constructor(
     private val db: AccountDao,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
-    private val encryptionManager = EncryptionManager()
     val messages = oneShotFlow<String>()
 
     var expanded by mutableStateOf(false)
@@ -74,7 +74,7 @@ class AddPasswordViewModel @Inject constructor(
             || (selectedOption?.first == "Other" && otherAccName.isNotBlank() || otherAccName.isNotEmpty())
         ) {
 
-            val encryptedPassword = encryptionManager.encryptPassword(password)
+            val encryptedPassword = encryptionManager.encrypt(password)
 
             val account = AccountEntity(
                 id = 0,

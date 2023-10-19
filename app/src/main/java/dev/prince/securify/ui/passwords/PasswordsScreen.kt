@@ -1,16 +1,11 @@
 package dev.prince.securify.ui.passwords
 
+import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +27,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,8 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -57,6 +56,7 @@ import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
 fun PasswordsScreen(
@@ -66,6 +66,7 @@ fun PasswordsScreen(
 
     val context = LocalContext.current
     val accounts = viewModel.accounts.collectAsState(emptyList())
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // State for holding the search query
     var searchQuery by remember { mutableStateOf("") }
@@ -78,7 +79,19 @@ fun PasswordsScreen(
                 account.mobileNumber.contains(searchQuery, ignoreCase = true)
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.messages.collect {
+            snackbarHostState.showSnackbar(
+                message = it,
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
@@ -168,7 +181,7 @@ fun PasswordsScreen(
                         .padding(8.dp)
                 ) {
                     items(filteredAccounts) { account ->
-                        AccountRow(account)
+                        AccountRow(account, viewModel)
                     }
                 }
             }
@@ -180,8 +193,12 @@ fun PasswordsScreen(
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AccountRow(account: AccountEntity) {
+fun AccountRow(
+    account: AccountEntity,
+    viewModel: PasswordsViewModel
+) {
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
@@ -216,6 +233,8 @@ fun AccountRow(account: AccountEntity) {
             optionsWithImages.find { it.first.equals(account.accountName, ignoreCase = true) }
 
         var expanded by remember { mutableStateOf(false) }
+
+        val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -268,7 +287,11 @@ fun AccountRow(account: AccountEntity) {
 
                 IconButton(
                     onClick = {
-                        // copy password
+                        val password = viewModel.decryptPassword(account.password)
+                        clipboardManager.setText(
+                            AnnotatedString(password)
+                        )
+                        viewModel.showCopyMsg()
                     },
                     modifier = Modifier.size(32.dp)
                 ) {
@@ -316,7 +339,7 @@ fun AccountRow(account: AccountEntity) {
                         DropdownMenuItem(
                             text = { Text("Delete") },
                             onClick = {
-                                // Add delete functionality here
+                                viewModel.deleteAccount(account)
                                 expanded = false
                             },
                             trailingIcon = {

@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.Destination
+import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.destinations.UnlockScreenDestination
@@ -25,7 +26,8 @@ fun Destination.shouldShowBottomBar(): Boolean {
         IntroScreenDestination,
         UnlockScreenDestination,
         MasterKeyScreenDestination,
-        AddPasswordScreenDestination
+        AddPasswordScreenDestination,
+        EditScreenDestination
     ))
 }
 

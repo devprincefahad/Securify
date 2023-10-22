@@ -5,7 +5,6 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,8 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -31,9 +28,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -50,8 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -61,7 +58,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -154,7 +151,7 @@ fun AddPasswordScreen(
                         .background(color = Color.White)
                 ) {
 
-                    val optionsWithImages = listOf(
+                    /*val optionsWithImages = listOf(
                         "Instagram" to painterResource(R.drawable.icon_instagram),
                         "Facebook" to painterResource(R.drawable.icon_facebook),
                         "LinkedIn" to painterResource(R.drawable.icon_linkedin),
@@ -170,18 +167,8 @@ fun AddPasswordScreen(
                         "Quora" to painterResource(R.drawable.icon_quora),
                         "Pinterest" to painterResource(R.drawable.icon_pinterest),
                         "Other" to painterResource(R.drawable.icon_others)
-                    )
+                    )*/
 
-                    if (viewModel.selectedOption != null) {
-                        Image(
-                            modifier = Modifier
-                                .padding(top = 16.dp, bottom = 16.dp)
-                                .height(100.dp)
-                                .fillMaxWidth(),
-                            painter = viewModel.selectedOption!!.second,
-                            contentDescription = null
-                        )
-                    }
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "Account Name",
@@ -194,120 +181,26 @@ fun AddPasswordScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    ExposedDropdownMenuBox(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .clickable(onClick = { viewModel.expanded = true }),
-                        expanded = viewModel.expanded,
-                        onExpandedChange = { viewModel.expanded = !viewModel.expanded }
-                    ) {
+                    val suggestions = listOf(
+                        "Instagram",
+                        "Facebook",
+                        "LinkedIn",
+                        "Snapchat",
+                        "YouTube",
+                        "Netflix",
+                        "Discord",
+                        "Twitter",
+                        "Amazon Prime",
+                        "Spotify",
+                        "Gmail",
+                        "Reddit",
+                        "Quora",
+                        "Pinterest"
+                    )
 
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .onGloballyPositioned { coordinates ->
-                                    viewModel.textFieldSize = coordinates.size.toSize()
-                                }
-                                .menuAnchor(),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                focusedBorderColor = Color.Black,
-                                unfocusedBorderColor = Color.Black,
-                                focusedLabelColor = Color.Black,
-                                unfocusedLabelColor = Color.Gray,
-                                cursorColor = Color.Gray
-                            ),
-                            readOnly = true,
-                            value = viewModel.selectedOption?.first ?: "Choose an account",
-                            onValueChange = { },
-                            shape = RoundedCornerShape(8.dp),
-                            trailingIcon = {
-                                Icon(
-                                    imageVector = if (viewModel.expanded)
-                                        Icons.Filled.ArrowDropUp
-                                    else
-                                        Icons.Filled.ArrowDropDown,
-                                    contentDescription = null
-                                )
-                            },
-                        )
-                        ExposedDropdownMenu(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .width(with(LocalDensity.current) { viewModel.textFieldSize.width.toDp() })
-                                .height(280.dp)
-                                .background(Color.White),
-                            expanded = viewModel.expanded,
-                            onDismissRequest = {
-                                viewModel.expanded = false
-                            }
-                        ) {
-                            optionsWithImages.forEach { (selectionOption, painter) ->
-                                DropdownMenuItem(
-                                    onClick = {
-                                        viewModel.selectedOption = selectionOption to painter
-                                        viewModel.expanded = false
-                                    },
-                                    text = {
-                                        Text(text = selectionOption)
-                                    }
-                                )
-                            }
-                        }
-                    }
-
-                    if (viewModel.selectedOption != null && viewModel.selectedOption?.first == "Other") {
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .fillMaxWidth(),
-                            value = viewModel.otherAccName,
-                            placeholder = {
-                                Text("Other Account Name")
-                            },
-                            shape = RoundedCornerShape(8.dp),
-                            onValueChange = {
-                                if (it.length <= 20) {
-                                    viewModel.otherAccName = it
-                                }
-                            },
-                            supportingText = {
-                                Text(text = "${viewModel.otherAccName.length}/20")
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                focusedBorderColor = Color.Black,
-                                unfocusedBorderColor = Color.Black,
-                                focusedLabelColor = Color.Black,
-                                unfocusedLabelColor = Color.Gray,
-                                cursorColor = Color.Gray
-                            ),
-                            singleLine = true,
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.size(22.dp),
-                                    painter = painterResource(
-                                        id = R.drawable.icon_other
-                                    ),
-                                    contentDescription = null
-                                )
-                            },
-                            prefix = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    TextFieldSeparator()
-                                }
-                            },
-                            keyboardOptions = KeyboardOptions(
-                                keyboardType = KeyboardType.Text
-                            )
-                        )
-                    }
+                    SearchOutlinedTextFieldWithDropdown(
+                        suggestions = suggestions, viewModel = viewModel
+                    )
 
                     Text(
                         text = "Username",
@@ -582,6 +475,79 @@ fun AddPasswordScreen(
     }
     BackHandler {
         navigator.navigate(PasswordsScreenDestination)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchOutlinedTextFieldWithDropdown(
+    suggestions: List<String>,
+    viewModel: AddPasswordViewModel
+) {
+
+    ExposedDropdownMenuBox(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        expanded = viewModel.expanded,
+        onExpandedChange = { viewModel.expanded = !viewModel.expanded },
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(),
+            value = viewModel.selectedOptionText,
+            placeholder = {
+                Text("Type Account Name ...")
+            },
+            onValueChange = {
+                if (it.length <= 35) {
+                    viewModel.selectedOptionText = it
+                }
+            },
+            supportingText = {
+                Text(text = "${viewModel.selectedOptionText.length}/35")
+            },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.expanded) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedBorderColor = Color.Black,
+                unfocusedBorderColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Gray,
+                cursorColor = Color.Gray
+            ),
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+            textStyle = TextStyle(color = Color.Black),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text
+            )
+        )
+        // filter options based on text field value
+        val filteringOptions =
+            suggestions.filter { it.contains(viewModel.selectedOptionText, ignoreCase = true) }
+        if (filteringOptions.isNotEmpty()) {
+            DropdownMenu(
+                modifier = Modifier
+                    .background(Color.White)
+                    .height(280.dp)
+                    .exposedDropdownSize(true),
+                properties = PopupProperties(focusable = false),
+                expanded = viewModel.expanded,
+                onDismissRequest = { viewModel.expanded = false },
+            ) {
+                filteringOptions.forEach { selectionOption ->
+                    DropdownMenuItem(
+                        text = { Text(selectionOption) },
+                        onClick = {
+                            viewModel.selectedOptionText = selectionOption
+                            viewModel.expanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                    )
+                }
+            }
+        }
     }
 }
 

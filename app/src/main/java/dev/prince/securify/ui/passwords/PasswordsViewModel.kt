@@ -2,6 +2,8 @@ package dev.prince.securify.ui.passwords
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,8 @@ class PasswordsViewModel @Inject constructor(
     val accounts = db.accountDao().getAllAccounts()
 
     val messages = oneShotFlow<String>()
+
+    var showDialog = mutableStateOf(false)
 
     fun deleteAccount(account: AccountEntity) {
         viewModelScope.launch {

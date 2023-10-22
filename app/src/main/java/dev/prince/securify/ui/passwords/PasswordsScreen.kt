@@ -51,6 +51,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
+import dev.prince.securify.ui.composables.AlertDialogContent
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.theme.Blue
@@ -194,6 +195,7 @@ fun PasswordsScreen(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AccountRow(
@@ -234,7 +236,8 @@ fun AccountRow(
 
         val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
-        val matchingImage = suggestionsWithImages.firstOrNull { it.first == account.accountName }?.second
+        val matchingImage =
+            suggestionsWithImages.firstOrNull { it.first == account.accountName }?.second
 
         val painter = matchingImage ?: painterResource(R.drawable.icon_others)
 
@@ -341,7 +344,7 @@ fun AccountRow(
                         DropdownMenuItem(
                             text = { Text("Delete") },
                             onClick = {
-                                viewModel.deleteAccount(account)
+                                viewModel.showDialog.value = true
                                 expanded = false
                             },
                             trailingIcon = {
@@ -350,6 +353,21 @@ fun AccountRow(
                                     contentDescription = null
                                 )
                             }
+                        )
+                    }
+                    if (viewModel.showDialog.value) {
+                        AlertDialogContent(
+                            onDismissRequest = {
+                                viewModel.showDialog.value = false
+                            },
+                            onConfirmation = {
+                                viewModel.deleteAccount(account)
+                                viewModel.showDialog.value = false
+                            },
+                            dialogTitle = "Delete Password?",
+                            dialogText = "Are you sure you want to delete password for ${account.accountName}?",
+                            icon = Icons.Default.Delete,
+                            confirmTitle = "Delete"
                         )
                     }
                 }

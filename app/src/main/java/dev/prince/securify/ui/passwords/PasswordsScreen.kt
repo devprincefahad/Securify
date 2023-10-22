@@ -52,6 +52,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
+import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
@@ -181,7 +182,7 @@ fun PasswordsScreen(
                         .padding(8.dp)
                 ) {
                     items(filteredAccounts) { account ->
-                        AccountRow(account, viewModel)
+                        AccountRow(navigator, account, viewModel)
                     }
                 }
             }
@@ -196,6 +197,7 @@ fun PasswordsScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AccountRow(
+    navigator: DestinationsNavigator,
     account: AccountEntity,
     viewModel: PasswordsViewModel
 ) {
@@ -211,7 +213,7 @@ fun AccountRow(
             .padding(8.dp)
     ) {
 
-        val optionsWithImages = listOf(
+        val suggestionsWithImages = listOf(
             "Instagram" to painterResource(R.drawable.icon_instagram),
             "Facebook" to painterResource(R.drawable.icon_facebook),
             "LinkedIn" to painterResource(R.drawable.icon_linkedin),
@@ -225,16 +227,17 @@ fun AccountRow(
             "Gmail" to painterResource(R.drawable.icon_gmail),
             "Reddit" to painterResource(R.drawable.icon_reddit),
             "Quora" to painterResource(R.drawable.icon_quora),
-            "Pinterest" to painterResource(R.drawable.icon_pinterest),
-            "Other" to painterResource(R.drawable.icon_others)
+            "Pinterest" to painterResource(R.drawable.icon_pinterest)
         )
-
-        val selectedOption =
-            optionsWithImages.find { it.first.equals(account.accountName, ignoreCase = true) }
 
         var expanded by remember { mutableStateOf(false) }
 
         val clipboardManager: ClipboardManager = LocalClipboardManager.current
+
+        val matchingImage = suggestionsWithImages.firstOrNull { it.first == account.accountName }?.second
+
+        val painter = matchingImage ?: painterResource(R.drawable.icon_others)
+
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -242,16 +245,14 @@ fun AccountRow(
                 .fillMaxWidth()
                 .padding(12.dp)
         ) {
-            // Image
-            selectedOption?.second?.let {
-                Image(
-                    painter = it,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                )
-            }
+
+            Image(
+                painter = painter,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
 
             // Account Name and Details
             Column(
@@ -259,6 +260,7 @@ fun AccountRow(
                     .padding(start = 14.dp)
                     .weight(1f)
             ) {
+
                 Text(
                     text = account.accountName,
                     fontSize = 18.sp,
@@ -325,7 +327,7 @@ fun AccountRow(
                         DropdownMenuItem(
                             text = { Text("Edit") },
                             onClick = {
-                                // Add edit functionality here
+                                navigator.navigate(EditScreenDestination(account.id))
                                 expanded = false
                             },
                             trailingIcon = {

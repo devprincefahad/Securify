@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -39,7 +40,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -83,6 +86,8 @@ fun AddScreen(
         modifier = Modifier
             .background(color = BgBlack)
     ) {
+
+        val focusManager = LocalFocusManager.current
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -203,6 +208,11 @@ fun AddScreen(
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
                     )
                 )
 
@@ -271,6 +281,11 @@ fun AddScreen(
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
                     )
                 )
 
@@ -339,6 +354,11 @@ fun AddScreen(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
                     )
                 )
 
@@ -422,6 +442,10 @@ fun AddScreen(
                             TextFieldSeparator()
                         }
                     },
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            viewModel.validateAndInsert()                        }
+                    )
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
@@ -466,6 +490,8 @@ fun SearchOutlinedTextFieldWithDropdown(
     viewModel: AddViewModel = hiltViewModel()
 ) {
 
+    val focusManager = LocalFocusManager.current
+
     ExposedDropdownMenuBox(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
         expanded = viewModel.suggestions.isNotEmpty(),
@@ -505,6 +531,11 @@ fun SearchOutlinedTextFieldWithDropdown(
             textStyle = TextStyle(color = Color.Black),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }
             )
         )
 

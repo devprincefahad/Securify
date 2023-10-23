@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +53,9 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -220,17 +223,21 @@ fun PasswordsScreen(
                     )
                 )
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            start = 8.dp, end = 8.dp,
-                            top = 8.dp, bottom = 0.dp
-                        )
-                        .nestedScroll(nestedScrollConnection),
-                ) {
-                    items(filteredAccounts) { account ->
-                        AccountRow(navigator, account, viewModel)
+                if (filteredAccounts.isEmpty()) {
+                    EmptyListPlaceholder()
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                start = 8.dp, end = 8.dp,
+                                top = 8.dp, bottom = 0.dp
+                            )
+                            .nestedScroll(nestedScrollConnection),
+                    ) {
+                        items(filteredAccounts) { account ->
+                            AccountRow(navigator, account, viewModel)
+                        }
                     }
                 }
             }
@@ -418,5 +425,32 @@ fun AccountRow(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EmptyListPlaceholder() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier.size(120.dp),
+            painter = painterResource(R.drawable.img_empty_box),
+            contentDescription = null,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No passwords\nadded yet!",
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontFamily = poppinsFamily,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center
+            )
+        )
     }
 }

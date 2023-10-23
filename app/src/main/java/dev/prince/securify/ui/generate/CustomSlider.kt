@@ -68,7 +68,7 @@ fun CustomSlider(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(start = 16.dp),
         interactionSource = interactionSource,
         onValueChangeFinished = null
     )

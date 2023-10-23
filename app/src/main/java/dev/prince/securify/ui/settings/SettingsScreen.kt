@@ -41,7 +41,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.ui.auth.NavigationSource
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
-import dev.prince.securify.ui.theme.Gray
+import dev.prince.securify.ui.theme.White
 import dev.prince.securify.ui.theme.poppinsFamily
 
 data class SettingsItem(
@@ -76,23 +76,25 @@ fun SettingsScreen(
             fontFamily = poppinsFamily
         )
 
-        val items = remember { listOf(
-            SettingsItem(
-                "Update Master Key",
-                Icons.Outlined.LockOpen,
-                onClick = { navigator.navigate(MasterKeyScreenDestination(NavigationSource.SETTINGS)) }
-            ),
-            SettingsItem(
-            "Share Securify",
-                Icons.Outlined.Share,
-                onClick = { /* TODO hook up Firebase Remote Config for Share Securify  */ }
-            ),
-            SettingsItem(
-                "About Securify",
-                Icons.Outlined.Info,
-                onClick = { showSheet = true }
+        val items = remember {
+            listOf(
+                SettingsItem(
+                    "Reset Master Key",
+                    Icons.Outlined.LockOpen,
+                    onClick = { navigator.navigate(MasterKeyScreenDestination(NavigationSource.SETTINGS)) }
+                ),
+                SettingsItem(
+                    "Share",
+                    Icons.Outlined.Share,
+                    onClick = { /* TODO hook up Firebase Remote Config for Share Securify  */ }
+                ),
+                SettingsItem(
+                    "About",
+                    Icons.Outlined.Info,
+                    onClick = { showSheet = true }
+                )
             )
-        ) }
+        }
 
         Card(
             modifier = Modifier
@@ -112,16 +114,21 @@ fun SettingsScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(top = 16.dp)
+                    .padding(
+                        top = 16.dp
+                    )
                     .fillMaxSize()
             ) {
                 items.forEach {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(
+                                vertical = 8.dp,
+                                horizontal = 16.dp
+                            ),
                         colors = CardDefaults.cardColors(
-                            containerColor = Gray
+                            containerColor = White
                         ),
                         shape = RoundedCornerShape(20.dp),
                         onClick = it.onClick

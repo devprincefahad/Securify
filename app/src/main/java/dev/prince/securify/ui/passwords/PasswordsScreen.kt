@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,10 +27,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -65,6 +64,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
 import dev.prince.securify.ui.composables.AlertDialogContent
+import dev.prince.securify.ui.composables.BottomSheetSurface
 import dev.prince.securify.ui.destinations.AddScreenDestination
 import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
@@ -145,7 +145,11 @@ fun PasswordsScreen(
                     text = {
                         Text(
                             text = "Add Password",
-                            fontSize = 16.sp
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                fontWeight = FontWeight.Medium
+                            )
                         )
                     }
                 )
@@ -166,77 +170,81 @@ fun PasswordsScreen(
                 ),
                 text = "My Passwords",
                 color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = poppinsFamily
+                style = TextStyle(
+                    fontSize = 24.sp,
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.SemiBold
+                )
             )
 
-            Card(
+            BottomSheetSurface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 24.dp, topEnd = 24.dp
-                        )
-                    ),
-                shape = RoundedCornerShape(
-                    bottomStart = 0.dp, bottomEnd = 0.dp
-                ),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                )
             ) {
 
-                // Search Bar
-                OutlinedTextField(
+                Column(
                     modifier = Modifier
-                        .padding(
-                            start = 16.dp, end = 16.dp,
-                            top = 16.dp, bottom = 8.dp
-                        )
-                        .fillMaxWidth(),
-                    value = searchQuery,
-                    onValueChange = {
-                        if (it.length <= 25) {
-                            searchQuery = it
-                        }
-                    },
-                    placeholder = {
-                        Text("Search Passwords")
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null
-                        )
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                    singleLine = true,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        focusedBorderColor = LightBlack,
-                        focusedLabelColor = Color.Black,
-                        unfocusedLabelColor = Color.Gray,
-                        cursorColor = Color.Gray
-                    )
-                )
+                        .fillMaxSize()
+                        .background(color = Color.White)
+                ) {
 
-                if (filteredAccounts.isEmpty()) {
-                    EmptyListPlaceholder()
-                } else {
-                    LazyColumn(
+                    OutlinedTextField(
                         modifier = Modifier
-                            .fillMaxSize()
                             .padding(
-                                start = 8.dp, end = 8.dp,
-                                top = 8.dp, bottom = 0.dp
+                                start = 16.dp, end = 16.dp,
+                                top = 16.dp, bottom = 8.dp
                             )
-                            .nestedScroll(nestedScrollConnection),
-                    ) {
-                        items(filteredAccounts) { account ->
-                            AccountRow(navigator, account, viewModel)
+                            .fillMaxWidth(),
+                        value = searchQuery,
+                        onValueChange = {
+                            if (it.length <= 25) {
+                                searchQuery = it
+                            }
+                        },
+                        placeholder = {
+                            Text(
+                                "Search Passwords",
+                                style = TextStyle(
+                                    fontSize = 14.sp,
+                                    fontFamily = poppinsFamily,
+                                    fontWeight = FontWeight.Normal
+                                )
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null
+                            )
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            focusedBorderColor = LightBlack,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = Color.Gray
+                        )
+                    )
+
+                    if (filteredAccounts.isEmpty()) {
+                        EmptyListPlaceholder()
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(
+                                    start = 8.dp, end = 8.dp,
+                                    top = 8.dp, bottom = 0.dp
+                                )
+                                .nestedScroll(nestedScrollConnection),
+                        ) {
+                            items(filteredAccounts) { account ->
+                                AccountRow(navigator, account, viewModel)
+                            }
                         }
                     }
                 }
@@ -318,9 +326,12 @@ fun AccountRow(
 
                 Text(
                     text = account.accountName,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = Color.Black,
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
 
                 val displayInfo = when {
@@ -333,13 +344,16 @@ fun AccountRow(
                     text = displayInfo,
                     color = Color.Gray,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = poppinsFamily,
+                        fontWeight = FontWeight.Normal
+                    )
                 )
             }
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(end = 4.dp)
+                verticalAlignment = Alignment.CenterVertically
             ) {
 
                 IconButton(
@@ -353,21 +367,27 @@ fun AccountRow(
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ContentCopy,
-                        contentDescription = null
+                        modifier = Modifier
+                            .size(28.dp)
+                            .padding(end = 6.dp),
+                        painter = painterResource(R.drawable.icon_copy),
+                        contentDescription = "Copy Icon"
                     )
                 }
 
-                Box(
-                    modifier = Modifier.size(48.dp)
-                ) {
+                Box {
                     IconButton(
+                        modifier = Modifier
+                            .size(26.dp)
+                            .padding(end = 4.dp),
                         onClick = {
                             expanded = true
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.MoreVert,
+                            modifier = Modifier
+                                .size(18.dp),
+                            painter = painterResource(R.drawable.icon_more),
                             contentDescription = "Options Icon"
                         )
                     }
@@ -380,13 +400,23 @@ fun AccountRow(
                     ) {
 
                         DropdownMenuItem(
-                            text = { Text("Edit") },
+                            text = {
+                                Text(
+                                    text = "Edit",
+                                    style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontFamily = poppinsFamily,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            },
                             onClick = {
                                 navigator.navigate(EditScreenDestination(account.id))
                                 expanded = false
                             },
                             trailingIcon = {
                                 Icon(
+                                    modifier = Modifier.size(20.dp),
                                     imageVector = Icons.Default.Edit,
                                     contentDescription = "Edit Icon"
                                 )
@@ -394,19 +424,29 @@ fun AccountRow(
                         )
 
                         DropdownMenuItem(
-                            text = { Text("Delete") },
+                            text = {
+                                Text(
+                                    text = "Delete", style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontFamily = poppinsFamily,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            },
                             onClick = {
                                 viewModel.showDialog.value = true
                                 expanded = false
                             },
                             trailingIcon = {
                                 Icon(
+                                    modifier = Modifier.size(20.dp),
                                     imageVector = Icons.Default.Delete,
                                     contentDescription = null
                                 )
                             }
                         )
                     }
+
                     if (viewModel.showDialog.value) {
                         AlertDialogContent(
                             onDismissRequest = {

@@ -62,7 +62,6 @@ import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.clickWithRipple
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
@@ -82,9 +81,6 @@ fun EditScreen(
             snackbar(it)
         }
     }
-
-
-    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
@@ -126,7 +122,7 @@ fun EditScreen(
         ) {
             Column(
                 modifier = Modifier
-                    .verticalScroll(state = scrollState)
+                    .verticalScroll(state = rememberScrollState())
                     .fillMaxSize()
                     .background(color = Color.White)
             ) {

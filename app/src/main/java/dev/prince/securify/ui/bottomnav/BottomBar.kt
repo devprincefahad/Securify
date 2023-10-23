@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,13 +13,11 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavOptionsBuilder
 import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.navigation.navigateTo
 import dev.prince.securify.ui.NavGraphs
 import dev.prince.securify.ui.appCurrentDestinationAsState
 import dev.prince.securify.ui.destinations.Destination
 import dev.prince.securify.ui.startAppDestination
 import dev.prince.securify.ui.theme.Blue
-import dev.prince.securify.ui.theme.LightBlue
 
 @SuppressLint("RestrictedApi")
 @Composable
@@ -96,7 +93,6 @@ fun checkForDestinations(
         if (it.direction.route == navBackStackEntry.destination.route) {
             return true
         }
-
     }
     return false
 }

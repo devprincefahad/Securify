@@ -4,14 +4,17 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,6 +23,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,12 +34,15 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -44,6 +51,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -60,7 +68,6 @@ import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @RootNavGraph(start = true)
 @Destination
@@ -70,12 +77,12 @@ fun UnlockScreen(
 ) {
 
     val snackbar = LocalSnackbar.current
+
     LaunchedEffect(Unit) {
         viewModel.messages.collect {
             snackbar(it)
         }
     }
-
 
     LaunchedEffect(Unit) {
         viewModel.navigateToHome.collect {
@@ -87,31 +94,33 @@ fun UnlockScreen(
         }
     }
 
-    val keyboard = LocalSoftwareKeyboardController.current
-
     if (!viewModel.isUserLoggedIn) {
         navigator.navigate(IntroScreenDestination)
     } else {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = BgBlack)
-        ) {
+        UnlockScreenContent()
+    }
+}
 
-            Spacer(modifier = Modifier.height(120.dp))
-            Image(
-                modifier = Modifier
-                    .height(160.dp)
-                    .fillMaxWidth(),
-                painter = painterResource(R.drawable.key),
-                contentDescription = null
-            )
-            Spacer(modifier = Modifier.height(160.dp))
-            BottomSheetSurface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun UnlockScreenContent(
+    viewModel: AuthViewModel = hiltViewModel()
+){
+
+    val keyboard = LocalSoftwareKeyboardController.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = BgBlack)
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+        ) {
+            BottomSheetSurface {
                 Column(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.Center
@@ -221,5 +230,15 @@ fun UnlockScreen(
                 }
             }
         }
+
+        Image(
+            modifier = Modifier
+                .height(200.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+                .offset(y = (80).dp),
+            painter = painterResource(R.drawable.key),
+            contentDescription = null
+        )
     }
 }

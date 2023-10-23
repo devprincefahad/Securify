@@ -67,7 +67,7 @@ fun AboutBottomSheet(
                 Spacer(modifier = Modifier.navigationBarsPadding())
                 Spacer(
                     modifier = Modifier
-                        .height(60.dp)
+                        .height(50.dp)
                         .fillMaxWidth()
                         .background(color = BgBlack)
                 )

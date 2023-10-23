@@ -54,9 +54,9 @@ fun MasterKeyScreen(
 ) {
 
     val context = LocalContext.current
-    val scrollState = rememberScrollState()
 
     val snackbar = LocalSnackbar.current
+
     LaunchedEffect(Unit) {
         viewModel.messages.collect {
             snackbar(it)
@@ -75,7 +75,7 @@ fun MasterKeyScreen(
 
     Column(
         modifier = Modifier
-            .verticalScroll(state = scrollState)
+            .verticalScroll(state = rememberScrollState())
             .fillMaxSize()
             .background(color = BgBlack),
         horizontalAlignment = Alignment.CenterHorizontally

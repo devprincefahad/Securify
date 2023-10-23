@@ -58,6 +58,7 @@ import dev.prince.securify.ui.composables.BottomSheetSurface
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
+import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.clickWithRipple
@@ -71,6 +72,7 @@ fun AddScreen(
 ) {
 
     val snackbar = LocalSnackbar.current
+
     LaunchedEffect(Unit) {
         viewModel.messages.collect {
             snackbar(it)
@@ -142,7 +144,11 @@ fun AddScreen(
                     text = "Username",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -151,7 +157,14 @@ fun AddScreen(
                         .fillMaxWidth(),
                     value = viewModel.username,
                     placeholder = {
-                        Text("John Doe")
+                        Text(
+                            "John Doe",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -197,7 +210,11 @@ fun AddScreen(
                     text = "Email ID",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -206,7 +223,14 @@ fun AddScreen(
                         .fillMaxWidth(),
                     value = viewModel.email,
                     placeholder = {
-                        Text("john@example.com")
+                        Text(
+                            "john@example.com",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -254,7 +278,11 @@ fun AddScreen(
                     text = "Mobile No.",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -263,7 +291,13 @@ fun AddScreen(
                         .fillMaxWidth(),
                     value = viewModel.mobileNumber,
                     placeholder = {
-                        Text("XXXXXXXXXX")
+                        Text(
+                            "XXXXXXXXXX", style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -312,7 +346,11 @@ fun AddScreen(
                     text = "Password",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -322,7 +360,14 @@ fun AddScreen(
                         .fillMaxWidth(),
                     value = viewModel.password,
                     placeholder = {
-                        Text("**********")
+                        Text(
+                            " ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -395,9 +440,11 @@ fun AddScreen(
                 ) {
                     Text(
                         text = "Save Password",
-                        fontSize = 22.sp,
-                        fontFamily = poppinsFamily,
-                        fontWeight = FontWeight.Medium
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontFamily = poppinsFamily,
+                            fontWeight = FontWeight.Medium
+                        )
                     )
                 }
                 if (viewModel.success.value) {
@@ -430,7 +477,14 @@ fun SearchOutlinedTextFieldWithDropdown(
                 .menuAnchor(),
             value = viewModel.accountName,
             placeholder = {
-                Text("Type Account Name ...")
+                Text(
+                    "Type Account Name ...",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = poppinsFamily,
+                        color = Gray
+                    )
+                )
             },
             onValueChange = {
                 viewModel.accountName = it

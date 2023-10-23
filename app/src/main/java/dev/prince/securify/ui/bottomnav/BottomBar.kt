@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -17,6 +19,8 @@ import dev.prince.securify.ui.NavGraphs
 import dev.prince.securify.ui.appCurrentDestinationAsState
 import dev.prince.securify.ui.destinations.Destination
 import dev.prince.securify.ui.startAppDestination
+import dev.prince.securify.ui.theme.Blue
+import dev.prince.securify.ui.theme.LightBlue
 
 @SuppressLint("RestrictedApi")
 @Composable
@@ -67,13 +71,22 @@ fun BottomBar(
                             restoreState = true
                         })
                 },
-                icon = { Icon(destination.icon, contentDescription = stringResource(destination.label))},
+                icon = {
+                    Icon(
+                        destination.icon,
+                        contentDescription = stringResource(destination.label),
+                        tint = if (currentDestination == destination.direction) Color.White else Color.Black // Icon color when selected
+                    )
+                },
                 label = { Text(stringResource(destination.label)) },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Blue,
+                    indicatorColor = Blue
+                )
             )
         }
     }
 }
-
 
 fun checkForDestinations(
     navigationRoutes: Array<BottomBarDestination>,

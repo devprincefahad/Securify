@@ -3,10 +3,11 @@ package dev.prince.securify.util
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
+import dev.prince.securify.ui.destinations.AddScreenDestination
 import dev.prince.securify.ui.destinations.Destination
 import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.destinations.IntroScreenDestination
@@ -26,7 +27,7 @@ fun Destination.shouldShowBottomBar(): Boolean {
         IntroScreenDestination,
         UnlockScreenDestination,
         MasterKeyScreenDestination,
-        AddPasswordScreenDestination,
+        AddScreenDestination,
         EditScreenDestination
     ))
 }
@@ -38,3 +39,5 @@ fun Modifier.clickWithRipple(bounded: Boolean = true, onClick: () -> Unit) = com
         onClick = { onClick() }
     )
 }
+
+val LocalSnackbar = compositionLocalOf<(String) -> Unit> { { } }

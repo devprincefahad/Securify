@@ -40,6 +40,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.ui.auth.NavigationSource
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
+import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.poppinsFamily
 
@@ -62,7 +63,7 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.Black),
+            .background(color = BgBlack),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 

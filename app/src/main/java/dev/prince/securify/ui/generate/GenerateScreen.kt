@@ -53,10 +53,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import dev.prince.securify.ui.composables.BottomSheetSurface
+import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.LightGray
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.clickWithRipple
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,210 +69,200 @@ fun GenerateScreen(
 ) {
 
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
     val interactionSource = MutableInteractionSource()
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+    val snackbar = LocalSnackbar.current
+    LaunchedEffect(Unit) {
+        viewModel.messages.collect {
+            snackbar(it)
         }
-    ) { innerPadding ->
+    }
 
-        LaunchedEffect(Unit) {
-            viewModel.messages.collect {
-                snackbarHostState.showSnackbar(
-                    message = it,
-                    duration = SnackbarDuration.Short
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = BgBlack),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            modifier = Modifier.padding(
+                top = 18.dp, bottom = 12.dp
+            ),
+            text = "Password Generator",
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.SemiBold,
+            fontFamily = poppinsFamily
+        )
+
+        // TODO convert to surface
+        Card(
+            modifier = Modifier
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 12.dp,
+                    bottom = 16.dp
+                )
+                .height(160.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(10.dp),
+            border = BorderStroke(1.dp, LightGray),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 4.dp
+            ),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            )
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                Text(
+                    text = viewModel.password,
+                    color = Color.Black,
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = poppinsFamily
                 )
             }
         }
 
-        Column(
+        BottomSheetSurface(
             modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(color = Color.Black),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Text(
-                modifier = Modifier.padding(
-                    top = 18.dp, bottom = 12.dp
-                ),
-                text = "Password Generator",
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.SemiBold,
-                fontFamily = poppinsFamily
-            )
-
-            // TODO convert to surface
-            Card(
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 12.dp,
-                        bottom = 16.dp
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 24.dp, topEnd = 24.dp
                     )
-                    .height(160.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp),
-                border = BorderStroke(1.dp, LightGray),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 4.dp
-                ),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
                 )
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Options",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Black,
+                    fontFamily = poppinsFamily
+                )
+
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
 
                     Text(
-                        text = viewModel.password,
+                        text = "Length",
+                        fontSize = 18.sp,
                         color = Color.Black,
-                        fontSize = 26.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.SemiBold,
                         fontFamily = poppinsFamily
+                    )
+                    CustomSlider(
+                        value = viewModel.passwordLength.toFloat(),
+                        onValueChange = { viewModel.passwordLength = it.toInt() },
+                        valueRange = 8f..15f,
+                        interactionSource = interactionSource
                     )
                 }
-            }
 
-            BottomSheetSurface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = 24.dp, topEnd = 24.dp
+                SelectionRow(
+                    text = "Lower case",
+                    checked = viewModel.lowerCase,
+                    onCheckedChange = { viewModel.lowerCase = it }
+                )
+
+                SelectionRow(
+                    text = "Upper case",
+                    checked = viewModel.upperCase,
+                    onCheckedChange = { viewModel.upperCase = it }
+                )
+
+                SelectionRow(
+                    text = "Digits",
+                    checked = viewModel.digits,
+                    onCheckedChange = { viewModel.digits = it }
+                )
+
+                SelectionRow(
+                    text = "Special characters",
+                    checked = viewModel.specialCharacters,
+                    onCheckedChange = { viewModel.specialCharacters = it }
+                )
+
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(
+                    modifier = Modifier
+                        .padding(
+                            start = 22.dp,
+                            end = 22.dp,
+                            bottom = 32.dp
                         )
-                    )
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    Text(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        text = "Options",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.Black,
-                        fontFamily = poppinsFamily
-                    )
-
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Box(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .clip(CircleShape)
+                            .shadow(10.dp)
+                            .background(color = BgBlack)
+                            .clickWithRipple {
+                                viewModel.checkToggleAndSave()
+                            },
                     ) {
-
-                        Text(
-                            text = "Length",
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                            fontWeight = FontWeight.SemiBold,
-                            fontFamily = poppinsFamily
-                        )
-                        CustomSlider(
-                            value = viewModel.passwordLength.toFloat(),
-                            onValueChange = { viewModel.passwordLength = it.toInt() },
-                            valueRange = 8f..15f,
-                            interactionSource = interactionSource
+                        Icon(
+                            modifier = Modifier
+                                .padding(all = 8.dp)
+                                .size(40.dp),
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null,
+                            tint = Color.White
                         )
                     }
 
-                    SelectionRow(
-                        text = "Lower case",
-                        checked = viewModel.lowerCase,
-                        onCheckedChange = { viewModel.lowerCase = it }
-                    )
-
-                    SelectionRow(
-                        text = "Upper case",
-                        checked = viewModel.upperCase,
-                        onCheckedChange = { viewModel.upperCase = it }
-                    )
-
-                    SelectionRow(
-                        text = "Digits",
-                        checked = viewModel.digits,
-                        onCheckedChange = { viewModel.digits = it }
-                    )
-
-                    SelectionRow(
-                        text = "Special characters",
-                        checked = viewModel.specialCharacters,
-                        onCheckedChange = { viewModel.specialCharacters = it }
-                    )
-
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Row(
+                    Button(
                         modifier = Modifier
+                            .weight(1f)
+                            .height(58.dp)
                             .padding(
-                                start = 22.dp,
-                                end = 22.dp,
-                                bottom = 32.dp
+                                start = 16.dp
+                            ),
+                        onClick = {
+                            clipboardManager.setText(
+                                AnnotatedString((viewModel.password))
                             )
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            viewModel.showCopyMsg()
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Blue,
+                            contentColor = Color.White
+                        )
                     ) {
-
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape)
-                                .shadow(10.dp)
-                                .background(color = Color.Black)
-                                .clickWithRipple {
-                                    viewModel.checkToggleAndSave()
-                                },
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .padding(all = 8.dp)
-                                    .size(40.dp),
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = null,
-                                tint = Color.White
-                            )
-                        }
-
-                        Button(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(58.dp)
-                                .padding(
-                                    start = 16.dp
-                                ),
-                            onClick = {
-                                clipboardManager.setText(
-                                    AnnotatedString((viewModel.password))
-                                )
-                                viewModel.showCopyMsg()
-                            },
-                            shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Blue,
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text(
-                                text = "Copy Password",
-                                fontSize = 20.sp,
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                        Text(
+                            text = "Copy Password",
+                            fontSize = 20.sp,
+                            fontFamily = poppinsFamily,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }

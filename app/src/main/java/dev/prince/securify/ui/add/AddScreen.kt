@@ -1,9 +1,10 @@
-package dev.prince.securify.ui.edit
+package dev.prince.securify.ui.add
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,7 +54,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.ui.add.TextFieldSeparator
 import dev.prince.securify.ui.composables.BottomSheetSurface
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
@@ -62,19 +62,13 @@ import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.clickWithRipple
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
-fun EditScreen(
+fun AddScreen(
     navigator: DestinationsNavigator,
-    viewModel: EditViewModel = hiltViewModel(),
-    accountId: Int
+    viewModel: AddViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(Unit) {
-        viewModel.getAccountById(accountId)
-    }
 
     val snackbar = LocalSnackbar.current
     LaunchedEffect(Unit) {
@@ -82,9 +76,6 @@ fun EditScreen(
             snackbar(it)
         }
     }
-
-
-    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
@@ -110,7 +101,7 @@ fun EditScreen(
                     top = 18.dp, bottom = 12.dp,
                     start = 16.dp, end = 16.dp
                 ),
-                text = "Edit Password",
+                text = "Add New Password",
                 color = Color.White,
                 style = TextStyle(
                     fontSize = 24.sp,
@@ -119,17 +110,20 @@ fun EditScreen(
                 fontWeight = FontWeight.SemiBold,
             )
         }
+
         BottomSheetSurface(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
+
             Column(
                 modifier = Modifier
-                    .verticalScroll(state = scrollState)
+                    .verticalScroll(rememberScrollState())
                     .fillMaxSize()
                     .background(color = Color.White)
             ) {
+
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "Account Name",
@@ -155,15 +149,18 @@ fun EditScreen(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
-                    value = viewModel.userName,
+                    value = viewModel.username,
+                    placeholder = {
+                        Text("John Doe")
+                    },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
                         if (it.length <= 35) {
-                            viewModel.userName = it
+                            viewModel.username = it
                         }
                     },
                     supportingText = {
-                        Text(text = "${viewModel.userName.length}/35")
+                        Text(text = "${viewModel.username.length}/35")
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.Black,
@@ -388,7 +385,7 @@ fun EditScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     onClick = {
-                        viewModel.updateAccountDetails(accountId)
+                        viewModel.validateAndInsert()
                     },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -397,7 +394,7 @@ fun EditScreen(
                     )
                 ) {
                     Text(
-                        text = "Update Password",
+                        text = "Save Password",
                         fontSize = 22.sp,
                         fontFamily = poppinsFamily,
                         fontWeight = FontWeight.Medium
@@ -409,7 +406,6 @@ fun EditScreen(
                     }
                 }
             }
-
         }
         BackHandler {
             navigator.navigate(PasswordsScreenDestination)
@@ -420,7 +416,7 @@ fun EditScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchOutlinedTextFieldWithDropdown(
-    viewModel: EditViewModel = hiltViewModel()
+    viewModel: AddViewModel = hiltViewModel()
 ) {
 
     ExposedDropdownMenuBox(
@@ -478,6 +474,16 @@ fun SearchOutlinedTextFieldWithDropdown(
                 )
             }
         }
-
     }
+}
+
+@Composable
+fun TextFieldSeparator() {
+    Box(
+        modifier = Modifier
+            .padding(end = 12.dp)
+            .height(24.dp)
+            .width(1.dp)
+            .background(color = Color.LightGray)
+    )
 }

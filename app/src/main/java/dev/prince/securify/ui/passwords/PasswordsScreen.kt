@@ -4,14 +4,19 @@ import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,11 +37,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -52,11 +62,13 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
 import dev.prince.securify.ui.composables.AlertDialogContent
-import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
+import dev.prince.securify.ui.destinations.AddScreenDestination
 import dev.prince.securify.ui.destinations.EditScreenDestination
+import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.LocalSnackbar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Destination
@@ -68,7 +80,6 @@ fun PasswordsScreen(
 
     val context = LocalContext.current
     val accounts = viewModel.accounts.collectAsState(emptyList())
-    val snackbarHostState = remember { SnackbarHostState() }
 
     // State for holding the search query
     var searchQuery by remember { mutableStateOf("") }
@@ -81,36 +92,68 @@ fun PasswordsScreen(
                 account.mobileNumber.contains(searchQuery, ignoreCase = true)
     }
 
+    val snackbar = LocalSnackbar.current
     LaunchedEffect(Unit) {
         viewModel.messages.collect {
-            snackbarHostState.showSnackbar(
-                message = it,
-                duration = SnackbarDuration.Short
-            )
+            snackbar(it)
+        }
+    }
+
+    val isVisible = rememberSaveable { mutableStateOf(true) }
+
+    val nestedScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                // Hide FAB
+                if (available.y < -1) {
+                    isVisible.value = false
+                }
+
+                // Show FAB
+                if (available.y > 1) {
+                    isVisible.value = true
+                }
+
+                return Offset.Zero
+            }
         }
     }
 
     Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    navigator.navigate(AddPasswordScreenDestination)
-                },
-                containerColor = Blue,
-                contentColor = Color.White,
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(text = "Add New Password") },
-            )
+            AnimatedVisibility(
+                visible = isVisible.value,
+                enter = slideInVertically(initialOffsetY = { it * 2 }),
+                exit = slideOutVertically(targetOffsetY = { it * 2 }),
+            ) {
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        navigator.navigate(AddScreenDestination)
+                    },
+                    containerColor = Blue,
+                    contentColor = Color.White,
+                    icon = {
+                        Icon(
+                            Icons.Filled.Add,
+                            modifier = Modifier.size(26.dp),
+                            contentDescription = null
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = "Add Password",
+                            fontSize = 16.sp
+                        )
+                    }
+                )
+            }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .background(color = Color.Black),
+                .background(color = BgBlack),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -180,7 +223,11 @@ fun PasswordsScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(8.dp)
+                        .padding(
+                            start = 8.dp, end = 8.dp,
+                            top = 8.dp, bottom = 0.dp
+                        )
+                        .nestedScroll(nestedScrollConnection),
                 ) {
                     items(filteredAccounts) { account ->
                         AccountRow(navigator, account, viewModel)
@@ -195,7 +242,6 @@ fun PasswordsScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AccountRow(
@@ -241,7 +287,6 @@ fun AccountRow(
 
         val painter = matchingImage ?: painterResource(R.drawable.icon_others)
 
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -253,7 +298,7 @@ fun AccountRow(
                 painter = painter,
                 contentDescription = null,
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(42.dp)
                     .clip(CircleShape)
             )
 
@@ -324,7 +369,7 @@ fun AccountRow(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.background)
+                            .background(Color.White)
                     ) {
 
                         DropdownMenuItem(

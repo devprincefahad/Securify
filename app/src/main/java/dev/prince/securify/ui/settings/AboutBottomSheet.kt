@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.prince.securify.R
+import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.poppinsFamily
 import kotlinx.coroutines.launch
 
@@ -68,7 +69,7 @@ fun AboutBottomSheet(
                     modifier = Modifier
                         .height(60.dp)
                         .fillMaxWidth()
-                        .background(color = Color.Black)
+                        .background(color = BgBlack)
                 )
             }
         },

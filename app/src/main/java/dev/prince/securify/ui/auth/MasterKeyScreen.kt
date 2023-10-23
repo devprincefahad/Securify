@@ -36,7 +36,9 @@ import dev.prince.securify.R
 import dev.prince.securify.ui.composables.CreateMasterKeySheetContent
 import dev.prince.securify.ui.composables.UpdateMasterKeySheetContent
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
+import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.LocalSnackbar
 
 enum class NavigationSource {
     INTRO,
@@ -52,71 +54,61 @@ fun MasterKeyScreen(
 ) {
 
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+    val snackbar = LocalSnackbar.current
+    LaunchedEffect(Unit) {
+        viewModel.messages.collect {
+            snackbar(it)
         }
-    ) { contentPadding ->
+    }
 
-        LaunchedEffect(Unit) {
-            viewModel.messages.collect {
-                snackbarHostState.showSnackbar(
-                    message = it,
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
-        LaunchedEffect(Unit) {
-            viewModel.navigateToHome.collect {
-                navigator.navigate(PasswordsScreenDestination) {
-                    popUpTo(PasswordsScreenDestination) {
-                        inclusive = true
-                    }
+    LaunchedEffect(Unit) {
+        viewModel.navigateToHome.collect {
+            navigator.navigate(PasswordsScreenDestination) {
+                popUpTo(PasswordsScreenDestination) {
+                    inclusive = true
                 }
             }
         }
+    }
 
-        Column(
+    Column(
+        modifier = Modifier
+            .verticalScroll(state = scrollState)
+            .fillMaxSize()
+            .background(color = BgBlack),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(28.dp))
+        Text(
             modifier = Modifier
-                .verticalScroll(state = scrollState)
-                .padding(contentPadding)
-                .fillMaxSize()
-                .background(color = Color.Black),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(28.dp))
-            Text(
-                modifier = Modifier
-                    .padding(start = 16.dp, end = 32.dp),
-                text = stringResource(R.string.setup_key_tagline_1),
-                textAlign = TextAlign.Left,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                style = TextStyle(
-                    fontSize = 52.sp,
-                    fontFamily = poppinsFamily,
-                    lineHeight = 52.sp
-                )
+                .padding(start = 16.dp, end = 32.dp),
+            text = stringResource(R.string.setup_key_tagline_1),
+            textAlign = TextAlign.Left,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            style = TextStyle(
+                fontSize = 52.sp,
+                fontFamily = poppinsFamily,
+                lineHeight = 52.sp
             )
-            Spacer(modifier = Modifier.height(60.dp))
+        )
+        Spacer(modifier = Modifier.height(60.dp))
 
-            if (navigationSource == NavigationSource.SETTINGS) {
-                UpdateMasterKeySheetContent()
+        if (navigationSource == NavigationSource.SETTINGS) {
+            UpdateMasterKeySheetContent()
+        } else {
+            CreateMasterKeySheetContent()
+        }
+
+        BackHandler {
+            if (navigationSource == NavigationSource.INTRO) {
+                (context as ComponentActivity).finish()
             } else {
-                CreateMasterKeySheetContent()
-            }
-
-            BackHandler {
-                if (navigationSource == NavigationSource.INTRO) {
-                    (context as ComponentActivity).finish()
-                } else {
-                    navigator.popBackStack()
-                }
+                navigator.popBackStack()
             }
         }
     }

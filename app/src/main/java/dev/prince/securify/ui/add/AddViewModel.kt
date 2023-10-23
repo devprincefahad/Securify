@@ -6,18 +6,20 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.prince.securify.encryption.EncryptionManager
 import dev.prince.securify.database.AccountDao
 import dev.prince.securify.database.AccountEntity
+import dev.prince.securify.util.accountSuggestions
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddPasswordViewModel @Inject constructor(
+class AddViewModel @Inject constructor(
     private val db: AccountDao,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {
@@ -25,7 +27,8 @@ class AddPasswordViewModel @Inject constructor(
     val messages = oneShotFlow<String>()
 
     var expanded by mutableStateOf(false)
-    var selectedOptionText by mutableStateOf("")
+    var accountName by mutableStateOf("")
+    var suggestions = SnapshotStateList<String>()
 
     var username by mutableStateOf("")
 
@@ -42,7 +45,7 @@ class AddPasswordViewModel @Inject constructor(
         if (username.isEmpty() && email.isBlank() && mobileNumber.isBlank()) {
             messages.tryEmit("Please provide a username, email, or mobile number.")
         }
-        if (selectedOptionText.isBlank()) {
+        if (accountName.isBlank()) {
             messages.tryEmit("Please provide an account name.")
         }
         if (password.isBlank() || password.isEmpty()) {
@@ -55,16 +58,16 @@ class AddPasswordViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateAndInsert() {
+
         val isOneFilled = (username.isNotEmpty() || email.isNotBlank() || mobileNumber.isNotBlank())
-        if (
-            isOneFilled && password.isNotBlank() && selectedOptionText.isNotBlank()
-        ) {
+
+        if (isOneFilled && password.isNotBlank() && accountName.isNotBlank()) {
 
             val encryptedPassword = encryptionManager.encrypt(password)
 
             val account = AccountEntity(
                 id = 0,
-                accountName = selectedOptionText,
+                accountName = accountName,
                 userName = username,
                 email = email,
                 mobileNumber = mobileNumber,
@@ -79,5 +82,16 @@ class AddPasswordViewModel @Inject constructor(
         } else {
             validateFields()
         }
+    }
+
+    fun filter(accountName: String) {
+        suggestions.clear()
+        if (accountName.isNotEmpty()) {
+            suggestions.addAll(accountSuggestions.filter { it.contains(accountName, true) })
+        }
+    }
+
+    fun resetSuggestions() {
+        suggestions.clear()
     }
 }

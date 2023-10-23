@@ -55,8 +55,10 @@ import dev.prince.securify.R
 import dev.prince.securify.ui.composables.BottomSheetSurface
 import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
+import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.LocalSnackbar
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -67,164 +69,153 @@ fun UnlockScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
 
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+    val snackbar = LocalSnackbar.current
+    LaunchedEffect(Unit) {
+        viewModel.messages.collect {
+            snackbar(it)
         }
-    ) { contentPadding ->
+    }
 
-        LaunchedEffect(Unit) {
-            viewModel.messages.collect {
-                snackbarHostState.showSnackbar(
-                    message = it,
-                    duration = SnackbarDuration.Short
-                )
-            }
-        }
 
-        LaunchedEffect(Unit) {
-            viewModel.navigateToHome.collect {
-                navigator.navigate(PasswordsScreenDestination) {
-                    popUpTo(PasswordsScreenDestination) {
-                        inclusive = true
-                    }
+    LaunchedEffect(Unit) {
+        viewModel.navigateToHome.collect {
+            navigator.navigate(PasswordsScreenDestination) {
+                popUpTo(PasswordsScreenDestination) {
+                    inclusive = true
                 }
             }
         }
+    }
 
-        val keyboard = LocalSoftwareKeyboardController.current
+    val keyboard = LocalSoftwareKeyboardController.current
 
-        if (!viewModel.isUserLoggedIn) {
-            navigator.navigate(IntroScreenDestination)
-        } else {
-            Column(
+    if (!viewModel.isUserLoggedIn) {
+        navigator.navigate(IntroScreenDestination)
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = BgBlack)
+        ) {
+
+            Spacer(modifier = Modifier.height(120.dp))
+            Image(
                 modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
-                    .background(color = Color.Black)
+                    .height(160.dp)
+                    .fillMaxWidth(),
+                painter = painterResource(R.drawable.key),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.height(160.dp))
+            BottomSheetSurface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
             ) {
-
-                Spacer(modifier = Modifier.height(120.dp))
-                Image(
-                    modifier = Modifier
-                        .height(160.dp)
-                        .fillMaxWidth(),
-                    painter = painterResource(R.drawable.key),
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.height(160.dp))
-                BottomSheetSurface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
 
-                        Text(
-                            modifier = Modifier
-                                .padding(all = 8.dp)
-                                .fillMaxWidth(),
-                            text = "Please provide your \nMaster Key",
-                            textAlign = TextAlign.Center,
-                            style = TextStyle(
-                                fontSize = 24.sp,
-                                fontFamily = poppinsFamily
-                            ),
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
-                        )
+                    Text(
+                        modifier = Modifier
+                            .padding(all = 8.dp)
+                            .fillMaxWidth(),
+                        text = "Please provide your \nMaster Key",
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            fontSize = 24.sp,
+                            fontFamily = poppinsFamily
+                        ),
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black
+                    )
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                        OutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Enter Master key") },
-                            value = viewModel.unlockKey,
-                            visualTransformation = if (viewModel.unlockKeyVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                            onValueChange = {
-                                if (it.length <= 8) viewModel.unlockKey = it
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                focusedBorderColor = Color.Black,
-                                unfocusedBorderColor = Color.Black,
-                                focusedLabelColor = Color.Black,
-                                unfocusedLabelColor = Color.Gray,
-                                cursorColor = Color.Gray
-                            ),
-                            singleLine = true,
-                            supportingText = {
-                                AnimatedVisibility (viewModel.unlockKey.isNotEmpty()) {
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        fontFamily = poppinsFamily,
-                                        fontWeight = FontWeight.Medium,
-                                        text = "Limit: ${viewModel.unlockKey.length}/8",
-                                    )
-                                }
-                            },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    keyboard?.hide()
-                                    viewModel.validateAndOpen()
-                                }
-                            ),
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {
-                                        viewModel.unlockKeyVisible = !viewModel.unlockKeyVisible
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = if (viewModel.unlockKeyVisible)
-                                            Icons.Filled.Visibility
-                                        else Icons.Filled.VisibilityOff,
-                                        if (viewModel.unlockKeyVisible) "Hide password" else "Show password",
-                                        tint = Color.Gray
-                                    )
-                                }
-                            }
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(
-                            modifier = Modifier
-                                .padding(
-                                    top = 16.dp,
-                                    start = 16.dp, end = 16.dp
-                                )
-                                .fillMaxWidth()
-                                .height(50.dp),
-                            onClick = {
-                                viewModel.validateAndOpen()
-                            },
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Blue,
-                                contentColor = Color.White
-                            )
-                        ) {
-                            if (viewModel.isLoadingForUnlock) {
-                                CircularProgressIndicator(
-                                    color = Color.White,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            } else {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text("Enter Master key") },
+                        value = viewModel.unlockKey,
+                        visualTransformation = if (viewModel.unlockKeyVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        onValueChange = {
+                            if (it.length <= 8) viewModel.unlockKey = it
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            focusedBorderColor = Color.Black,
+                            unfocusedBorderColor = Color.Black,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = Color.Gray
+                        ),
+                        singleLine = true,
+                        supportingText = {
+                            AnimatedVisibility(viewModel.unlockKey.isNotEmpty()) {
                                 Text(
-                                    text = "Proceed",
-                                    fontSize = 22.sp,
+                                    modifier = Modifier.fillMaxWidth(),
                                     fontFamily = poppinsFamily,
-                                    fontWeight = FontWeight.Medium
+                                    fontWeight = FontWeight.Medium,
+                                    text = "Limit: ${viewModel.unlockKey.length}/8",
                                 )
                             }
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboard?.hide()
+                                viewModel.validateAndOpen()
+                            }
+                        ),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    viewModel.unlockKeyVisible = !viewModel.unlockKeyVisible
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = if (viewModel.unlockKeyVisible)
+                                        Icons.Filled.Visibility
+                                    else Icons.Filled.VisibilityOff,
+                                    if (viewModel.unlockKeyVisible) "Hide password" else "Show password",
+                                    tint = Color.Gray
+                                )
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Button(
+                        modifier = Modifier
+                            .padding(
+                                top = 16.dp,
+                                start = 16.dp, end = 16.dp
+                            )
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        onClick = {
+                            viewModel.validateAndOpen()
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Blue,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        if (viewModel.isLoadingForUnlock) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "Proceed",
+                                fontSize = 22.sp,
+                                fontFamily = poppinsFamily,
+                                fontWeight = FontWeight.Medium
+                            )
                         }
                     }
                 }

@@ -15,6 +15,8 @@ import dev.prince.securify.database.AccountDao
 import dev.prince.securify.database.AccountEntity
 import dev.prince.securify.encryption.EncryptionManager
 import dev.prince.securify.util.accountSuggestions
+import dev.prince.securify.util.generatePassword
+import dev.prince.securify.util.getRandomNumber
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -91,4 +93,15 @@ class EditViewModel @Inject constructor(
     fun resetSuggestions() {
         suggestions.clear()
     }
+
+    fun generateRandomPassword() {
+        password = generatePassword(
+            length = getRandomNumber(),
+            lowerCase = true,
+            upperCase = true,
+            digits = true,
+            specialCharacters = true
+        )
+    }
+
 }

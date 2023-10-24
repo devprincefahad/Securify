@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -373,80 +374,99 @@ fun AddScreen(
                     )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
+                Row(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    value = viewModel.password,
-                    placeholder = {
-                        Text(
-                            " ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontFamily = poppinsFamily,
-                                color = Gray
+                ) {
+
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 6.dp),
+                        value = viewModel.password,
+                        placeholder = {
+                            Text(
+                                " ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ",
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    fontFamily = poppinsFamily,
+                                    color = Gray
+                                )
                             )
-                        )
-                    },
-                    shape = RoundedCornerShape(8.dp),
-                    onValueChange = {
-                        if (it.length <= 25) {
-                            viewModel.password = it
-                        }
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Password
-                    ),
-                    singleLine = true,
-                    supportingText = {
-                        Text(
-                            text = "${viewModel.password.length}/25"
-                        )
-                    },
-                    visualTransformation = if (viewModel.keyVisible)
-                        VisualTransformation.None else PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                viewModel.keyVisible = !viewModel.keyVisible
-                            }) {
+                        },
+                        shape = RoundedCornerShape(8.dp),
+                        onValueChange = {
+                            if (it.length <= 25) {
+                                viewModel.password = it
+                            }
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password
+                        ),
+                        singleLine = true,
+                        supportingText = {
+                            Text(
+                                text = "${viewModel.password.length}/25"
+                            )
+                        },
+                        visualTransformation = if (viewModel.keyVisible)
+                            VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    viewModel.keyVisible = !viewModel.keyVisible
+                                }) {
+                                Icon(
+                                    imageVector = if (viewModel.keyVisible)
+                                        Icons.Filled.Visibility
+                                    else Icons.Filled.VisibilityOff, contentDescription = null
+                                )
+                            }
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            focusedBorderColor = Color.Black,
+                            unfocusedBorderColor = Color.Black,
+                            focusedLabelColor = Color.Black,
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = Color.Gray
+                        ),
+                        leadingIcon = {
                             Icon(
-                                imageVector = if (viewModel.keyVisible)
-                                    Icons.Filled.Visibility
-                                else Icons.Filled.VisibilityOff, contentDescription = null
+                                painter = painterResource(
+                                    id = R.drawable.icon_passlock
+                                ),
+                                contentDescription = null
                             )
-                        }
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color.Black,
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black,
-                        focusedLabelColor = Color.Black,
-                        unfocusedLabelColor = Color.Gray,
-                        cursorColor = Color.Gray
-                    ),
-                    leadingIcon = {
-                        Icon(
-                            painter = painterResource(
-                                id = R.drawable.icon_passlock
-                            ),
-                            contentDescription = null
+                        },
+                        prefix = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                TextFieldSeparator()
+                            }
+                        },
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                viewModel.validateAndInsert()
+                            }
                         )
-                    },
-                    prefix = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            TextFieldSeparator()
-                        }
-                    },
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            viewModel.validateAndInsert()                        }
                     )
-                )
+                    Icon(
+                        modifier = Modifier
+                            .padding(top = 14.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
+                            .size(34.dp)
+                            .clickWithRipple {
+                                viewModel.generateRandomPassword()
+                            },
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = null,
+                        tint = Color.Black
+                    )
+                }
+
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
                     modifier = Modifier

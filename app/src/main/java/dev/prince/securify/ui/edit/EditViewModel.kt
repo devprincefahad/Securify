@@ -35,6 +35,7 @@ class EditViewModel @Inject constructor(
     var keyVisible by mutableStateOf(false)
 
     val success = mutableStateOf(false)
+
     var suggestions = SnapshotStateList<String>()
 
     var accountName by mutableStateOf("")

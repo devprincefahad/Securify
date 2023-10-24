@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -38,10 +39,14 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -404,7 +409,8 @@ fun EditScreen(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.updateAccountDetails(accountId)                        }
+                                viewModel.updateAccountDetails(accountId)
+                            }
                         )
                     )
                     Icon(
@@ -464,6 +470,32 @@ fun SearchOutlinedTextFieldWithDropdown(
 
     val focusManager = LocalFocusManager.current
 
+//    Adjustment for dropdown height to display
+//    single item in dropdown instead of empty list space.
+
+    val DropdownMenuVerticalPadding = 8.dp
+    val itemHeights = remember { mutableStateMapOf<Int, Int>() }
+    val baseHeight = 330.dp
+    val density = LocalDensity.current
+    val maxHeight = remember(itemHeights.toMap()) {
+        if (itemHeights.keys.toSet() != viewModel.suggestions.indices.toSet()) {
+            // if we don't have all heights calculated yet, return default value
+            return@remember baseHeight
+        }
+        val baseHeightInt = with(density) { baseHeight.toPx().toInt() }
+
+        // top+bottom system padding
+        var sum = with(density) { DropdownMenuVerticalPadding.toPx().toInt() } * 2
+        for ((i, itemSize) in itemHeights.toSortedMap()) {
+            sum += itemSize
+            if (sum >= baseHeightInt) {
+                return@remember with(density) { (sum - itemSize / 2).toDp() }
+            }
+        }
+        // all items fit into base height
+        baseHeight
+    }
+
     ExposedDropdownMenuBox(
         modifier = Modifier.padding(start = 16.dp, end = 16.dp),
         expanded = viewModel.suggestions.isNotEmpty(),
@@ -507,18 +539,21 @@ fun SearchOutlinedTextFieldWithDropdown(
         DropdownMenu(
             modifier = Modifier
                 .background(Color.White)
-                .height(280.dp)
-                .exposedDropdownSize(true),
+                .exposedDropdownSize(true)
+                .requiredSizeIn(maxHeight = maxHeight),
             properties = PopupProperties(focusable = false),
             expanded = viewModel.suggestions.isNotEmpty(),
             onDismissRequest = { viewModel.resetSuggestions() },
         ) {
-            viewModel.suggestions.forEach { selectedAccountName ->
+            viewModel.suggestions.forEachIndexed { index, selectedAccountName ->
                 DropdownMenuItem(
                     text = { Text(selectedAccountName) },
                     onClick = {
                         viewModel.accountName = selectedAccountName
                         viewModel.resetSuggestions()
+                    },
+                    modifier = Modifier.onSizeChanged {
+                        itemHeights[index] = it.height
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )

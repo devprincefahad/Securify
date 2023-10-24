@@ -67,7 +67,7 @@ fun UpdateMasterKeySheetContent(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
-                text = stringResource(R.string.update_master_key),
+                text = stringResource(R.string.reset_master_key),
                 textAlign = TextAlign.Center,
                 fontSize = 22.sp,
                 fontFamily = poppinsFamily,
@@ -79,7 +79,7 @@ fun UpdateMasterKeySheetContent(
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
-                text = stringResource(R.string.update_key_tagline),
+                text = stringResource(R.string.reset_key_tagline),
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 fontFamily = poppinsFamily,
@@ -259,7 +259,7 @@ fun UpdateMasterKeySheetContent(
                         )
                     } else {
                         Text(
-                            text = "Update Master Key",
+                            text = stringResource(R.string.reset_master_key),
                             fontSize = 22.sp,
                             fontFamily = poppinsFamily,
                             fontWeight = FontWeight.Medium

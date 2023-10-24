@@ -10,7 +10,7 @@
     <string name="generate">Generate</string>
     <string name="about_info">Securify is a trusted password management app designed to simplify your online security. With Securify, you no longer need to remember countless passwords for your accounts. Our app provides a secure vault where you can store and organize your passwords with ease. Rest assured knowing your sensitive information is encrypted and safeguarded. Securify ensures quick and seamless access to your accounts, making your online experience hassle-free. Elevate your digital security with Securify, and experience peace of mind in the digital world.</string>
     <string name="get_started">Get Started</string>
-    <string name="update_master_key">Update Master Key</string>
-    <string name="update_key_tagline">Update your Master Key to secure your credentials with end-to-end encryption</string>
+    <string name="reset_master_key">Reset Master Key</string>
+    <string name="reset_key_tagline">Reset your Master Key to secure your credentials with end-to-end encryption</string>
 
 </resources>

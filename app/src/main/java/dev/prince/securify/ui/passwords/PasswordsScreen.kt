@@ -231,7 +231,7 @@ fun PasswordsScreen(
                     )
 
                     if (filteredAccounts.isEmpty()) {
-                        EmptyListPlaceholder()
+                        EmptyListPlaceholder(searchQuery.isNotEmpty())
                     } else {
                         LazyColumn(
                             modifier = Modifier
@@ -468,7 +468,9 @@ fun AccountRow(
 }
 
 @Composable
-fun EmptyListPlaceholder() {
+fun EmptyListPlaceholder(
+    isSearch: Boolean
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -483,7 +485,7 @@ fun EmptyListPlaceholder() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "No passwords\nadded yet!",
+            text = if (isSearch) "No password\n found!" else "No passwords\nadded yet!",
             style = TextStyle(
                 fontSize = 18.sp,
                 fontFamily = poppinsFamily,

@@ -272,7 +272,7 @@ fun EditScreen(
                 )
 
                 Text(
-                    text = "Mobile No.",
+                    text = "Mobile Number",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp)
@@ -409,7 +409,7 @@ fun EditScreen(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.updateAccountDetails(accountId)
+                                viewModel.validationAndUpdateDetails(accountId)
                             }
                         )
                     )
@@ -433,7 +433,7 @@ fun EditScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     onClick = {
-                        viewModel.updateAccountDetails(accountId)
+                        viewModel.validationAndUpdateDetails(accountId)
                     },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(

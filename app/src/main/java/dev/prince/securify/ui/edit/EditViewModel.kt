@@ -1,15 +1,15 @@
 package dev.prince.securify.ui.edit
 
 import android.os.Build
+import android.util.Patterns
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.prince.securify.database.AccountDao
 import dev.prince.securify.database.AccountEntity
@@ -18,7 +18,6 @@ import dev.prince.securify.util.accountSuggestions
 import dev.prince.securify.util.generatePassword
 import dev.prince.securify.util.getRandomNumber
 import dev.prince.securify.util.oneShotFlow
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -68,19 +67,21 @@ class EditViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateAccountDetails(id: Int) {
-        viewModelScope.launch {
-            val accountEntity = AccountEntity(
-                id,
-                accountName,
-                userName,
-                email,
-                mobileNumber,
-                encryptPassword(password)
-            )
-            db.updateAccount(accountEntity)
-            messages.tryEmit("Successfully Updated!")
-            success.value = true
+    fun validationAndUpdateDetails(id: Int) {
+        if (validateFields()) {
+            viewModelScope.launch {
+                val accountEntity = AccountEntity(
+                    id,
+                    accountName.trim(),
+                    userName.trim(),
+                    email.trim(),
+                    mobileNumber,
+                    encryptPassword(password.trim())
+                )
+                db.updateAccount(accountEntity)
+                messages.tryEmit("Successfully Updated!")
+                success.value = true
+            }
         }
     }
 
@@ -104,5 +105,34 @@ class EditViewModel @Inject constructor(
             specialCharacters = true
         )
     }
+
+    private fun validateFields(): Boolean {
+        if (accountName.isBlank()) {
+            messages.tryEmit("Please provide an account name")
+            return false
+        }
+        if (userName.isEmpty() && email.isBlank() && mobileNumber.isBlank()) {
+            messages.tryEmit("Please provide a username, email, or mobile number")
+            return false
+        }
+        if (password.isBlank()) {
+            messages.tryEmit("Password cannot be empty")
+            return false
+        }
+        if (password.trim().isEmpty() || password.contains("\\s+".toRegex())) {
+            messages.tryEmit("Password cannot contain whitespace")
+            return false
+        }
+        if (email.isNotBlank() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            messages.tryEmit("Invalid email address")
+            return false
+        }
+        if (!mobileNumber.isDigitsOnly()) {
+            messages.tryEmit("Invalid mobile number")
+            return false
+        }
+        return true
+    }
+
 
 }

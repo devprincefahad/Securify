@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,37 +44,47 @@ class AddViewModel @Inject constructor(
 
     val success = mutableStateOf(false)
 
-    private fun validateFields() {
-        if (username.isEmpty() && email.isBlank() && mobileNumber.isBlank()) {
-            messages.tryEmit("Please provide a username, email, or mobile number.")
-        }
+    private fun validateFields(): Boolean {
         if (accountName.isBlank()) {
-            messages.tryEmit("Please provide an account name.")
+            messages.tryEmit("Please provide an account name")
+            return false
         }
-        if (password.isBlank() || password.isEmpty()) {
+        if (username.isEmpty() && email.isBlank() && mobileNumber.isBlank()) {
+            messages.tryEmit("Please provide a username, email, or mobile number")
+            return false
+        }
+        if (password.isBlank()) {
             messages.tryEmit("Password cannot be empty")
+            return false
+        }
+        if (password.trim().isEmpty() || password.contains("\\s+".toRegex())){
+            messages.tryEmit("Password cannot contain whitespace")
+            return false
         }
         if (email.isNotBlank() && !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             messages.tryEmit("Invalid email address")
+            return false
         }
+        if(!mobileNumber.isDigitsOnly()){
+            messages.tryEmit("Invalid mobile number")
+            return false
+        }
+        return true
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun validateAndInsert() {
 
-        val isOneFilled = (username.isNotEmpty() || email.isNotBlank() || mobileNumber.isNotBlank())
-
-        if (isOneFilled && password.isNotBlank() && accountName.isNotBlank()) {
-
+        if (validateFields()) {
             val encryptedPassword = encryptionManager.encrypt(password)
 
             val account = AccountEntity(
                 id = 0,
-                accountName = accountName,
-                userName = username,
-                email = email,
+                accountName = accountName.trim(),
+                userName = username.trim(),
+                email = email.trim(),
                 mobileNumber = mobileNumber,
-                password = encryptedPassword
+                password = encryptedPassword.trim()
             )
 
             viewModelScope.launch {
@@ -81,9 +92,8 @@ class AddViewModel @Inject constructor(
                 messages.tryEmit("Credentials Added!")
                 success.value = true
             }
-        } else {
-            validateFields()
         }
+
     }
 
     fun filter(accountName: String) {

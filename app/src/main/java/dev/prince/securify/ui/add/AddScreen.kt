@@ -297,7 +297,7 @@ fun AddScreen(
                 )
 
                 Text(
-                    text = "Mobile No.",
+                    text = "Mobile Number",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(start = 16.dp, top = 16.dp),

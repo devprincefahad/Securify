@@ -113,9 +113,9 @@ fun AddScreen(
                 color = Color.White,
                 style = TextStyle(
                     fontSize = 24.sp,
-                    fontFamily = poppinsFamily
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.SemiBold
                 ),
-                fontWeight = FontWeight.SemiBold,
             )
         }
 

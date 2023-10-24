@@ -1,12 +1,25 @@
 package dev.prince.securify.ui.composables
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
+import dev.prince.securify.ui.theme.Blue
+import dev.prince.securify.ui.theme.Gray
+import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.clickWithRipple
 
 @Composable
 fun AlertDialogContent(
@@ -14,46 +27,75 @@ fun AlertDialogContent(
     onConfirmation: () -> Unit,
     dialogTitle: String,
     dialogText: String,
-    icon: ImageVector,
     confirmTitle: String
 ) {
     AlertDialog(
-        icon = {
-            Icon(icon, contentDescription = "Alert Dialog Icon")
-        },
         title = {
-            Text(text = dialogTitle)
+            Text(
+                text = dialogTitle,
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.Medium
+                )
+            )
         },
         text = {
-            Text(text = dialogText)
+            Text(
+                text = dialogText,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.Normal
+                )
+            )
         },
         containerColor = Color.White,
         onDismissRequest = {
             onDismissRequest()
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     onConfirmation()
-                }
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Blue,
+                    contentColor = Color.White
+                )
             ) {
                 Text(
+                    modifier = Modifier
+                        .padding(
+                            vertical = 4.dp,
+                            horizontal = 8.dp
+                        ),
                     text = confirmTitle,
-                    color = Color.Red
+                    color = Color.White,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = poppinsFamily,
+                        fontWeight = FontWeight.Normal
+                    )
                 )
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text(
-                    "Cancel",
-                    color = Color.Black
+            Text(
+                modifier = Modifier
+                    .padding(all = 16.dp)
+                    .clickable {
+                        onDismissRequest()
+                    },
+                text = "Cancel",
+                color = Gray,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.Normal
                 )
-            }
+            )
         }
     )
 }

@@ -458,7 +458,6 @@ fun AccountRow(
                             },
                             dialogTitle = "Delete Password?",
                             dialogText = "Are you sure you want to delete password for ${account.accountName}?",
-                            icon = Icons.Default.Delete,
                             confirmTitle = "Delete"
                         )
                     }

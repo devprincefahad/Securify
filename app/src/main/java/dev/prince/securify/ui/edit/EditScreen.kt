@@ -67,6 +67,7 @@ import dev.prince.securify.ui.composables.BottomSheetSurface
 import dev.prince.securify.ui.destinations.PasswordsScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
+import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.clickWithRipple
@@ -196,7 +197,7 @@ fun EditScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextFieldSeparator()
+                            TextFieldSeparator(24)
                         }
                     },
                     keyboardOptions = KeyboardOptions(
@@ -252,7 +253,7 @@ fun EditScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextFieldSeparator()
+                            TextFieldSeparator(24)
                         }
                     },
                     singleLine = true,
@@ -296,7 +297,7 @@ fun EditScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextFieldSeparator()
+                            TextFieldSeparator(24)
                             /*Text(text = "+91 ")*/
                         }
                     },
@@ -404,7 +405,7 @@ fun EditScreen(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                TextFieldSeparator()
+                                TextFieldSeparator(24)
                             }
                         },
                         keyboardActions = KeyboardActions(
@@ -425,6 +426,82 @@ fun EditScreen(
                         tint = Color.Black
                     )
                 }
+
+                Text(
+                    text = "Note",
+                    textAlign = TextAlign.Left,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    value = viewModel.note,
+                    placeholder = {
+                        Text(
+                            "Add a Note Here...",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
+                    },
+                    maxLines = 6,
+                    shape = RoundedCornerShape(8.dp),
+                    onValueChange = {
+                        if (it.length <= 140) {
+                            viewModel.note = it
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedBorderColor = Color.Black,
+                        unfocusedBorderColor = Color.Black,
+                        focusedLabelColor = Color.Black,
+                        unfocusedLabelColor = Color.Gray,
+                        cursorColor = Color.Gray
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp),
+                            painter = painterResource(
+                                id = R.drawable.icon_note
+                            ),
+                            contentDescription = null
+                        )
+                    },
+                    prefix = {
+                        Row(
+                            modifier = Modifier.padding(top = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextFieldSeparator(134)
+                        }
+                    },
+                    supportingText = {
+                        Text(
+                            text = "${viewModel.note.length}/140"
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    )
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
                 Button(

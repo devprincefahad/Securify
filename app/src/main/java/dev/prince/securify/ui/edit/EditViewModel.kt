@@ -42,6 +42,7 @@ class EditViewModel @Inject constructor(
     var email by mutableStateOf("")
     var mobileNumber by mutableStateOf("")
     var password by mutableStateOf("")
+    var note by mutableStateOf("")
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun decryptPassword(password: String): String {

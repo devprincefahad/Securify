@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.size
@@ -210,7 +209,7 @@ fun AddScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextFieldSeparator()
+                            TextFieldSeparator(24)
                         }
                     },
                     keyboardOptions = KeyboardOptions(
@@ -277,7 +276,7 @@ fun AddScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextFieldSeparator()
+                            TextFieldSeparator(24)
                         }
                     },
                     singleLine = true,
@@ -331,7 +330,7 @@ fun AddScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TextFieldSeparator()
+                            TextFieldSeparator(24)
                             /*Text(text = "+91 ")*/
                         }
                     },
@@ -451,7 +450,7 @@ fun AddScreen(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                TextFieldSeparator()
+                                TextFieldSeparator(24)
                             }
                         },
                         keyboardActions = KeyboardActions(
@@ -472,6 +471,82 @@ fun AddScreen(
                         tint = Color.Black
                     )
                 }
+
+                Text(
+                    text = "Note",
+                    textAlign = TextAlign.Left,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    value = viewModel.note,
+                    placeholder = {
+                        Text(
+                            "Add a Note Here...",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
+                    },
+                    maxLines = 6,
+                    shape = RoundedCornerShape(8.dp),
+                    onValueChange = {
+                        if (it.length <= 140) {
+                            viewModel.note = it
+                        }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        focusedBorderColor = Color.Black,
+                        unfocusedBorderColor = Color.Black,
+                        focusedLabelColor = Color.Black,
+                        unfocusedLabelColor = Color.Gray,
+                        cursorColor = Color.Gray
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp),
+                            painter = painterResource(
+                                id = R.drawable.icon_note
+                            ),
+                            contentDescription = null
+                        )
+                    },
+                    prefix = {
+                        Row(
+                            modifier = Modifier.padding(top = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextFieldSeparator(134)
+                        }
+                    },
+                    supportingText = {
+                        Text(
+                            text = "${viewModel.note.length}/140"
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Text
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                    )
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
@@ -619,12 +694,15 @@ fun SearchOutlinedTextFieldWithDropdown(
 }
 
 @Composable
-fun TextFieldSeparator() {
+fun TextFieldSeparator(
+    height: Int
+) {
     Box(
         modifier = Modifier
             .padding(end = 12.dp)
-            .height(24.dp)
+            .height(height.dp)
             .width(1.dp)
-            .background(color = Color.LightGray)
-    )
+            .background(color = Color.LightGray),
+        contentAlignment = Alignment.Center
+    ) {}
 }

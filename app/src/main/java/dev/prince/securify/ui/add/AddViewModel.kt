@@ -37,6 +37,8 @@ class AddViewModel @Inject constructor(
 
     var email by mutableStateOf("")
 
+    var note by mutableStateOf("")
+
     var mobileNumber by mutableStateOf("")
     var keyVisible by mutableStateOf(false)
 

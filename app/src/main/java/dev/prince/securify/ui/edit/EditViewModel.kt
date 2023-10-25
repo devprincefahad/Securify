@@ -77,7 +77,8 @@ class EditViewModel @Inject constructor(
                     userName.trim(),
                     email.trim(),
                     mobileNumber,
-                    encryptPassword(password.trim())
+                    encryptPassword(password.trim()),
+                    note.trim()
                 )
                 db.updateAccount(accountEntity)
                 messages.tryEmit("Successfully Updated!")

@@ -20,9 +20,6 @@ interface AccountDao {
     @Delete
     suspend fun deleteAccount(accountEntity: AccountEntity)
 
-    @Query("DELETE FROM `account`")
-    suspend fun deleteAllAccounts()
-
     @Query("SELECT * FROM account ORDER BY id ASC")
     fun getAllAccounts(): Flow<List<AccountEntity>>
 

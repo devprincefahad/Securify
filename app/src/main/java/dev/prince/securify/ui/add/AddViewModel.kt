@@ -86,7 +86,8 @@ class AddViewModel @Inject constructor(
                 userName = username.trim(),
                 email = email.trim(),
                 mobileNumber = mobileNumber,
-                password = encryptedPassword.trim()
+                password = encryptedPassword.trim(),
+                note = note.trim()
             )
 
             viewModelScope.launch {

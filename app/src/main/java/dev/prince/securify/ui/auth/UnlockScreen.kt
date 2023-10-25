@@ -1,5 +1,8 @@
 package dev.prince.securify.ui.auth
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricPrompt
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +46,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -54,6 +58,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -84,6 +90,40 @@ fun UnlockScreen(
         }
     }
 
+    val context = LocalContext.current as FragmentActivity
+
+    //For Biometrics
+    val executor = ContextCompat.getMainExecutor(context)
+
+    val biometricPrompt = BiometricPrompt(
+        context,
+        executor,
+        object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+//                viewModel.showSnackBarMsg("$errorCode :: $errString")
+            }
+
+            @RequiresApi(Build.VERSION_CODES.R)
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                navigator.navigate(PasswordsScreenDestination)
+                viewModel.showSnackBarMsg("Authentication was successful")
+            }
+
+            override fun onAuthenticationFailed() {
+                super.onAuthenticationFailed()
+                viewModel.showSnackBarMsg("Authentication failed for an unknown reason")
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (viewModel.isUserLoggedIn && viewModel.isBiometricSupported()) {
+            biometricPrompt.authenticate(viewModel.promptInfo)
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.navigateToHome.collect {
             navigator.navigate(PasswordsScreenDestination) {
@@ -105,7 +145,7 @@ fun UnlockScreen(
 @Composable
 fun UnlockScreenContent(
     viewModel: AuthViewModel = hiltViewModel()
-){
+) {
 
     val keyboard = LocalSoftwareKeyboardController.current
 

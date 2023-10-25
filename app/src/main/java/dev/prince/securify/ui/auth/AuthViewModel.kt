@@ -1,11 +1,22 @@
 package dev.prince.securify.ui.auth
 
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricPrompt
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.prince.securify.local.SharedPrefHelper
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.delay
@@ -14,7 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val prefs: SharedPrefHelper
+    private val prefs: SharedPrefHelper,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     // For SharedPrefs
@@ -49,7 +61,7 @@ class AuthViewModel @Inject constructor(
             messages.tryEmit("Please enter correct Master Key")
             return
         }
-        if (key.length < 6){
+        if (key.length < 6) {
             messages.tryEmit("A Master Key should at least have 6 characters")
             return
         }
@@ -145,4 +157,39 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // For Biometric
+
+    fun isBiometricSupported(): Boolean {
+        val biometricManager = BiometricManager.from(context)
+        val canAuthenticate =
+            biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
+        when (canAuthenticate) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                // The user can authenticate with biometrics, continue with the authentication process
+                return true
+            }
+
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE, BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE, BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                // Handle the error cases as needed in your app
+                return false
+            }
+
+            else -> {
+                // Biometric status unknown or another error occurred
+                return false
+            }
+        }
+    }
+
+    val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        .setAllowedAuthenticators(BIOMETRIC_STRONG)
+        .setTitle("Touch ID")
+        .setSubtitle("Use fingerprint to unlock Securify")
+        .setNegativeButtonText("Cancel")
+        .setDeviceCredentialAllowed(true)
+        .build()
+
+    fun showSnackBarMsg(msg: String) {
+        messages.tryEmit(msg)
+    }
 }

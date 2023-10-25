@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.0-alpha05"
+biometric = "1.2.0-alpha05"
 hilt-android = "2.48"
 hilt-navigation-compose = "1.0.0"
 kotlin = "1.9.0"
@@ -14,6 +15,7 @@ security-crypto = "1.0.0"
 security-crypto-ktx = "1.0.0"
 
 [libraries]
+androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "security-crypto" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }

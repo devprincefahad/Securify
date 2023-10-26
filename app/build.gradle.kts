@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     id ("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
+    // Add the Crashlytics Gradle plugin
+    id("com.google.firebase.crashlytics")
+    // Add the Google services Gradle plugin
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -91,6 +95,15 @@ dependencies {
 
     // Biometric
     implementation (libs.androidx.biometric)
+
+    // Firebase Crashlytics
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
+
+    // Add the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

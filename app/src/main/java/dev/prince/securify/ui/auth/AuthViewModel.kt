@@ -192,4 +192,7 @@ class AuthViewModel @Inject constructor(
     fun showSnackBarMsg(msg: String) {
         messages.tryEmit(msg)
     }
+
+    val getState: Boolean
+        get() = prefs.getSwitchState()
 }

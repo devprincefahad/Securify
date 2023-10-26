@@ -119,7 +119,7 @@ fun UnlockScreen(
     )
 
     LaunchedEffect(Unit) {
-        if (viewModel.isUserLoggedIn && viewModel.isBiometricSupported()) {
+        if (viewModel.isUserLoggedIn && viewModel.isBiometricSupported() && viewModel.getState) {
             biometricPrompt.authenticate(viewModel.promptInfo)
         }
     }

@@ -12,7 +12,9 @@ class SharedPrefHelper @Inject constructor(
 
     var masterKey: String
         get() = getString(KEY_AUTH)
-        set(value) { setString(value) }
+        set(value) {
+            setString(value)
+        }
 
     private fun getString(key: String): String {
         return pref.getString(key, "") ?: ""
@@ -23,4 +25,13 @@ class SharedPrefHelper @Inject constructor(
             putString(KEY_AUTH, value)
         }
     }
+
+    fun getSwitchState(): Boolean {
+        return pref.getBoolean("switchState", false)
+    }
+
+    fun setSwitchState(state: Boolean) {
+        pref.edit { putBoolean("switchState", state) }
+    }
+
 }

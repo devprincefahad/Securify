@@ -1,5 +1,7 @@
 package dev.prince.securify.util
 
+import android.content.Context
+import androidx.biometric.BiometricManager
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.rememberRipple
@@ -41,3 +43,25 @@ fun Modifier.clickWithRipple(bounded: Boolean = true, onClick: () -> Unit) = com
 }
 
 val LocalSnackbar = compositionLocalOf<(String) -> Unit> { { } }
+
+fun isBiometricSupported(context: Context): Boolean {
+    val biometricManager = BiometricManager.from(context)
+    val canAuthenticate =
+        biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
+    when (canAuthenticate) {
+        BiometricManager.BIOMETRIC_SUCCESS -> {
+            // The user can authenticate with biometrics, continue with the authentication process
+            return true
+        }
+
+        BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE, BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE, BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+            // Handle the error cases as needed in your app
+            return false
+        }
+
+        else -> {
+            // Biometric status unknown or another error occurred
+            return false
+        }
+    }
+}

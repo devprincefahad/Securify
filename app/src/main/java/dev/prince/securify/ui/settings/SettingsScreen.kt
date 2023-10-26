@@ -43,12 +43,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.ui.auth.NavigationSource
+import dev.prince.securify.ui.composables.BottomSheetSurface
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.White
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.isBiometricSupported
 
 data class SettingsItem(
     val text: String,
@@ -90,13 +92,13 @@ fun SettingsScreen(
                     icon = Icons.Outlined.LockOpen,
                     onClick = { navigator.navigate(MasterKeyScreenDestination(NavigationSource.SETTINGS)) }
                 ),
-                SettingsItem(
+                if (isBiometricSupported(context)) SettingsItem(
                     text = "Touch ID",
                     icon = Icons.Outlined.Fingerprint,
                     onClick = {
-
+                        /**/
                     }
-                ),
+                ) else null,
                 SettingsItem(
                     text = "Share",
                     icon = Icons.Outlined.Share,
@@ -110,21 +112,10 @@ fun SettingsScreen(
             )
         }
 
-        Card(
+        BottomSheetSurface(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 24.dp, topEnd = 24.dp
-                    )
-                ),
-            shape = RoundedCornerShape(
-                bottomStart = 0.dp, bottomEnd = 0.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
         ) {
             Column(
                 modifier = Modifier
@@ -134,59 +125,7 @@ fun SettingsScreen(
                     .fillMaxSize()
             ) {
                 items.forEach { settingsItem ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                        colors = CardDefaults.cardColors(
-                            containerColor = White
-                        ),
-                        shape = RoundedCornerShape(20.dp),
-                        onClick = settingsItem.onClick
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Icon(
-                                imageVector = settingsItem.icon,
-                                contentDescription = null,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = settingsItem.text,
-                                fontSize = 18.sp,
-                                color = Color.Black,
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            if (settingsItem.text == "Touch ID") {
-                                Switch(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .padding(end = 18.dp),
-                                    checked = viewModel.checked,
-                                    onCheckedChange = {
-                                        viewModel.checked = !viewModel.checked
-                                        viewModel.setSwitchState(viewModel.checked)
-                                    },
-                                    colors = SwitchDefaults.colors(
-                                        checkedTrackColor = Blue,
-                                        uncheckedTrackColor = LightBlue,
-                                        uncheckedBorderColor = LightBlue,
-                                        uncheckedThumbColor = Color.White
-                                    )
-                                )
-                            }
-                        }
-                    }
+                    settingsItem?.let { SettingsItemRow(it) }
                 }
             }
         }
@@ -198,5 +137,68 @@ fun SettingsScreen(
     }
     BackHandler {
         (context as ComponentActivity).finish()
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsItemRow(
+    settingsItem: SettingsItem
+) {
+    val viewModel: SettingsViewModel = hiltViewModel()
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                vertical = 8.dp,
+                horizontal = 16.dp
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = White
+        ),
+        shape = RoundedCornerShape(20.dp),
+        onClick = settingsItem.onClick
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = settingsItem.icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = settingsItem.text,
+                fontSize = 18.sp,
+                color = Color.Black,
+                fontFamily = poppinsFamily,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (settingsItem.text == "Touch ID") {
+                Switch(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .padding(end = 18.dp),
+                    checked = viewModel.checked,
+                    onCheckedChange = {
+                        viewModel.checked = !viewModel.checked
+                        viewModel.setSwitchState(viewModel.checked)
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedTrackColor = Blue,
+                        uncheckedTrackColor = LightBlue,
+                        uncheckedBorderColor = LightBlue,
+                        uncheckedThumbColor = Color.White
+                    )
+                )
+            }
+        }
     }
 }

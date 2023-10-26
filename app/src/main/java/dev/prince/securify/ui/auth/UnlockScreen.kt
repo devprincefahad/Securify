@@ -73,6 +73,7 @@ import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
+import dev.prince.securify.util.isBiometricSupported
 
 @Composable
 @RootNavGraph(start = true)
@@ -119,7 +120,7 @@ fun UnlockScreen(
     )
 
     LaunchedEffect(Unit) {
-        if (viewModel.isUserLoggedIn && viewModel.isBiometricSupported() && viewModel.getState) {
+        if (viewModel.isUserLoggedIn && isBiometricSupported(context) && viewModel.getState) {
             biometricPrompt.authenticate(viewModel.promptInfo)
         }
     }

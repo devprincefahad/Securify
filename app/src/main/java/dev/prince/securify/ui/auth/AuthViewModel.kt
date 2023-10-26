@@ -159,28 +159,6 @@ class AuthViewModel @Inject constructor(
 
     // For Biometric
 
-    fun isBiometricSupported(): Boolean {
-        val biometricManager = BiometricManager.from(context)
-        val canAuthenticate =
-            biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
-        when (canAuthenticate) {
-            BiometricManager.BIOMETRIC_SUCCESS -> {
-                // The user can authenticate with biometrics, continue with the authentication process
-                return true
-            }
-
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE, BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE, BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                // Handle the error cases as needed in your app
-                return false
-            }
-
-            else -> {
-                // Biometric status unknown or another error occurred
-                return false
-            }
-        }
-    }
-
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
         .setAllowedAuthenticators(BIOMETRIC_STRONG)
         .setTitle("Touch ID")

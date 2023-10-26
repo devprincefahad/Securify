@@ -93,7 +93,7 @@ fun SettingsScreen(
                     onClick = { navigator.navigate(MasterKeyScreenDestination(NavigationSource.SETTINGS)) }
                 ),
                 if (isBiometricSupported(context)) SettingsItem(
-                    text = "Touch ID",
+                    text = "Fingerprint Unlock",
                     icon = Icons.Outlined.Fingerprint,
                     onClick = {
                         /**/
@@ -143,9 +143,9 @@ fun SettingsScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsItemRow(
-    settingsItem: SettingsItem
+    settingsItem: SettingsItem,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    val viewModel: SettingsViewModel = hiltViewModel()
 
     Card(
         modifier = Modifier
@@ -181,7 +181,7 @@ fun SettingsItemRow(
             )
             Spacer(modifier = Modifier.weight(1f))
 
-            if (settingsItem.text == "Touch ID") {
+            if (settingsItem.text == "Fingerprint Unlock") {
                 Switch(
                     modifier = Modifier
                         .size(28.dp)

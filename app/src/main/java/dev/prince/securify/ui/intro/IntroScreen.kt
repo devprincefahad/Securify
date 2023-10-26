@@ -1,8 +1,14 @@
 package dev.prince.securify.ui.intro
 
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +22,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,21 +38,94 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.identity.Identity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
+import dev.prince.securify.singin.GoogleAuthUiClient
 import dev.prince.securify.ui.auth.NavigationSource
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.LocalSnackbar
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Destination
 @Composable
 fun IntroScreen(
+    viewModel: IntroViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 ) {
+
+    val snackbar = LocalSnackbar.current
+
+    LaunchedEffect(Unit) {
+        viewModel.messages.collect {
+            snackbar(it)
+        }
+    }
+
     val context = LocalContext.current
+
+    val googleAuthUiClient by lazy {
+        GoogleAuthUiClient(
+            context = context,
+            oneTapClient = Identity.getSignInClient(context)
+        )
+    }
+
+    val state by viewModel.state.collectAsState()
+    LaunchedEffect(key1 = Unit) {
+        if (googleAuthUiClient.getSignedInUser() != null) {
+            navigator.navigate(
+                MasterKeyScreenDestination(NavigationSource.INTRO)
+            )
+        }
+    }
+    val scope = rememberCoroutineScope()
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+        onResult = { result ->
+            if (result.resultCode == RESULT_OK) {
+                scope.launch {
+                    val signInResult = googleAuthUiClient.signInWithIntent(
+                        intent = result.data ?: return@launch
+                    )
+                    viewModel.onSignInResult(signInResult)
+                }
+            }
+        }
+    )
+
+    LaunchedEffect(key1 = state.isSignInSuccessful) {
+        if (state.isSignInSuccessful) {
+            viewModel.showSnackBar("Sign in successful")
+
+            navigator.navigate(
+                MasterKeyScreenDestination(NavigationSource.INTRO)
+            )
+            viewModel.resetState()
+        }
+    }
+
+    IntroScreenContent(navigator,googleAuthUiClient,launcher)
+
+    BackHandler {
+        (context as ComponentActivity).finish()
+    }
+}
+
+@Composable
+fun IntroScreenContent(
+    navigator: DestinationsNavigator,
+    googleAuthUiClient: GoogleAuthUiClient,
+    launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>
+) {
+
+    val scope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -94,9 +177,17 @@ fun IntroScreen(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 onClick = {
-                    navigator.navigate(
+                    scope.launch {
+                        val signInIntentSender = googleAuthUiClient.signIn()
+                        launcher.launch(
+                            IntentSenderRequest.Builder(
+                                signInIntentSender ?: return@launch
+                            ).build()
+                        )
+                    }
+                    /*navigator.navigate(
                         MasterKeyScreenDestination(NavigationSource.INTRO)
-                    )
+                    )*/
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -115,9 +206,6 @@ fun IntroScreen(
             }
 
             Spacer(modifier = Modifier.height(60.dp))
-        }
-        BackHandler {
-            (context as ComponentActivity).finish()
         }
     }
 }

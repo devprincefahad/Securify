@@ -2,7 +2,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
-    id ("dagger.hilt.android.plugin")
+    id("dagger.hilt.android.plugin")
     id("com.google.devtools.ksp")
     // Add the Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics")
@@ -74,27 +74,28 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.5.1")
 
     //Dagger - Hilt
-    implementation (libs.hilt.android)
+    implementation(libs.hilt.android)
+    implementation(libs.firebase.auth)
     ksp(libs.hilt.android.compiler)
-    implementation (libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     //Crypto security
     implementation(libs.androidx.security.crypto)
 
     // Compose Nav Destinations
-    implementation ("io.github.raamcosta.compose-destinations:core:1.9.52")
+    implementation("io.github.raamcosta.compose-destinations:core:1.9.52")
     ksp("io.github.raamcosta.compose-destinations:ksp:1.9.52")
 
     // Room
-    implementation ("androidx.room:room-runtime:2.5.2")
+    implementation("androidx.room:room-runtime:2.5.2")
     annotationProcessor("androidx.room:room-compiler:2.5.2")
     ksp("androidx.room:room-compiler:2.5.2")
 
     // Kotlin Extensions and Coroutines support for Room
-    implementation ("androidx.room:room-ktx:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
 
     // Biometric
-    implementation (libs.androidx.biometric)
+    implementation(libs.androidx.biometric)
 
     // Firebase Crashlytics
     // Import the BoM for the Firebase platform
@@ -104,6 +105,11 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+
+    implementation(libs.coil.compose)
+
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.play.services.auth)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

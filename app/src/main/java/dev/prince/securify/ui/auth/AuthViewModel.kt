@@ -161,8 +161,8 @@ class AuthViewModel @Inject constructor(
 
     val promptInfo = BiometricPrompt.PromptInfo.Builder()
         .setAllowedAuthenticators(BIOMETRIC_STRONG)
-        .setTitle("Touch ID")
-        .setSubtitle("Use fingerprint to unlock Securify")
+        .setTitle("Fingerprint Unlock")
+        .setSubtitle("Use your fingerprint to unlock Securify")
         .setNegativeButtonText("Cancel")
         .setDeviceCredentialAllowed(true)
         .build()

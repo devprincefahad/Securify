@@ -2,7 +2,9 @@ package dev.prince.securify.ui.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,13 +25,19 @@ class HomeViewModel @Inject constructor(
 
     val messages = oneShotFlow<String>()
 
-    var showDialog = mutableStateOf(false)
+    var showDialog by mutableStateOf(false)
 
-    var loading = mutableStateOf(false)
+    var accountToDelete by mutableStateOf(AccountEntity(-1, "", "", "", "", "", ""))
 
-    fun deleteAccount(account: AccountEntity) {
+    fun onUserDeleteClick(accountEntity: AccountEntity) {
+        accountToDelete = accountEntity
+        showDialog = true
+    }
+
+    fun deleteAccount() {
         viewModelScope.launch {
-            db.accountDao().deleteAccount(account)
+            db.accountDao().deleteAccount(accountToDelete)
+            showDialog = false
         }
     }
 

@@ -1,6 +1,7 @@
 package dev.prince.securify.ui.home
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
@@ -36,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -87,6 +89,7 @@ fun HomeScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     // Filtered accounts based on search query
+    // FIXME move to ViewModel
     val filteredAccounts = accounts.value.filter { account ->
         account.accountName.contains(searchQuery, ignoreCase = true) ||
                 account.userName.contains(searchQuery, ignoreCase = true) ||
@@ -120,6 +123,8 @@ fun HomeScreen(
             }
         }
     }
+
+    if (viewModel.showDialog) ConfirmDeletionDialog()
 
     Scaffold(
         floatingActionButton = {
@@ -241,7 +246,10 @@ fun HomeScreen(
                                 )
                                 .nestedScroll(nestedScrollConnection),
                         ) {
-                            items(filteredAccounts) { account ->
+                            items(
+                                filteredAccounts,
+                                key = { account -> account.id }
+                            ) { account ->
                                 AccountRow(navigator, account, viewModel)
                             }
                         }
@@ -261,7 +269,7 @@ fun HomeScreen(
 fun AccountRow(
     navigator: DestinationsNavigator,
     account: AccountEntity,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     Card(
         elevation = CardDefaults.cardElevation(
@@ -275,6 +283,7 @@ fun AccountRow(
             .padding(8.dp)
     ) {
 
+        // FIXME move to Constants
         val suggestionsWithImages = listOf(
             "Instagram" to painterResource(R.drawable.icon_instagram),
             "Facebook" to painterResource(R.drawable.icon_facebook),
@@ -433,7 +442,7 @@ fun AccountRow(
                                 )
                             },
                             onClick = {
-                                viewModel.showDialog.value = true
+                                viewModel.onUserDeleteClick(account)
                                 expanded = false
                             },
                             trailingIcon = {
@@ -445,25 +454,27 @@ fun AccountRow(
                             }
                         )
                     }
-
-                    if (viewModel.showDialog.value) {
-                        AlertDialogContent(
-                            onDismissRequest = {
-                                viewModel.showDialog.value = false
-                            },
-                            onConfirmation = {
-                                viewModel.deleteAccount(account)
-                                viewModel.showDialog.value = false
-                            },
-                            dialogTitle = "Delete Password?",
-                            dialogText = "Are you sure you want to delete password for ${account.accountName}?",
-                            confirmTitle = "Delete"
-                        )
-                    }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun ConfirmDeletionDialog(
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
+    AlertDialogContent(
+        onDismissRequest = {
+            viewModel.showDialog = false
+        },
+        onConfirmation = {
+            viewModel.deleteAccount()
+        },
+        dialogTitle = "Delete Password?",
+        dialogText = "Are you sure you want to delete password for ${viewModel.accountToDelete.accountName}?",
+        confirmTitle = "Delete"
+    )
 }
 
 @Composable

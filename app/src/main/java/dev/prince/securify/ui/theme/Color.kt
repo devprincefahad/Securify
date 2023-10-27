@@ -14,3 +14,5 @@ val Gray = Color(0xD3515151)
 
 val LightBlack = Color(0xD3323232)
 val BgBlack = Color.Black
+
+val Red = Color(0xD3E72121)

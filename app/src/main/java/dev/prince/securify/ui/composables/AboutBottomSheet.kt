@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.settings
+package dev.prince.securify.ui.composables
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background

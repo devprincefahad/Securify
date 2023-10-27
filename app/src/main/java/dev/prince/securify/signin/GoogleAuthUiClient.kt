@@ -1,4 +1,4 @@
-package dev.prince.securify.singin
+package dev.prince.securify.signin
 
 import android.content.Context
 import android.content.Intent

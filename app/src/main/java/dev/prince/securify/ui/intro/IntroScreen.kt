@@ -43,7 +43,7 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.singin.GoogleAuthUiClient
+import dev.prince.securify.signin.GoogleAuthUiClient
 import dev.prince.securify.ui.auth.NavigationSource
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.theme.Blue

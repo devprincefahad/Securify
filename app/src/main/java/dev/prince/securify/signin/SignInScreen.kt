@@ -1,4 +1,4 @@
-package dev.prince.securify.singin
+package dev.prince.securify.signin
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box

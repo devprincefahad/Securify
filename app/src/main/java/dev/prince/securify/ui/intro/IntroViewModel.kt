@@ -2,8 +2,8 @@ package dev.prince.securify.ui.intro
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.prince.securify.singin.SignInResult
-import dev.prince.securify.singin.SignInState
+import dev.prince.securify.signin.SignInResult
+import dev.prince.securify.signin.SignInState
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

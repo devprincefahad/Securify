@@ -52,8 +52,8 @@ import coil.compose.AsyncImage
 import com.google.android.gms.auth.api.identity.Identity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import dev.prince.securify.singin.GoogleAuthUiClient
-import dev.prince.securify.singin.UserData
+import dev.prince.securify.signin.GoogleAuthUiClient
+import dev.prince.securify.signin.UserData
 import dev.prince.securify.ui.auth.NavigationSource
 import dev.prince.securify.ui.components.AboutBottomSheet
 import dev.prince.securify.ui.components.SheetSurface

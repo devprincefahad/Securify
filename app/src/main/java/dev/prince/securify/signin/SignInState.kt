@@ -1,4 +1,4 @@
-package dev.prince.securify.singin
+package dev.prince.securify.signin
 
 data class SignInState(
     val isSignInSuccessful: Boolean = false,

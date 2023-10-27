@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.composables
+package dev.prince.securify.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -10,7 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomSheetSurface(
+fun SheetSurface(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {

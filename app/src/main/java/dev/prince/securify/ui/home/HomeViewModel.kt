@@ -1,9 +1,7 @@
-package dev.prince.securify.ui.passwords
+package dev.prince.securify.ui.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,11 +11,10 @@ import dev.prince.securify.database.SecurifyDatabase
 import dev.prince.securify.encryption.EncryptionManager
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.launch
-import java.util.Base64
 import javax.inject.Inject
 
 @HiltViewModel
-class PasswordsViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val db: SecurifyDatabase,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {

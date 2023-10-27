@@ -9,7 +9,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import dev.prince.securify.ui.destinations.AddScreenDestination
+import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.Destination
 import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.destinations.IntroScreenDestination
@@ -29,7 +29,7 @@ fun Destination.shouldShowBottomBar(): Boolean {
         IntroScreenDestination,
         UnlockScreenDestination,
         MasterKeyScreenDestination,
-        AddScreenDestination,
+        AddPasswordScreenDestination,
         EditScreenDestination
     ))
 }

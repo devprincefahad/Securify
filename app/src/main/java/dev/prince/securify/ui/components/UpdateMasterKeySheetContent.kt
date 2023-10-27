@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.composables
+package dev.prince.securify.ui.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -50,7 +50,7 @@ import dev.prince.securify.ui.theme.poppinsFamily
 fun UpdateMasterKeySheetContent(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
-    BottomSheetSurface(
+    SheetSurface(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),

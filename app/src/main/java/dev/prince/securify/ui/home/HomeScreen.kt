@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.passwords
+package dev.prince.securify.ui.home
 
 import android.os.Build
 import androidx.activity.ComponentActivity
@@ -9,7 +9,6 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -63,9 +62,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
-import dev.prince.securify.ui.composables.AlertDialogContent
-import dev.prince.securify.ui.composables.BottomSheetSurface
-import dev.prince.securify.ui.destinations.AddScreenDestination
+import dev.prince.securify.ui.components.AlertDialogContent
+import dev.prince.securify.ui.components.SheetSurface
+import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
@@ -76,9 +75,9 @@ import dev.prince.securify.util.LocalSnackbar
 @RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
-fun PasswordsScreen(
+fun HomeScreen(
     navigator: DestinationsNavigator,
-    viewModel: PasswordsViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
@@ -131,7 +130,7 @@ fun PasswordsScreen(
             ) {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        navigator.navigate(AddScreenDestination)
+                        navigator.navigate(AddPasswordScreenDestination)
                     },
                     containerColor = Blue,
                     contentColor = Color.White,
@@ -177,7 +176,7 @@ fun PasswordsScreen(
                 )
             )
 
-            BottomSheetSurface(
+            SheetSurface(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
@@ -262,7 +261,7 @@ fun PasswordsScreen(
 fun AccountRow(
     navigator: DestinationsNavigator,
     account: AccountEntity,
-    viewModel: PasswordsViewModel
+    viewModel: HomeViewModel
 ) {
     Card(
         elevation = CardDefaults.cardElevation(

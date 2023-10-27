@@ -1,9 +1,10 @@
-package dev.prince.securify.ui.edit
+package dev.prince.securify.ui.add_password
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -62,9 +63,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.ui.add.TextFieldSeparator
-import dev.prince.securify.ui.composables.BottomSheetSurface
-import dev.prince.securify.ui.destinations.PasswordsScreenDestination
+import dev.prince.securify.ui.components.SheetSurface
+import dev.prince.securify.ui.destinations.HomeScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.Gray
@@ -75,15 +75,10 @@ import dev.prince.securify.util.clickWithRipple
 @RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
-fun EditScreen(
+fun AddPasswordScreen(
     navigator: DestinationsNavigator,
-    viewModel: EditViewModel = hiltViewModel(),
-    accountId: Int
+    viewModel: AddPasswordViewModel = hiltViewModel()
 ) {
-
-    LaunchedEffect(Unit) {
-        viewModel.getAccountById(accountId)
-    }
 
     val snackbar = LocalSnackbar.current
 
@@ -110,7 +105,7 @@ fun EditScreen(
                 tint = Color.White,
                 contentDescription = "Go back",
                 modifier = Modifier.clickWithRipple {
-                    navigator.navigate(PasswordsScreenDestination)
+                    navigator.navigate(HomeScreenDestination)
                 }
             )
 
@@ -119,26 +114,29 @@ fun EditScreen(
                     top = 18.dp, bottom = 12.dp,
                     start = 16.dp, end = 16.dp
                 ),
-                text = "Edit Password",
+                text = "Add New Password",
                 color = Color.White,
                 style = TextStyle(
                     fontSize = 24.sp,
-                    fontFamily = poppinsFamily
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.SemiBold
                 ),
-                fontWeight = FontWeight.SemiBold,
             )
         }
-        BottomSheetSurface(
+
+        SheetSurface(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
+
             Column(
                 modifier = Modifier
-                    .verticalScroll(state = rememberScrollState())
+                    .verticalScroll(rememberScrollState())
                     .fillMaxSize()
                     .background(color = Color.White)
             ) {
+
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "Account Name",
@@ -157,22 +155,36 @@ fun EditScreen(
                     text = "Username",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
-                    value = viewModel.userName,
+                    value = viewModel.username,
+                    placeholder = {
+                        Text(
+                            "John Doe",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
+                    },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
                         if (it.length <= 35) {
-                            viewModel.userName = it
+                            viewModel.username = it
                         }
                     },
                     supportingText = {
-                        Text(text = "${viewModel.userName.length}/35")
+                        Text(text = "${viewModel.username.length}/35")
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.Black,
@@ -214,7 +226,11 @@ fun EditScreen(
                     text = "Email ID",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -223,7 +239,14 @@ fun EditScreen(
                         .fillMaxWidth(),
                     value = viewModel.email,
                     placeholder = {
-                        Text("john@example.com")
+                        Text(
+                            "john@example.com",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -276,7 +299,11 @@ fun EditScreen(
                     text = "Mobile Number",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
@@ -285,7 +312,13 @@ fun EditScreen(
                         .fillMaxWidth(),
                     value = viewModel.mobileNumber,
                     placeholder = {
-                        Text("XXXXXXXXXX")
+                        Text(
+                            "XXXXXXXXXX", style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -339,7 +372,11 @@ fun EditScreen(
                     text = "Password",
                     textAlign = TextAlign.Left,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily
+                    )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
@@ -347,13 +384,21 @@ fun EditScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
+
                     OutlinedTextField(
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 6.dp),
                         value = viewModel.password,
                         placeholder = {
-                            Text("**********")
+                            Text(
+                                " ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ",
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    fontFamily = poppinsFamily,
+                                    color = Gray
+                                )
+                            )
                         },
                         shape = RoundedCornerShape(8.dp),
                         onValueChange = {
@@ -410,7 +455,7 @@ fun EditScreen(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.validationAndUpdateDetails(accountId)
+                                viewModel.validateAndInsert()
                             }
                         )
                     )
@@ -510,7 +555,7 @@ fun EditScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     onClick = {
-                        viewModel.validationAndUpdateDetails(accountId)
+                        viewModel.validateAndInsert()
                     },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -519,22 +564,23 @@ fun EditScreen(
                     )
                 ) {
                     Text(
-                        text = "Update Password",
-                        fontSize = 22.sp,
-                        fontFamily = poppinsFamily,
-                        fontWeight = FontWeight.Medium
+                        text = "Save Password",
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontFamily = poppinsFamily,
+                            fontWeight = FontWeight.Medium
+                        )
                     )
                 }
                 if (viewModel.success.value) {
                     LaunchedEffect(Unit) {
-                        navigator.navigate(PasswordsScreenDestination)
+                        navigator.navigate(HomeScreenDestination)
                     }
                 }
             }
-
         }
         BackHandler {
-            navigator.navigate(PasswordsScreenDestination)
+            navigator.navigate(HomeScreenDestination)
         }
     }
 }
@@ -542,7 +588,7 @@ fun EditScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchOutlinedTextFieldWithDropdown(
-    viewModel: EditViewModel = hiltViewModel()
+    viewModel: AddPasswordViewModel = hiltViewModel()
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -578,13 +624,21 @@ fun SearchOutlinedTextFieldWithDropdown(
         expanded = viewModel.suggestions.isNotEmpty(),
         onExpandedChange = { viewModel.resetSuggestions() },
     ) {
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(),
             value = viewModel.accountName,
             placeholder = {
-                Text("Type Account Name ...")
+                Text(
+                    "Type Account Name ...",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = poppinsFamily,
+                        color = Gray
+                    )
+                )
             },
             onValueChange = {
                 viewModel.accountName = it
@@ -636,6 +690,19 @@ fun SearchOutlinedTextFieldWithDropdown(
                 )
             }
         }
-
     }
+}
+
+@Composable
+fun TextFieldSeparator(
+    height: Int
+) {
+    Box(
+        modifier = Modifier
+            .padding(end = 12.dp)
+            .height(height.dp)
+            .width(1.dp)
+            .background(color = Color.LightGray),
+        contentAlignment = Alignment.Center
+    ) {}
 }

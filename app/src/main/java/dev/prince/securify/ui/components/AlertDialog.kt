@@ -1,8 +1,7 @@
-package dev.prince.securify.ui.composables
+package dev.prince.securify.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -15,11 +14,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.poppinsFamily
-import dev.prince.securify.util.clickWithRipple
 
 @Composable
 fun AlertDialogContent(

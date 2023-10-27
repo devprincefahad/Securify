@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.add
+package dev.prince.securify.ui.add_password
 
 import android.os.Build
 import android.util.Patterns
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddViewModel @Inject constructor(
+class AddPasswordViewModel @Inject constructor(
     private val db: AccountDao,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {

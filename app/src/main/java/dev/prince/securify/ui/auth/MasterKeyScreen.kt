@@ -10,14 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,9 +28,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
-import dev.prince.securify.ui.composables.CreateMasterKeySheetContent
-import dev.prince.securify.ui.composables.UpdateMasterKeySheetContent
-import dev.prince.securify.ui.destinations.PasswordsScreenDestination
+import dev.prince.securify.ui.components.CreateMasterKeySheetContent
+import dev.prince.securify.ui.components.UpdateMasterKeySheetContent
+import dev.prince.securify.ui.destinations.HomeScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
@@ -65,8 +60,8 @@ fun MasterKeyScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navigateToHome.collect {
-            navigator.navigate(PasswordsScreenDestination) {
-                popUpTo(PasswordsScreenDestination) {
+            navigator.navigate(HomeScreenDestination) {
+                popUpTo(HomeScreenDestination) {
                     inclusive = true
                 }
             }

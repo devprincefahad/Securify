@@ -3,13 +3,17 @@ package dev.prince.securify.ui.auth
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -70,28 +75,24 @@ fun MasterKeyScreen(
 
     Column(
         modifier = Modifier
-            .verticalScroll(state = rememberScrollState())
-            .fillMaxSize()
-            .background(color = BgBlack),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(color = BgBlack)
     ) {
-
-        Spacer(modifier = Modifier.weight(1f))
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(32.dp))
         Text(
             modifier = Modifier
                 .padding(start = 16.dp, end = 32.dp),
             text = stringResource(R.string.setup_key_tagline_1),
             textAlign = TextAlign.Left,
-            fontWeight = FontWeight.Bold,
             color = Color.White,
             style = TextStyle(
-                fontSize = 52.sp,
+                fontSize = 46.sp,
+                fontWeight = FontWeight.Bold,
                 fontFamily = poppinsFamily,
-                lineHeight = 52.sp
+                lineHeight = 60.sp
             )
         )
-        Spacer(modifier = Modifier.height(60.dp))
+
+        Spacer(modifier = Modifier.height(32.dp))
 
         if (navigationSource == NavigationSource.SETTINGS) {
             UpdateMasterKeySheetContent()

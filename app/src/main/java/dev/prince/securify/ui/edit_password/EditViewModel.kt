@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.edit
+package dev.prince.securify.ui.edit_password
 
 import android.os.Build
 import android.util.Patterns

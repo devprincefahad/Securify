@@ -16,9 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -60,6 +62,7 @@ import dev.prince.securify.ui.destinations.HomeScreenDestination
 import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
+import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.isBiometricSupported
@@ -152,29 +155,46 @@ fun UnlockScreenContent(
         ) {
             SheetSurface {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.Center
                 ) {
 
                     Text(
                         modifier = Modifier
-                            .padding(all = 8.dp)
+                            .padding(
+                                start = 16.dp, end = 16.dp,
+                                top = 16.dp, bottom = 8.dp
+                            )
                             .fillMaxWidth(),
-                        text = "Please provide your \nMaster Key",
+                        text = "Unlock with your \nMaster Key",
                         textAlign = TextAlign.Center,
                         style = TextStyle(
                             fontSize = 24.sp,
-                            fontFamily = poppinsFamily
-                        ),
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black
+                            fontFamily = poppinsFamily,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black
+                        )
+
                     )
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
                     OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Enter Master key") },
+                        modifier = Modifier
+                            .padding(
+                                start = 16.dp, end = 16.dp,
+                                top = 8.dp, bottom = 8.dp
+                            )
+                            .fillMaxWidth(),
+                        label = {
+                            Text(
+                                text = "Enter Master key",
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    fontFamily = poppinsFamily,
+                                    color = Gray
+                                )
+                            )
+                        },
                         value = viewModel.unlockKey,
                         visualTransformation = if (viewModel.unlockKeyVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         onValueChange = {
@@ -224,13 +244,11 @@ fun UnlockScreenContent(
                         }
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     Button(
                         modifier = Modifier
                             .padding(
-                                top = 16.dp,
-                                start = 16.dp, end = 16.dp
+                                start = 16.dp, end = 16.dp,
+                                top = 8.dp, bottom = 16.dp
                             )
                             .fillMaxWidth()
                             .height(50.dp),

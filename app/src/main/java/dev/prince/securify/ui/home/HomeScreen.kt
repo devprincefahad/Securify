@@ -89,7 +89,6 @@ fun HomeScreen(
     var searchQuery by remember { mutableStateOf("") }
 
     // Filtered accounts based on search query
-    // FIXME move to ViewModel
     val filteredAccounts = accounts.value.filter { account ->
         account.accountName.contains(searchQuery, ignoreCase = true) ||
                 account.userName.contains(searchQuery, ignoreCase = true) ||

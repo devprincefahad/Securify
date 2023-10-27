@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.edit
+package dev.prince.securify.ui.edit_password
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -520,9 +520,11 @@ fun EditScreen(
                 ) {
                     Text(
                         text = "Update Password",
-                        fontSize = 22.sp,
-                        fontFamily = poppinsFamily,
-                        fontWeight = FontWeight.Medium
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                            fontFamily = poppinsFamily,
+                            fontWeight = FontWeight.Medium
+                        ),
                     )
                 }
                 if (viewModel.success.value) {

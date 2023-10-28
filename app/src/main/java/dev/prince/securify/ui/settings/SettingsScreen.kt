@@ -3,6 +3,7 @@ package dev.prince.securify.ui.settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -17,12 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Fingerprint
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LockOpen
-import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -44,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +49,7 @@ import coil.compose.AsyncImage
 import com.google.android.gms.auth.api.identity.Identity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import dev.prince.securify.R
 import dev.prince.securify.signin.GoogleAuthUiClient
 import dev.prince.securify.signin.UserData
 import dev.prince.securify.ui.auth.NavigationSource
@@ -64,12 +62,13 @@ import dev.prince.securify.ui.theme.LightBlue
 import dev.prince.securify.ui.theme.Red
 import dev.prince.securify.ui.theme.White
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.clickWithRipple
 import dev.prince.securify.util.isBiometricSupported
 import kotlinx.coroutines.launch
 
 data class SettingsItem(
     val text: String,
-    val icon: ImageVector,
+    val icon: Int,
     val onClick: () -> Unit
 )
 
@@ -113,29 +112,29 @@ fun SettingsScreen(
             listOf(
                 SettingsItem(
                     text = "Reset Master Key",
-                    icon = Icons.Outlined.LockOpen,
+                    icon = R.drawable.icon_lock_open,
                     onClick = { navigator.navigate(MasterKeyScreenDestination(NavigationSource.SETTINGS)) }
                 ),
                 if (isBiometricSupported(context)) SettingsItem(
                     text = "Fingerprint Unlock",
-                    icon = Icons.Outlined.Fingerprint,
+                    icon = R.drawable.icon_fingerprint,
                     onClick = {
                         /**/
                     }
                 ) else null,
                 SettingsItem(
                     text = "Share",
-                    icon = Icons.Outlined.Share,
+                    icon = R.drawable.icon_share,
                     onClick = { /* TODO hook up Firebase Remote Config for Share Securify  */ }
                 ),
                 SettingsItem(
                     text = "About",
-                    icon = Icons.Outlined.Info,
+                    icon = R.drawable.icon_info,
                     onClick = { showSheet = true }
                 ),
                 SettingsItem(
                     text = "Logout",
-                    icon = Icons.Outlined.Logout,
+                    icon = R.drawable.icon_logout,
                     onClick = {
                         scope.launch { googleAuthUiClient.signOut() }
                     }
@@ -248,37 +247,44 @@ fun UserProfileRow(userData: UserData?) {
     }
 }
 
-
 @Composable
 fun SettingsItemRow(
     settingsItem: SettingsItem,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    Surface(
+    Column (
         modifier = Modifier
-            .fillMaxWidth(),
-        onClick = settingsItem.onClick
+            .clickable {
+                settingsItem.onClick
+            }
+            .fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(
+                    top = 16.dp, bottom = 16.dp,
+                    start = 16.dp, end = 16.dp
+                )
         ) {
+
             Icon(
-                imageVector = settingsItem.icon,
+                painter = painterResource(settingsItem.icon),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = if (settingsItem.text == "Logout") Red else Color.Black
             )
-            Spacer(modifier = Modifier.width(16.dp))
+
             Text(
+                modifier = Modifier.padding(top = 2.dp, start = 16.dp),
                 text = settingsItem.text,
-                fontSize = 18.sp,
+                fontSize = 16.sp,
                 color = if (settingsItem.text == "Logout") Red else Color.Black,
                 fontFamily = poppinsFamily,
                 fontWeight = FontWeight.Medium
             )
+
             Spacer(modifier = Modifier.weight(1f))
 
             if (settingsItem.text == "Fingerprint Unlock") {

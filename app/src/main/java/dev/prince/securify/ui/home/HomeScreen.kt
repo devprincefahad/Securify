@@ -1,7 +1,6 @@
 package dev.prince.securify.ui.home
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
@@ -25,11 +24,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,7 +31,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,6 +66,7 @@ import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
+import dev.prince.securify.util.suggestionsWithImages
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Destination
@@ -140,7 +134,7 @@ fun HomeScreen(
                     contentColor = Color.White,
                     icon = {
                         Icon(
-                            Icons.Filled.Add,
+                            painter = painterResource(R.drawable.icon_add),
                             modifier = Modifier.size(26.dp),
                             contentDescription = null
                         )
@@ -217,7 +211,7 @@ fun HomeScreen(
                         },
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.Search,
+                                painter = painterResource(R.drawable.icon_search),
                                 contentDescription = null
                             )
                         },
@@ -282,24 +276,6 @@ fun AccountRow(
             .padding(8.dp)
     ) {
 
-        // FIXME move to Constants
-        val suggestionsWithImages = listOf(
-            "Instagram" to painterResource(R.drawable.icon_instagram),
-            "Facebook" to painterResource(R.drawable.icon_facebook),
-            "LinkedIn" to painterResource(R.drawable.icon_linkedin),
-            "Snapchat" to painterResource(R.drawable.icons_snapchat),
-            "YouTube" to painterResource(R.drawable.icon_youtube),
-            "Netflix" to painterResource(R.drawable.icon_netflix),
-            "Discord" to painterResource(R.drawable.icon_discord),
-            "Twitter" to painterResource(R.drawable.icon_twitterx),
-            "Amazon Prime" to painterResource(R.drawable.icon_amazon_prime_video),
-            "Spotify" to painterResource(R.drawable.icon_spotify),
-            "Gmail" to painterResource(R.drawable.icon_gmail),
-            "Reddit" to painterResource(R.drawable.icon_reddit),
-            "Quora" to painterResource(R.drawable.icon_quora),
-            "Pinterest" to painterResource(R.drawable.icon_pinterest)
-        )
-
         var expanded by remember { mutableStateOf(false) }
 
         val clipboardManager: ClipboardManager = LocalClipboardManager.current
@@ -307,7 +283,7 @@ fun AccountRow(
         val matchingImage =
             suggestionsWithImages.firstOrNull { it.first == account.accountName }?.second
 
-        val painter = matchingImage ?: painterResource(R.drawable.icon_others)
+        val painter = matchingImage ?: R.drawable.icon_others
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -317,7 +293,7 @@ fun AccountRow(
         ) {
 
             Image(
-                painter = painter,
+                painter = painterResource(painter),
                 contentDescription = null,
                 modifier = Modifier
                     .size(42.dp)
@@ -393,7 +369,7 @@ fun AccountRow(
                     ) {
                         Icon(
                             modifier = Modifier
-                                .size(18.dp),
+                                .size(26.dp),
                             painter = painterResource(R.drawable.icon_more),
                             contentDescription = "Options Icon"
                         )
@@ -424,7 +400,7 @@ fun AccountRow(
                             trailingIcon = {
                                 Icon(
                                     modifier = Modifier.size(20.dp),
-                                    imageVector = Icons.Default.Edit,
+                                    painter = painterResource(R.drawable.icon_edit),
                                     contentDescription = "Edit Icon"
                                 )
                             }
@@ -447,7 +423,7 @@ fun AccountRow(
                             trailingIcon = {
                                 Icon(
                                     modifier = Modifier.size(20.dp),
-                                    imageVector = Icons.Default.Delete,
+                                    painter = painterResource(R.drawable.icon_delete),
                                     contentDescription = null
                                 )
                             }

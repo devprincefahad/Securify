@@ -8,6 +8,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -70,7 +71,7 @@ fun BottomBar(
                 },
                 icon = {
                     Icon(
-                        destination.icon,
+                        painter = painterResource(destination.icon),
                         contentDescription = stringResource(destination.label),
                         tint = if (currentDestination == destination.direction) Color.White else Color.Black // Icon color when selected
                     )

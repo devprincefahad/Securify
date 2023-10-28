@@ -20,11 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -106,7 +101,7 @@ fun EditScreen(
         ) {
             Spacer(Modifier.width(16.dp))
             Icon(
-                imageVector = Icons.Filled.ChevronLeft,
+                painter = painterResource(R.drawable.icon_arrow_left),
                 tint = Color.White,
                 contentDescription = "Go back",
                 modifier = Modifier.clickWithRipple {
@@ -188,7 +183,7 @@ fun EditScreen(
                         Icon(
                             modifier = Modifier.size(22.dp),
                             painter = painterResource(
-                                id = R.drawable.icon_user
+                                id = R.drawable.icon_username
                             ),
                             contentDescription = null
                         )
@@ -378,9 +373,9 @@ fun EditScreen(
                                     viewModel.keyVisible = !viewModel.keyVisible
                                 }) {
                                 Icon(
-                                    imageVector = if (viewModel.keyVisible)
-                                        Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff, contentDescription = null
+                                    painter = if (viewModel.keyVisible)
+                                        painterResource(R.drawable.icon_visibility)
+                                    else painterResource(R.drawable.icon_visibility_off), contentDescription = null
                                 )
                             }
                         },
@@ -396,7 +391,7 @@ fun EditScreen(
                         leadingIcon = {
                             Icon(
                                 painter = painterResource(
-                                    id = R.drawable.icon_passlock
+                                    id = R.drawable.icon_lock
                                 ),
                                 contentDescription = null
                             )
@@ -421,7 +416,7 @@ fun EditScreen(
                             .clickWithRipple {
                                 viewModel.generateRandomPassword()
                             },
-                        imageVector = Icons.Default.Refresh,
+                        painter = painterResource(R.drawable.icon_regenerate),
                         contentDescription = null,
                         tint = Color.Black
                     )

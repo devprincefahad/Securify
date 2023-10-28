@@ -18,9 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +34,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -165,9 +163,9 @@ fun UpdateMasterKeySheetContent(
                                 }
                             ) {
                                 Icon(
-                                    imageVector = if (viewModel.oldKeyVisible)
-                                        Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff, contentDescription = null,
+                                    painter = if (viewModel.oldKeyVisible) painterResource(R.drawable.icon_visibility)
+                                    else painterResource(R.drawable.icon_visibility_off),
+                                    contentDescription = null,
                                     tint = Color.Gray
                                 )
                             }
@@ -226,10 +224,10 @@ fun UpdateMasterKeySheetContent(
                                 viewModel.newKeyVisible = !viewModel.newKeyVisible
                             }) {
                                 Icon(
-                                    imageVector = if (viewModel.newKeyVisible)
-                                        Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff,
-                                    if (viewModel.newKeyVisible) "Hide password" else "Show password",
+                                    painter = if (viewModel.newKeyVisible)
+                                        painterResource(R.drawable.icon_visibility)
+                                    else painterResource(R.drawable.icon_visibility_off),
+                                    contentDescription = null,
                                     tint = Color.Gray
                                 )
                             }
@@ -289,10 +287,10 @@ fun UpdateMasterKeySheetContent(
                                 viewModel.confirmNewKeyVisible = !viewModel.confirmNewKeyVisible
                             }) {
                                 Icon(
-                                    imageVector = if (viewModel.confirmNewKeyVisible)
-                                        Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff,
-                                    if (viewModel.confirmNewKeyVisible) "Hide password" else "Show password",
+                                    painter = if (viewModel.confirmNewKeyVisible)
+                                        painterResource(R.drawable.icon_visibility)
+                                    else painterResource(R.drawable.icon_visibility_off),
+                                    contentDescription = null,
                                     tint = Color.Gray
                                 )
                             }

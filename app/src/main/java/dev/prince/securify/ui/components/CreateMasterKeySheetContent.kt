@@ -19,9 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -185,9 +183,10 @@ fun CreateMasterKeySheetContent(
                                 }
                             ) {
                                 Icon(
-                                    imageVector = if (viewModel.keyVisible)
-                                        Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff, contentDescription = null,
+                                    painter = if (viewModel.keyVisible)
+                                        painterResource(R.drawable.icon_visibility)
+                                    else painterResource(R.drawable.icon_visibility_off),
+                                    contentDescription = null,
                                     tint = Color.Gray
                                 )
                             }
@@ -247,10 +246,9 @@ fun CreateMasterKeySheetContent(
                                 viewModel.confirmKeyVisible = !viewModel.confirmKeyVisible
                             }) {
                                 Icon(
-                                    imageVector = if (viewModel.confirmKeyVisible)
-                                        Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff,
-                                    if (viewModel.confirmKeyVisible) "Hide password" else "Show password",
+                                    painter = if (viewModel.confirmKeyVisible)
+                                        painterResource(R.drawable.icon_visibility)
+                                    else painterResource(R.drawable.icon_visibility_off), contentDescription = null,
                                     tint = Color.Gray
                                 )
                             }

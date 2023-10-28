@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -36,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
+import dev.prince.securify.R
 import dev.prince.securify.ui.components.SheetSurface
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
@@ -222,7 +222,7 @@ fun GenerateScreen(
                             modifier = Modifier
                                 .padding(all = 8.dp)
                                 .size(40.dp),
-                            imageVector = Icons.Default.Refresh,
+                            painter = painterResource(R.drawable.icon_regenerate),
                             contentDescription = null,
                             tint = Color.White
                         )

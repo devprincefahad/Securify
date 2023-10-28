@@ -21,9 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -97,6 +94,7 @@ fun UnlockScreen(
 //                viewModel.showSnackBarMsg("$errorCode :: $errString")
             }
 
+            // FIXME add if else for backwards compatibility
             @RequiresApi(Build.VERSION_CODES.R)
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
@@ -234,10 +232,10 @@ fun UnlockScreenContent(
                                 }
                             ) {
                                 Icon(
-                                    imageVector = if (viewModel.unlockKeyVisible)
-                                        Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff,
-                                    if (viewModel.unlockKeyVisible) "Hide password" else "Show password",
+                                    painter = if (viewModel.unlockKeyVisible)
+                                        painterResource(R.drawable.icon_visibility)
+                                    else painterResource(R.drawable.icon_visibility_off),
+                                    contentDescription = null,
                                     tint = Color.Gray
                                 )
                             }

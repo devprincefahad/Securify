@@ -71,15 +71,14 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
-    implementation("androidx.compose.material:material-icons-extended:1.5.1")
 
-    //Dagger - Hilt
+    // Dagger - Hilt
     implementation(libs.hilt.android)
     implementation(libs.firebase.auth)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    //Crypto security
+    // Crypto security
     implementation(libs.androidx.security.crypto)
 
     // Compose Nav Destinations
@@ -106,8 +105,10 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
 
+    // Coil
     implementation(libs.coil.compose)
 
+    // Auth and google play services
     implementation(libs.firebase.auth.ktx)
     implementation(libs.play.services.auth)
 

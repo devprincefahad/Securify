@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="GenerateScreenPreview">
+      <entry key="MultiFloatingActionButtonPreview">
         <State />
       </entry>
       <entry key="SettingsScreenPreview">
@@ -11,15 +11,6 @@
       <entry key="app">
         <State>
           <runningDeviceTargetsSelectedWithDialog>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="SERIAL_NUMBER" />
-                  <value value="K7E4C19726004447" />
-                </Key>
-              </deviceKey>
-            </Target>
             <Target>
               <type value="RUNNING_DEVICE_TARGET" />
               <deviceKey>

@@ -27,14 +27,18 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.prince.securify.R
 import dev.prince.securify.ui.components.fab.FabButtonItem
 import dev.prince.securify.ui.components.fab.FabButtonMain
 import dev.prince.securify.ui.components.fab.FabButtonState
 import dev.prince.securify.ui.components.fab.FabButtonSub
 import dev.prince.securify.ui.components.fab.rememberMultiFabState
+import dev.prince.securify.ui.theme.poppinsFamily
 
 /**
  * Composable function to display a Multi-Floating Action Button (Multi-FAB) that can be expanded to reveal sub-items.
@@ -95,6 +99,7 @@ fun MultiFloatingActionButton(
 
         // Main FloatingActionButton representing the Multi-FAB
         FloatingActionButton(
+            modifier = Modifier.size(66.dp),
             onClick = {
                 fabState.value = fabState.value.toggleValue()
                 stateChanged(fabState.value)
@@ -106,7 +111,8 @@ fun MultiFloatingActionButton(
             Icon(
                 painter = painterResource(fabIcon.iconRes),
                 contentDescription = null,
-                modifier = Modifier.rotate(rotation),
+                modifier = Modifier.size(32.dp)
+                    .rotate(rotation),
                 tint = fabOption.iconTint
             )
         }
@@ -136,7 +142,11 @@ fun MiniFabItem(
         // Text label for the sub-item displayed in a rounded-corner background
         Text(
             text = item.label,
-            style = typography.labelSmall,
+            style = TextStyle(
+                fontFamily = poppinsFamily,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium
+            ),
             color = Color.White,
             modifier = Modifier
                 .clip(RoundedCornerShape(size = 8.dp))

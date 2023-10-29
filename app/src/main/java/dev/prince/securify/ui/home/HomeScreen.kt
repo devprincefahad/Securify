@@ -1,5 +1,6 @@
 package dev.prince.securify.ui.home
 
+import MultiFloatingActionButton
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -59,6 +60,9 @@ import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
 import dev.prince.securify.ui.components.AlertDialogContent
 import dev.prince.securify.ui.components.SheetSurface
+import dev.prince.securify.ui.components.fab.FabButtonItem
+import dev.prince.securify.ui.components.fab.FabButtonMain
+import dev.prince.securify.ui.destinations.AddCardScreenDestination
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
@@ -126,28 +130,22 @@ fun HomeScreen(
                 enter = slideInVertically(initialOffsetY = { it * 2 }),
                 exit = slideOutVertically(targetOffsetY = { it * 2 }),
             ) {
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        navigator.navigate(AddPasswordScreenDestination)
-                    },
-                    containerColor = Blue,
-                    contentColor = Color.White,
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.icon_add),
-                            modifier = Modifier.size(26.dp),
-                            contentDescription = null
-                        )
-                    },
-                    text = {
-                        Text(
-                            text = "Add Password",
-                            style = TextStyle(
-                                fontSize = 16.sp,
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.Medium
-                            )
-                        )
+                val items = listOf(
+                    FabButtonItem(R.drawable.icon_card, label = "Add Card"),
+                    FabButtonItem(R.drawable.icon_pass, "Add Password")
+                )
+                val fabIcon = FabButtonMain(R.drawable.icon_add)
+                MultiFloatingActionButton(
+                    items = items,
+                    fabIcon = fabIcon,
+                    onFabItemClicked = {
+                        when (it.label) {
+                            "Add Card" -> navigator.navigate(AddCardScreenDestination)
+                            "Add Password" ->  navigator.navigate(AddPasswordScreenDestination)
+                            else -> {
+                                // To handle other cases if needed
+                            }
+                        }
                     }
                 )
             }

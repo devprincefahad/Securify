@@ -11,6 +11,7 @@ val LightBlue = Color(0xFF79B7E9)
 
 val White = Color(0xFFEBEBEB)
 val Gray = Color(0xD3515151)
+val LightGray = Color(0xD3BBBBBB)
 
 val LightBlack = Color(0xD3323232)
 val BgBlack = Color.Black

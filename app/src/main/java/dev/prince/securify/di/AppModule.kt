@@ -30,6 +30,10 @@ object AppModule {
     @Provides
     fun provideAccountDao(db: SecurifyDatabase) = db.accountDao()
 
+    @Singleton
+    @Provides
+    fun provideCardDao(db: SecurifyDatabase) = db.cardDao()
+
     @Provides
     @Singleton
     fun provideSharedPref(@ApplicationContext context: Context): SharedPreferences {

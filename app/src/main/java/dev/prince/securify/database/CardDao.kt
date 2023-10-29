@@ -23,7 +23,7 @@ interface CardDao {
     @Query("SELECT * FROM card ORDER BY id ASC")
     fun getAllCard(): Flow<List<CardEntity>>
 
-    @Query("SELECT * FROM `account` WHERE id = :id")
+    @Query("SELECT * FROM `card` WHERE id = :id")
     fun getCardById(id: Int): Flow<CardEntity>
 
 }

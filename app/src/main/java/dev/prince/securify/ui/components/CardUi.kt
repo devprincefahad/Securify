@@ -158,17 +158,3 @@ fun CardUi(
         }
     }
 }
-
-/*
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CreditCardPreview() {
-    CardUi(
-        cardHolderName = "John Doe",
-        cardNumber = "4444 3333 2222 1111",
-        cardCVV = "415",
-        cardExpiryDate = "05/12",
-        cardIcon = R.drawable.icon_card
-    )
-}
-*/

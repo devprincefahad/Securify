@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,18 +29,11 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -66,7 +58,6 @@ import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.MaskVisualTransformation
 import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.clickWithRipple
-import dev.prince.securify.util.suggestionsWithImages
 import kotlinx.coroutines.delay
 
 @Composable
@@ -136,7 +127,7 @@ fun AddCardScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 val matchingImage =
-                    cardSuggestions.firstOrNull { it.first == viewModel.selectedOptionText }?.second
+                    cardSuggestions.firstOrNull { it.first == viewModel.cardProviderName }?.second
 
                 val painter = matchingImage ?: R.drawable.icon_card
 
@@ -388,7 +379,7 @@ fun TextFieldDropDown(
                 .fillMaxWidth()
                 .menuAnchor(),
             readOnly = true,
-            value = viewModel.selectedOptionText,
+            value = viewModel.cardProviderName,
             onValueChange = {},
             label = {
                 Text(text = "Card Provider")
@@ -437,7 +428,7 @@ fun TextFieldDropDown(
                         )
                     },
                     onClick = {
-                        viewModel.selectedOptionText = cardInfo.first
+                        viewModel.cardProviderName = cardInfo.first
                         viewModel.selectedCardImage = cardInfo.second
                         viewModel.expandedProviderField = false
                         viewModel.hideKeyboard = true

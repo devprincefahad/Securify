@@ -58,6 +58,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
+import dev.prince.securify.database.CardEntity
 import dev.prince.securify.ui.components.AlertDialogContent
 import dev.prince.securify.ui.components.SheetSurface
 import dev.prince.securify.ui.components.fab.FabButtonItem
@@ -66,10 +67,12 @@ import dev.prince.securify.ui.destinations.AddCardScreenDestination
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.EditScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
-import dev.prince.securify.ui.theme.Blue
+import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.AccountOrCard
 import dev.prince.securify.util.LocalSnackbar
+import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.suggestionsWithImages
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -82,6 +85,9 @@ fun HomeScreen(
 
     val context = LocalContext.current
     val accounts = viewModel.accounts.collectAsState(emptyList())
+    val cards = viewModel.cards.collectAsState(emptyList())
+
+    val combinedData by viewModel.combinedData.collectAsState(emptyList())
 
     // State for holding the search query
     var searchQuery by remember { mutableStateOf("") }
@@ -121,7 +127,9 @@ fun HomeScreen(
         }
     }
 
-    if (viewModel.showDialog) ConfirmDeletionDialog()
+    if (viewModel.showAccountDeleteDialog) ConfirmAccountDeletionDialog()
+
+    if (viewModel.showCardDeleteDialog) ConfirmCardDeletionDialog()
 
     Scaffold(
         floatingActionButton = {
@@ -141,7 +149,7 @@ fun HomeScreen(
                     onFabItemClicked = {
                         when (it.label) {
                             "Add Card" -> navigator.navigate(AddCardScreenDestination)
-                            "Add Password" ->  navigator.navigate(AddPasswordScreenDestination)
+                            "Add Password" -> navigator.navigate(AddPasswordScreenDestination)
                             else -> {
                                 // To handle other cases if needed
                             }
@@ -163,7 +171,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(
                     top = 18.dp, bottom = 12.dp
                 ),
-                text = "My Passwords",
+                text = "Home",
                 color = Color.White,
                 style = TextStyle(
                     fontSize = 24.sp,
@@ -225,26 +233,53 @@ fun HomeScreen(
                         )
                     )
 
-                    if (filteredAccounts.isEmpty()) {
-                        EmptyListPlaceholder(searchQuery.isNotEmpty())
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(
-                                    start = 8.dp, end = 8.dp,
-                                    top = 8.dp, bottom = 0.dp
-                                )
-                                .nestedScroll(nestedScrollConnection),
-                        ) {
-                            items(
-                                filteredAccounts,
-                                key = { account -> account.id }
-                            ) { account ->
-                                AccountRow(navigator, account, viewModel)
+//                    if (filteredAccounts.isEmpty()) {
+//                        EmptyListPlaceholder(searchQuery.isNotEmpty())
+//                    } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                start = 8.dp, end = 8.dp,
+                                top = 8.dp, bottom = 0.dp
+                            )
+                            .nestedScroll(nestedScrollConnection),
+                    ) {
+                        /*items(
+                            filteredAccounts,
+                            key = { account -> account.id }
+                        ) { account ->
+                            AccountRow(navigator, account, viewModel)
+                        }
+                        items(cards.value) { card ->
+
+                        }*/
+
+                        items(combinedData) { item ->
+                            when (item) {
+                                is AccountOrCard.AccountItem -> {
+                                    AccountRow(navigator, item.account)
+                                }
+
+                                is AccountOrCard.CardItem -> {
+                                    CardRow(navigator, item.card)
+                                }
                             }
+
+                            /*when (item) {
+                                is AccountOrCard.AccountItem -> {
+                                    ItemRow(navigator,item.account)
+                                    // Display account details
+                                    // You can use a custom Composable for this
+                                }
+                                is AccountOrCard.CardItem -> {
+                                    // Display card details
+                                    // You can use a custom Composable for this
+                                }
+                            }*/
                         }
                     }
+//                    }
                 }
             }
         }
@@ -316,8 +351,8 @@ fun AccountRow(
                 )
 
                 val displayInfo = when {
-                    !account.email.isNullOrBlank() -> account.email
-                    !account.userName.isNullOrBlank() -> account.userName
+                    account.email.isNotBlank() -> account.email
+                    account.userName.isNotBlank() -> account.userName
                     else -> account.mobileNumber
                 }
 
@@ -415,7 +450,7 @@ fun AccountRow(
                                 )
                             },
                             onClick = {
-                                viewModel.onUserDeleteClick(account)
+                                viewModel.onUserAccountDeleteClick(account)
                                 expanded = false
                             },
                             trailingIcon = {
@@ -434,18 +469,216 @@ fun AccountRow(
 }
 
 @Composable
-private fun ConfirmDeletionDialog(
+fun CardRow(
+    navigator: DestinationsNavigator,
+    card: CardEntity,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
+    Card(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 2.dp
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+
+        var expanded by remember { mutableStateOf(false) }
+
+        val clipboardManager: ClipboardManager = LocalClipboardManager.current
+
+        val matchingImage =
+            cardSuggestions.firstOrNull { it.first == card.cardProvider }?.second
+
+        val painter = matchingImage ?: R.drawable.icon_card
+
+        val tint = if (painter == R.drawable.icon_card) {
+            Gray
+        } else {
+            Color.Unspecified
+        }
+
+        val cardNumber = card.cardNumber.takeLast(4).padStart(card.cardNumber.length, '*')
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = 16.dp, end = 12.dp,
+                    top = 12.dp, bottom = 12.dp
+                )
+        ) {
+
+            Icon(
+                painter = painterResource(painter),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(32.dp),
+                tint = tint
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(start = 14.dp)
+                    .weight(1f)
+            ) {
+
+                Text(
+                    text = card.cardHolderName,
+                    color = Color.Black,
+                    style = TextStyle(
+                        fontSize = 18.sp,
+                        fontFamily = poppinsFamily,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+
+                Text(
+                    text = cardNumber,
+                    color = Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = poppinsFamily,
+                        fontWeight = FontWeight.Normal
+                    )
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                IconButton(
+                    onClick = {
+                        clipboardManager.setText(
+                            AnnotatedString(card.cardNumber)
+                        )
+                        viewModel.showCopyMsg()
+                    },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .padding(end = 6.dp),
+                        painter = painterResource(R.drawable.icon_copy),
+                        contentDescription = "Copy Icon"
+                    )
+                }
+
+                Box {
+                    IconButton(
+                        modifier = Modifier
+                            .size(26.dp)
+                            .padding(end = 4.dp),
+                        onClick = {
+                            expanded = true
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(26.dp),
+                            painter = painterResource(R.drawable.icon_more),
+                            contentDescription = "Options Icon"
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .background(Color.White)
+                    ) {
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "Edit",
+                                    style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontFamily = poppinsFamily,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            },
+                            onClick = {
+                                //add edit screen navigation
+                                //navigator.navigate(EditScreenDestination(account.id))
+                                expanded = false
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    painter = painterResource(R.drawable.icon_edit),
+                                    contentDescription = "Edit Icon"
+                                )
+                            }
+                        )
+
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "Delete", style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontFamily = poppinsFamily,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            },
+                            onClick = {
+                                viewModel.onUserCardDeleteClick(card)
+                                expanded = false
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    painter = painterResource(R.drawable.icon_delete),
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ConfirmAccountDeletionDialog(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     AlertDialogContent(
         onDismissRequest = {
-            viewModel.showDialog = false
+            viewModel.showAccountDeleteDialog = false
         },
         onConfirmation = {
             viewModel.deleteAccount()
         },
         dialogTitle = "Delete Password?",
         dialogText = "Are you sure you want to delete password for ${viewModel.accountToDelete.accountName}?",
+        confirmTitle = "Delete"
+    )
+}
+
+@Composable
+private fun ConfirmCardDeletionDialog(
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
+    AlertDialogContent(
+        onDismissRequest = {
+            viewModel.showCardDeleteDialog = false
+        },
+        onConfirmation = {
+            viewModel.deleteCard()
+        },
+        dialogTitle = "Delete Card?",
+        dialogText = "Are you sure you want to delete ${viewModel.cardToDelete.cardHolderName}'s Card?",
         confirmTitle = "Delete"
     )
 }

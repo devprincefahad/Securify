@@ -8,36 +8,65 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.prince.securify.database.AccountDao
 import dev.prince.securify.database.AccountEntity
-import dev.prince.securify.database.SecurifyDatabase
+import dev.prince.securify.database.CardDao
+import dev.prince.securify.database.CardEntity
 import dev.prince.securify.encryption.EncryptionManager
+import dev.prince.securify.util.AccountOrCard
 import dev.prince.securify.util.oneShotFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val db: SecurifyDatabase,
+    private val dbAccount: AccountDao,
+    private val dbCard: CardDao,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
-    val accounts = db.accountDao().getAllAccounts()
+    val accounts = dbAccount.getAllAccounts()
+    val cards = dbCard.getAllCards()
+
+    val combinedData: Flow<List<AccountOrCard>> = combine(accounts, cards) { accounts, cards ->
+        val combinedList = mutableListOf<AccountOrCard>()
+        combinedList.addAll(accounts.map { AccountOrCard.AccountItem(it) })
+        combinedList.addAll(cards.map { AccountOrCard.CardItem(it) })
+        combinedList
+    }
 
     val messages = oneShotFlow<String>()
 
-    var showDialog by mutableStateOf(false)
+    var showAccountDeleteDialog by mutableStateOf(false)
+
+    var showCardDeleteDialog by mutableStateOf(false)
 
     var accountToDelete by mutableStateOf(AccountEntity(-1, "", "", "", "", "", ""))
+    var cardToDelete by mutableStateOf(CardEntity(-1, "", "", "", "", ""))
 
-    fun onUserDeleteClick(accountEntity: AccountEntity) {
+    fun onUserAccountDeleteClick(accountEntity: AccountEntity) {
         accountToDelete = accountEntity
-        showDialog = true
+        showAccountDeleteDialog = true
     }
 
     fun deleteAccount() {
         viewModelScope.launch {
-            db.accountDao().deleteAccount(accountToDelete)
-            showDialog = false
+            dbAccount.deleteAccount(accountToDelete)
+            showAccountDeleteDialog = false
+        }
+    }
+
+    fun onUserCardDeleteClick(cardEntity: CardEntity) {
+        cardToDelete = cardEntity
+        showCardDeleteDialog = true
+    }
+
+    fun deleteCard() {
+        viewModelScope.launch {
+            dbCard.deleteCard(cardToDelete)
+            showCardDeleteDialog = false
         }
     }
 

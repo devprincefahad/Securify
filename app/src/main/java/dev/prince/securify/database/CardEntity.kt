@@ -10,5 +10,6 @@ data class CardEntity(
     val cardHolderName: String,
     val cardNumber: String,
     val cardExpiryDate: String,
-    val cardCvv: String
+    val cardCvv: String,
+    val cardProvider: String
 )

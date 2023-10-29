@@ -38,8 +38,9 @@ class AddCardViewModel @Inject constructor(
 
     var expanded by mutableStateOf(false)
 
+    var cardProviderName by mutableStateOf("Select Card Provider")
+
     var expandedProviderField by mutableStateOf(false)
-    var selectedOptionText by mutableStateOf("Select Card Provider")
     var hideKeyboard by mutableStateOf(false)
     var selectedCardImage by mutableIntStateOf(cardSuggestions.first().second)
 
@@ -105,7 +106,7 @@ class AddCardViewModel @Inject constructor(
     }
 
     private fun validateFields(): Boolean {
-        if (selectedOptionText == "Select Card Provider") {
+        if (cardProviderName == "Select Card Provider") {
             messages.tryEmit("Please choose a Card Provider")
             return false
         }
@@ -148,7 +149,8 @@ class AddCardViewModel @Inject constructor(
                 cardHolderName = cardHolderName.trim(),
                 cardNumber = cardNumber,
                 cardExpiryDate = cardExpiryDate,
-                cardCvv = cardCVV
+                cardCvv = cardCVV,
+                cardProvider = cardProviderName
             )
 
             viewModelScope.launch {

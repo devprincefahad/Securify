@@ -99,5 +99,20 @@ class AddCardViewModel @Inject constructor(
         return out
     }
 
+    private val gradientOptions = listOf(
+        listOf(Color(0xFF6C72CB), Color(0xFF0078FF)), // Blue Gradient
+        listOf(Color(0xFF8A2387), Color(0xFFE94057)), // Pink Gradient
+        listOf(Color(0xFF56CCF2), Color(0xFF2F80ED)), // Sky Blue Gradient
+        listOf(Color(0xFFFF6B6B), Color(0xFFFFD23F)), // Sunset Gradient
+        listOf(Color(0xFF6A3093), Color(0xFFA044FF)), // Purple Gradient
+        listOf(Color(0xFFFC4A1A), Color(0xFFF7B733)), // Orange Gradient
+        listOf(Color(0xFF00C9FF), Color(0xFF92FE9D)), // Turquoise Gradient
+        listOf(Color(0xFF00F260), Color(0xFF0575E6)), // Green Gradient
+        listOf(Color(0xFF693B52), Color(0xFF1B1B1E)), // Dark Red Gradient
+        listOf(Color(0xFF00B4DB), Color(0xFF0083B0))  // Ocean Blue Gradient
+    )
+
+    private val randomIndex = Random.nextInt(gradientOptions.size)
+    val randomGradient = gradientOptions[randomIndex]
 
 }

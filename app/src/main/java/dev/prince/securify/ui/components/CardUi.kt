@@ -63,9 +63,7 @@ fun CardUi(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFF6C72CB), Color(0xFF0078FF))
-                        )
+                        Brush.verticalGradient(viewModel.randomGradient)
                     )
             ) {
 

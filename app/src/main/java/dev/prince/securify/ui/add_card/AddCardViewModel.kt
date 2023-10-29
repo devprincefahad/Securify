@@ -3,22 +3,27 @@ package dev.prince.securify.ui.add_card
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.prince.securify.database.CardDao
+import dev.prince.securify.database.CardEntity
 import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.oneShotFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 
+@HiltViewModel
 class AddCardViewModel @Inject constructor(
-
+    private val db: CardDao
 ) : ViewModel() {
 
     val messages = oneShotFlow<String>()
@@ -33,12 +38,12 @@ class AddCardViewModel @Inject constructor(
 
     var expanded by mutableStateOf(false)
 
-    var cardSuggestionList = SnapshotStateList<String>()
-
     var expandedProviderField by mutableStateOf(false)
-    var selectedOptionText by mutableStateOf("Choose a Provider, eg: Visa")
+    var selectedOptionText by mutableStateOf("Select Card Provider")
     var hideKeyboard by mutableStateOf(false)
     var selectedCardImage by mutableIntStateOf(cardSuggestions.first().second)
+
+    val success = mutableStateOf(false)
 
     // Making XXXX-XXXX-XXXX-XXXX string.
     val visualTransformation = object : VisualTransformation {
@@ -97,6 +102,62 @@ class AddCardViewModel @Inject constructor(
         }
 
         return out
+    }
+
+    private fun validateFields(): Boolean {
+        if (selectedOptionText == "Select Card Provider") {
+            messages.tryEmit("Please choose a Card Provider")
+            return false
+        }
+        if (cardNumber.isEmpty()) {
+            messages.tryEmit("Please provide Card Number")
+            return false
+        }
+        if (cardNumber.length < 16) {
+            messages.tryEmit("Card number must be 16 digits long")
+            return false
+        }
+        if (!cardNumber.isDigitsOnly()) {
+            messages.tryEmit("Invalid Card Number")
+            return false
+        }
+        if (cardHolderName.isEmpty()) {
+            messages.tryEmit("Please provide Card holder's name")
+            return false
+        }
+        if (cardExpiryDate.isEmpty()) {
+            messages.tryEmit("Please provide Card Expiry Date")
+            return false
+        }
+        if (cardCVV.isEmpty()) {
+            messages.tryEmit("Please provide Card CVV")
+            return false
+        }
+        if (cardNumber.length < 3) {
+            messages.tryEmit("Card cvv must be 3 digits")
+            return false
+        }
+        return true
+    }
+
+    fun validateAndInsert() {
+        if (validateFields()) {
+
+            val card = CardEntity(
+                id = 0,
+                cardHolderName = cardHolderName.trim(),
+                cardNumber = cardNumber,
+                cardExpiryDate = cardExpiryDate,
+                cardCvv = cardCVV
+            )
+
+            viewModelScope.launch {
+                db.insertCard(card)
+                messages.tryEmit("Credentials Added!")
+                success.value = true
+            }
+
+        }
     }
 
     private val gradientOptions = listOf(

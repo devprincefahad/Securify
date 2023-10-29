@@ -170,6 +170,9 @@ fun AddCardScreen(
                             viewModel.cardNumber = it
                         }
                     },
+                    supportingText = {
+                        Text(text = "${viewModel.cardNumber.length}/16")
+                    },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black,
@@ -265,6 +268,9 @@ fun AddCardScreen(
                             )
                         },
                         shape = RoundedCornerShape(8.dp),
+                        supportingText = {
+                            Text(text = "mm/yy")
+                        },
                         visualTransformation = MaskVisualTransformation("##/##"),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.Black,
@@ -302,6 +308,9 @@ fun AddCardScreen(
                                 viewModel.cardCVV = it
                             }
                         },
+                        supportingText = {
+                            Text(text = "${viewModel.cardCVV.length}/3")
+                        },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.Black,
                             unfocusedTextColor = Color.Black,
@@ -331,7 +340,7 @@ fun AddCardScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     onClick = {
-
+                        viewModel.validateAndInsert()
                     },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -347,6 +356,11 @@ fun AddCardScreen(
                             fontWeight = FontWeight.Medium
                         )
                     )
+                }
+                if (viewModel.success.value) {
+                    LaunchedEffect(Unit) {
+                        navigator.navigate(HomeScreenDestination)
+                    }
                 }
             }
         }

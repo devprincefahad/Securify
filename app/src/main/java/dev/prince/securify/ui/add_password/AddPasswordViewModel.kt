@@ -79,7 +79,7 @@ class AddPasswordViewModel @Inject constructor(
 
         if (validateFields()) {
             val encryptedPassword = encryptionManager.encrypt(password)
-
+            val currentTimeInMillis = System.currentTimeMillis()
             val account = AccountEntity(
                 id = 0,
                 accountName = accountName.trim(),
@@ -87,7 +87,8 @@ class AddPasswordViewModel @Inject constructor(
                 email = email.trim(),
                 mobileNumber = mobileNumber,
                 password = encryptedPassword.trim(),
-                note = note.trim()
+                note = note.trim(),
+                createdAt = currentTimeInMillis
             )
 
             viewModelScope.launch {

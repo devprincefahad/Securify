@@ -143,6 +143,7 @@ class AddCardViewModel @Inject constructor(
 
     fun validateAndInsert() {
         if (validateFields()) {
+            val currentTimeInMillis = System.currentTimeMillis()
 
             val card = CardEntity(
                 id = 0,
@@ -150,7 +151,8 @@ class AddCardViewModel @Inject constructor(
                 cardNumber = cardNumber,
                 cardExpiryDate = cardExpiryDate,
                 cardCvv = cardCVV,
-                cardProvider = cardProviderName
+                cardProvider = cardProviderName,
+                createdAt = currentTimeInMillis
             )
 
             viewModelScope.launch {

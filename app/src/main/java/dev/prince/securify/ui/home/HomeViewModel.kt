@@ -32,8 +32,14 @@ class HomeViewModel @Inject constructor(
 
     val combinedData: Flow<List<AccountOrCard>> = combine(accounts, cards) { accounts, cards ->
         val combinedList = mutableListOf<AccountOrCard>()
-        combinedList.addAll(accounts.map { AccountOrCard.AccountItem(it) })
-        combinedList.addAll(cards.map { AccountOrCard.CardItem(it) })
+
+        val itemsWithTimestamp = mutableListOf<Pair<AccountOrCard, Long>>()
+        accounts.forEach { item -> itemsWithTimestamp.add(AccountOrCard.AccountItem(item) to item.createdAt) }
+        cards.forEach { item -> itemsWithTimestamp.add(AccountOrCard.CardItem(item) to item.createdAt) }
+
+        val sortedItems = itemsWithTimestamp.sortedByDescending { it.second }
+
+        combinedList.addAll(sortedItems.map { it.first })
         combinedList
     }
 
@@ -43,8 +49,8 @@ class HomeViewModel @Inject constructor(
 
     var showCardDeleteDialog by mutableStateOf(false)
 
-    var accountToDelete by mutableStateOf(AccountEntity(-1, "", "", "", "", "", ""))
-    var cardToDelete by mutableStateOf(CardEntity(-1, "", "", "", "", ""))
+    var accountToDelete by mutableStateOf(AccountEntity(-1, "", "", "", "", "", "", 0L))
+    var cardToDelete by mutableStateOf(CardEntity(-1, "", "", "", "", "", 0L))
 
     fun onUserAccountDeleteClick(accountEntity: AccountEntity) {
         accountToDelete = accountEntity

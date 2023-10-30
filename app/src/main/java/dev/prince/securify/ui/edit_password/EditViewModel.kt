@@ -71,6 +71,7 @@ class EditViewModel @Inject constructor(
     fun validationAndUpdateDetails(id: Int) {
         if (validateFields()) {
             viewModelScope.launch {
+                val currentTimeInMillis = System.currentTimeMillis()
                 val accountEntity = AccountEntity(
                     id,
                     accountName.trim(),
@@ -78,7 +79,8 @@ class EditViewModel @Inject constructor(
                     email.trim(),
                     mobileNumber,
                     encryptPassword(password.trim()),
-                    note.trim()
+                    note.trim(),
+                    currentTimeInMillis
                 )
                 db.updateAccount(accountEntity)
                 messages.tryEmit("Successfully Updated!")

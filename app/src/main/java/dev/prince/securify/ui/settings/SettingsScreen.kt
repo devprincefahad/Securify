@@ -255,7 +255,7 @@ fun SettingsItemRow(
     Column (
         modifier = Modifier
             .clickable {
-                settingsItem.onClick
+                settingsItem.onClick.invoke()
             }
             .fillMaxWidth()
     ) {

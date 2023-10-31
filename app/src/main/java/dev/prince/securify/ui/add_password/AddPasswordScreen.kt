@@ -420,7 +420,8 @@ fun AddPasswordScreen(
                                 Icon(
                                     painter = if (viewModel.keyVisible)
                                         painterResource(R.drawable.icon_visibility)
-                                    else painterResource(R.drawable.icon_visibility_off), contentDescription = null
+                                    else painterResource(R.drawable.icon_visibility_off),
+                                    contentDescription = null
                                 )
                             }
                         },
@@ -450,7 +451,7 @@ fun AddPasswordScreen(
                         },
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                viewModel.validateAndInsert()
+                                focusManager.moveFocus(FocusDirection.Down)
                             }
                         )
                     )
@@ -538,7 +539,7 @@ fun AddPasswordScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            focusManager.moveFocus(FocusDirection.Down)
+                            viewModel.validateAndInsert()
                         }
                     )
                 )

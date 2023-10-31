@@ -60,6 +60,7 @@ import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.clickWithRipple
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Destination
 fun AddCardScreen(
@@ -81,6 +82,7 @@ fun AddCardScreen(
     ) {
 
         val focusManager = LocalFocusManager.current
+        val keyboardController = LocalSoftwareKeyboardController.current
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -275,6 +277,11 @@ fun AddCardScreen(
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.moveFocus(FocusDirection.Right)
+                            }
                         )
                     )
 
@@ -317,7 +324,8 @@ fun AddCardScreen(
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                focusManager.moveFocus(FocusDirection.Down)
+                                keyboardController?.hide()
+                                viewModel.validateAndInsert()
                             }
                         )
                     )

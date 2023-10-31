@@ -1,5 +1,6 @@
 package dev.prince.securify.ui.add_card
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,9 @@ import dev.prince.securify.database.CardEntity
 import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -130,6 +134,9 @@ class AddCardViewModel @Inject constructor(
             messages.tryEmit("Please provide Card Expiry Date")
             return false
         }
+        if (!validateExpiryDate(cardExpiryDate)) {
+            return false
+        }
         if (cardCVV.isEmpty()) {
             messages.tryEmit("Please provide Card CVV")
             return false
@@ -143,13 +150,15 @@ class AddCardViewModel @Inject constructor(
 
     fun validateAndInsert() {
         if (validateFields()) {
+
             val currentTimeInMillis = System.currentTimeMillis()
+            val formattedExpiryDate = formatExpiryDate(cardExpiryDate)
 
             val card = CardEntity(
                 id = 0,
                 cardHolderName = cardHolderName.trim(),
                 cardNumber = cardNumber,
-                cardExpiryDate = cardExpiryDate,
+                cardExpiryDate = formattedExpiryDate,
                 cardCvv = cardCVV,
                 cardProvider = cardProviderName,
                 createdAt = currentTimeInMillis
@@ -168,9 +177,9 @@ class AddCardViewModel @Inject constructor(
         listOf(Color(0xFF6C72CB), Color(0xFF0078FF)), // Blue Gradient
         listOf(Color(0xFF8A2387), Color(0xFFE94057)), // Pink Gradient
         listOf(Color(0xFF56CCF2), Color(0xFF2F80ED)), // Sky Blue Gradient
-        listOf(Color(0xFFFF6B6B), Color(0xFFFFD23F)), // Sunset Gradient
+        listOf(Color(0xFFFFD23F), Color(0xFFFF6B6B)), // Sunset Gradient
         listOf(Color(0xFF6A3093), Color(0xFFA044FF)), // Purple Gradient
-        listOf(Color(0xFFFC4A1A), Color(0xFFF7B733)), // Orange Gradient
+        listOf(Color(0xFFF7B733), Color(0xFFFC4A1A)), // Orange Gradient
         listOf(Color(0xFF00C9FF), Color(0xFF92FE9D)), // Turquoise Gradient
         listOf(Color(0xFF00F260), Color(0xFF0575E6)), // Green Gradient
         listOf(Color(0xFF693B52), Color(0xFF1B1B1E)), // Dark Red Gradient
@@ -179,5 +188,32 @@ class AddCardViewModel @Inject constructor(
 
     private val randomIndex = Random.nextInt(gradientOptions.size)
     val randomGradient = gradientOptions[randomIndex]
+
+    private fun validateExpiryDate(cardExpiryDate: String): Boolean {
+
+        val currentDate = Date()
+        val calender = Calendar.getInstance()
+
+        val userMonth = cardExpiryDate.substring(0, 2).toInt()
+        val userYear = cardExpiryDate.substring(2, 4).toInt()
+        val currentYear = calender.get(Calendar.YEAR) % 100
+
+        if (userMonth < 1 || userMonth > 12) {
+            messages.tryEmit("Invalid month. Please enter a valid month between 01 and 12.")
+            return false
+        }
+
+        if (userYear < currentYear) {
+            messages.tryEmit("Expiry year is in the past. Please enter a valid future year.")
+            return false
+        }
+
+        if (userYear == currentYear && userMonth < currentDate.month + 1) {
+            messages.tryEmit("Expiry date is in the past. Please enter a valid future date.")
+            return false
+        }
+
+        return true
+    }
 
 }

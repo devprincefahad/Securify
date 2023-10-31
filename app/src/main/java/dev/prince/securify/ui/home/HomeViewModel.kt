@@ -2,8 +2,8 @@ package dev.prince.securify.ui.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
         searchQuery
     ) { accounts, cards, query ->
 
-        val itemsWithTimestamp = mutableListOf<Pair<AccountOrCard, Long>>()
+        val itemsWithTimestamp = mutableStateListOf<Pair<AccountOrCard, Long>>()
 
         accounts.forEach { item -> itemsWithTimestamp.add(AccountOrCard.AccountItem(item) to item.createdAt) }
         cards.forEach { item -> itemsWithTimestamp.add(AccountOrCard.CardItem(item) to item.createdAt) }

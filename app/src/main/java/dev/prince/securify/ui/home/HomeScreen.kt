@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,10 +30,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,6 +49,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -182,7 +187,7 @@ fun HomeScreen(
                         .fillMaxSize()
                         .background(color = Color.White)
                 ) {
-
+                    // FIXME: search query when switch to different tab does not updates list
                     OutlinedTextField(
                         modifier = Modifier
                             .padding(
@@ -225,24 +230,28 @@ fun HomeScreen(
                         )
                     )
 
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(
-                                start = 8.dp, end = 8.dp,
-                                top = 8.dp, bottom = 0.dp
-                            )
-                            .nestedScroll(nestedScrollConnection),
-                    ) {
+                    if (combinedData.isEmpty()) {
+                        EmptyListPlaceholder(false)
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(
+                                    start = 8.dp, end = 8.dp,
+                                    top = 8.dp, bottom = 0.dp
+                                )
+                                .nestedScroll(nestedScrollConnection),
+                        ) {
 
-                        items(combinedData) { item ->
-                            when (item) {
-                                is AccountOrCard.AccountItem -> {
-                                    AccountRow(navigator, item.account)
-                                }
+                            items(combinedData) { item ->
+                                when (item) {
+                                    is AccountOrCard.AccountItem -> {
+                                        AccountRow(navigator, item.account)
+                                    }
 
-                                is AccountOrCard.CardItem -> {
-                                    CardRow(navigator, item.card)
+                                    is AccountOrCard.CardItem -> {
+                                        CardRow(navigator, item.card)
+                                    }
                                 }
                             }
                         }
@@ -300,7 +309,6 @@ fun AccountRow(
                     .clip(CircleShape)
             )
 
-            // Account Name and Details
             Column(
                 modifier = Modifier
                     .padding(start = 14.dp)
@@ -668,7 +676,7 @@ fun EmptyListPlaceholder(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = if (isSearch) "No password\n found!" else "No passwords\nadded yet!",
+            text = if (isSearch) "Sorry, Nothing\n found!" else "Vault is empty",
             style = TextStyle(
                 fontSize = 18.sp,
                 fontFamily = poppinsFamily,

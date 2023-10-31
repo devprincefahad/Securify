@@ -85,23 +85,13 @@ fun HomeScreen(
 ) {
 
     val context = LocalContext.current
-    val accounts = viewModel.accounts.collectAsState(emptyList())
-    val cards = viewModel.cards.collectAsState(emptyList())
+
+    var searchQuery by remember { mutableStateOf("") }
 
     val combinedData by viewModel.combinedData.collectAsState(emptyList())
 
-    // State for holding the search query
-    var searchQuery by remember { mutableStateOf("") }
-
-    // Filtered accounts based on search query
-    val filteredAccounts = accounts.value.filter { account ->
-        account.accountName.contains(searchQuery, ignoreCase = true) ||
-                account.userName.contains(searchQuery, ignoreCase = true) ||
-                account.email.contains(searchQuery, ignoreCase = true) ||
-                account.mobileNumber.contains(searchQuery, ignoreCase = true)
-    }
-
     val snackbar = LocalSnackbar.current
+
     LaunchedEffect(Unit) {
         viewModel.messages.collect {
             snackbar(it)
@@ -172,7 +162,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(
                     top = 18.dp, bottom = 12.dp
                 ),
-                text = "Home",
+                text = "My Vault",
                 color = Color.White,
                 style = TextStyle(
                     fontSize = 24.sp,
@@ -204,11 +194,12 @@ fun HomeScreen(
                         onValueChange = {
                             if (it.length <= 25) {
                                 searchQuery = it
+                                viewModel.setSearchQuery(it)
                             }
                         },
                         placeholder = {
                             Text(
-                                "Search Passwords",
+                                "Search in Vault",
                                 style = TextStyle(
                                     fontSize = 14.sp,
                                     fontFamily = poppinsFamily,
@@ -234,9 +225,6 @@ fun HomeScreen(
                         )
                     )
 
-//                    if (filteredAccounts.isEmpty()) {
-//                        EmptyListPlaceholder(searchQuery.isNotEmpty())
-//                    } else {
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxSize()
@@ -246,15 +234,6 @@ fun HomeScreen(
                             )
                             .nestedScroll(nestedScrollConnection),
                     ) {
-                        /*items(
-                            filteredAccounts,
-                            key = { account -> account.id }
-                        ) { account ->
-                            AccountRow(navigator, account, viewModel)
-                        }
-                        items(cards.value) { card ->
-
-                        }*/
 
                         items(combinedData) { item ->
                             when (item) {
@@ -266,21 +245,8 @@ fun HomeScreen(
                                     CardRow(navigator, item.card)
                                 }
                             }
-
-                            /*when (item) {
-                                is AccountOrCard.AccountItem -> {
-                                    ItemRow(navigator,item.account)
-                                    // Display account details
-                                    // You can use a custom Composable for this
-                                }
-                                is AccountOrCard.CardItem -> {
-                                    // Display card details
-                                    // You can use a custom Composable for this
-                                }
-                            }*/
                         }
                     }
-//                    }
                 }
             }
         }

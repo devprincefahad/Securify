@@ -2,6 +2,7 @@ package dev.prince.securify.ui.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,6 +17,8 @@ import dev.prince.securify.encryption.EncryptionManager
 import dev.prince.securify.util.AccountOrCard
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,22 +30,6 @@ class HomeViewModel @Inject constructor(
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
-    val accounts = dbAccount.getAllAccounts()
-    val cards = dbCard.getAllCards()
-
-    val combinedData: Flow<List<AccountOrCard>> = combine(accounts, cards) { accounts, cards ->
-        val combinedList = mutableListOf<AccountOrCard>()
-
-        val itemsWithTimestamp = mutableListOf<Pair<AccountOrCard, Long>>()
-        accounts.forEach { item -> itemsWithTimestamp.add(AccountOrCard.AccountItem(item) to item.createdAt) }
-        cards.forEach { item -> itemsWithTimestamp.add(AccountOrCard.CardItem(item) to item.createdAt) }
-
-        val sortedItems = itemsWithTimestamp.sortedByDescending { it.second }
-
-        combinedList.addAll(sortedItems.map { it.first })
-        combinedList
-    }
-
     val messages = oneShotFlow<String>()
 
     var showAccountDeleteDialog by mutableStateOf(false)
@@ -50,7 +37,53 @@ class HomeViewModel @Inject constructor(
     var showCardDeleteDialog by mutableStateOf(false)
 
     var accountToDelete by mutableStateOf(AccountEntity(-1, "", "", "", "", "", "", 0L))
+
     var cardToDelete by mutableStateOf(CardEntity(-1, "", "", "", "", "", 0L))
+
+    private val _searchQuery = MutableStateFlow("")
+    private val searchQuery: StateFlow<String> get() = _searchQuery
+
+    val combinedData: Flow<List<AccountOrCard>> = combine(
+        dbAccount.getAllAccounts(),
+        dbCard.getAllCards(),
+        searchQuery
+    ) { accounts, cards, query ->
+
+        val itemsWithTimestamp = mutableListOf<Pair<AccountOrCard, Long>>()
+
+        accounts.forEach { item -> itemsWithTimestamp.add(AccountOrCard.AccountItem(item) to item.createdAt) }
+        cards.forEach { item -> itemsWithTimestamp.add(AccountOrCard.CardItem(item) to item.createdAt) }
+
+        val sortedItems = itemsWithTimestamp.sortedByDescending { it.second }
+
+        val filteredItems = if (query.isNotBlank()) {
+            sortedItems.filter { (item, _) ->
+                when (item) {
+                    is AccountOrCard.AccountItem -> {
+                        val account = item.account
+                        account.accountName.contains(query, ignoreCase = true) ||
+                                account.userName.contains(query, ignoreCase = true) ||
+                                account.email.contains(query, ignoreCase = true) ||
+                                account.mobileNumber.contains(query, ignoreCase = true)
+                    }
+
+                    is AccountOrCard.CardItem -> {
+                        val card = item.card
+                        card.cardHolderName.contains(query, ignoreCase = true) ||
+                                card.cardNumber.contains(query, ignoreCase = true) ||
+                                card.cardProvider.contains(query, ignoreCase = true)
+                    }
+                }
+            }
+        } else {
+            sortedItems
+        }
+        filteredItems.map { it.first }
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
 
     fun onUserAccountDeleteClick(accountEntity: AccountEntity) {
         accountToDelete = accountEntity

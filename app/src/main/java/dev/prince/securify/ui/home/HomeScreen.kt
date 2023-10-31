@@ -65,7 +65,8 @@ import dev.prince.securify.ui.components.fab.FabButtonItem
 import dev.prince.securify.ui.components.fab.FabButtonMain
 import dev.prince.securify.ui.destinations.AddCardScreenDestination
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
-import dev.prince.securify.ui.destinations.EditScreenDestination
+import dev.prince.securify.ui.destinations.EditCardScreenDestination
+import dev.prince.securify.ui.destinations.EditPassowrdScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.LightBlack
@@ -427,7 +428,7 @@ fun AccountRow(
                                 )
                             },
                             onClick = {
-                                navigator.navigate(EditScreenDestination(account.id))
+                                navigator.navigate(EditPassowrdScreenDestination(account.id))
                                 expanded = false
                             },
                             trailingIcon = {
@@ -608,7 +609,7 @@ fun CardRow(
                             },
                             onClick = {
                                 //add edit screen navigation
-                                //navigator.navigate(EditScreenDestination(account.id))
+                                navigator.navigate(EditCardScreenDestination(card.id))
                                 expanded = false
                             },
                             trailingIcon = {

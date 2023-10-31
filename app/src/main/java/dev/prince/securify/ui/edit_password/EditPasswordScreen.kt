@@ -70,9 +70,9 @@ import dev.prince.securify.util.clickWithRipple
 @RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
-fun EditScreen(
+fun EditPassowrdScreen(
     navigator: DestinationsNavigator,
-    viewModel: EditViewModel = hiltViewModel(),
+    viewModel: EditPasswordViewModel = hiltViewModel(),
     accountId: Int
 ) {
 
@@ -539,7 +539,7 @@ fun EditScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchOutlinedTextFieldWithDropdown(
-    viewModel: EditViewModel = hiltViewModel()
+    viewModel: EditPasswordViewModel = hiltViewModel()
 ) {
 
     val focusManager = LocalFocusManager.current

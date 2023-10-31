@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditViewModel @Inject constructor(
+class EditPasswordViewModel @Inject constructor(
     private val db: AccountDao,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {

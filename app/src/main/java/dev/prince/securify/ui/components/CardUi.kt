@@ -32,6 +32,9 @@ import dev.prince.securify.R
 import dev.prince.securify.ui.add_card.AddCardViewModel
 import dev.prince.securify.ui.theme.LightGray
 import dev.prince.securify.ui.theme.poppinsFamily
+import dev.prince.securify.util.formatCardNumber
+import dev.prince.securify.util.formatExpiryDate
+import dev.prince.securify.util.randomGradient
 
 @Composable
 fun CardUi(
@@ -43,8 +46,8 @@ fun CardUi(
     viewModel: AddCardViewModel = hiltViewModel()
 ) {
 
-    val formattedCardNumber = viewModel.formatCardNumber(cardNumber)
-    val formattedExpiryDate = viewModel.formatExpiryDate(cardExpiryDate)
+    val formattedCardNumber = formatCardNumber(cardNumber)
+    val formattedExpiryDate = formatExpiryDate(cardExpiryDate)
 
     Box(
         modifier = Modifier
@@ -63,7 +66,7 @@ fun CardUi(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        Brush.verticalGradient(viewModel.randomGradient)
+                        Brush.verticalGradient(randomGradient)
                     )
             ) {
 

@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.add_card
+package dev.prince.securify.ui.edit_card
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -18,12 +18,11 @@ import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
-class AddCardViewModel @Inject constructor(
+class EditCardViewModel @Inject constructor(
     private val db: CardDao
 ) : ViewModel() {
 
     val messages = oneShotFlow<String>()
-
     var cardNumber by mutableStateOf("")
 
     var cardHolderName by mutableStateOf("")
@@ -34,13 +33,50 @@ class AddCardViewModel @Inject constructor(
 
     var expanded by mutableStateOf(false)
 
-    var cardProviderName by mutableStateOf("Select Card Provider")
+    var cardProviderName by mutableStateOf("")
 
     var expandedProviderField by mutableStateOf(false)
     var hideKeyboard by mutableStateOf(false)
     var selectedCardImage by mutableIntStateOf(cardSuggestions.first().second)
 
     val success = mutableStateOf(false)
+
+    fun getAccountById(cardId: Int) {
+        viewModelScope.launch {
+            db.getCardsById(cardId).collect {
+                cardNumber = it.cardNumber
+                cardHolderName = it.cardHolderName
+                cardProviderName = it.cardProvider
+                cardCVV = it.cardCvv
+                cardExpiryDate = it.cardExpiryDate
+                it.createdAt
+            }
+        }
+    }
+
+    fun validateAndUpdate(id: Int) {
+        if (validateFields()) {
+
+            val currentTimeInMillis = System.currentTimeMillis()
+
+            val card = CardEntity(
+                id = id,
+                cardHolderName = cardHolderName.trim(),
+                cardNumber = cardNumber,
+                cardExpiryDate = cardExpiryDate,
+                cardCvv = cardCVV,
+                cardProvider = cardProviderName,
+                createdAt = currentTimeInMillis
+            )
+
+            viewModelScope.launch {
+                db.updateCard(card)
+                messages.tryEmit("Credentials Updated!")
+                success.value = true
+            }
+
+        }
+    }
 
     private fun validateFields(): Boolean {
         if (cardProviderName == "Select Card Provider") {
@@ -81,31 +117,6 @@ class AddCardViewModel @Inject constructor(
         return true
     }
 
-    fun validateAndInsert() {
-        if (validateFields()) {
-
-            val currentTimeInMillis = System.currentTimeMillis()
-//            val formattedExpiryDate = formatExpiryDate(cardExpiryDate)
-
-            val card = CardEntity(
-                id = 0,
-                cardHolderName = cardHolderName.trim(),
-                cardNumber = cardNumber,
-                cardExpiryDate = cardExpiryDate,
-                cardCvv = cardCVV,
-                cardProvider = cardProviderName,
-                createdAt = currentTimeInMillis
-            )
-
-            viewModelScope.launch {
-                db.insertCard(card)
-                messages.tryEmit("Credentials Added!")
-                success.value = true
-            }
-
-        }
-    }
-
     private fun validateExpiryDate(cardExpiryDate: String): Boolean {
 
         val currentDate = Date()
@@ -132,5 +143,4 @@ class AddCardViewModel @Inject constructor(
 
         return true
     }
-
 }

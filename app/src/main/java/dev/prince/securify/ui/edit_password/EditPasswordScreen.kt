@@ -67,7 +67,6 @@ import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.clickWithRipple
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
 fun EditPassowrdScreen(

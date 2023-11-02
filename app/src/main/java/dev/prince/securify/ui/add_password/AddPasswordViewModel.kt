@@ -74,7 +74,6 @@ class AddPasswordViewModel @Inject constructor(
         return true
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun validateAndInsert() {
 
         if (validateFields()) {

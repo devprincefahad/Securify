@@ -109,7 +109,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun decryptPassword(password: String): String {
         return encryptionManager.decrypt(password)
     }

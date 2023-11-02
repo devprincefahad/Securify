@@ -1,10 +1,8 @@
 package dev.prince.securify.ui.home
 
 import MultiFloatingActionButton
-import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -15,12 +13,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -81,7 +77,6 @@ import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.suggestionsWithImages
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
 fun HomeScreen(
@@ -252,6 +247,8 @@ fun HomeScreen(
                                     is AccountOrCard.CardItem -> {
                                         CardRow(navigator, item.card)
                                     }
+
+                                    else -> {/**/}
                                 }
                             }
                         }
@@ -266,7 +263,6 @@ fun HomeScreen(
 
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AccountRow(
     navigator: DestinationsNavigator,
@@ -293,7 +289,6 @@ fun AccountRow(
             suggestionsWithImages.firstOrNull { it.first == account.accountName }?.second
 
         val painter = matchingImage ?: R.drawable.icon_others
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier

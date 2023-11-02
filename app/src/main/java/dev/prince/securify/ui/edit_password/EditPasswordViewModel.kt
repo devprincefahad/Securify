@@ -44,12 +44,10 @@ class EditPasswordViewModel @Inject constructor(
     var password by mutableStateOf("")
     var note by mutableStateOf("")
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun decryptPassword(password: String): String {
+    private fun decryptPassword(password: String): String {
         return encryptionManager.decrypt(password)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getAccountById(accountId: Int) {
         viewModelScope.launch {
             db.getAccountById(accountId).collect {
@@ -62,12 +60,10 @@ class EditPasswordViewModel @Inject constructor(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun encryptPassword(password: String): String {
+    private fun encryptPassword(password: String): String {
         return encryptionManager.encrypt(password)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun validationAndUpdateDetails(id: Int) {
         if (validateFields()) {
             viewModelScope.launch {

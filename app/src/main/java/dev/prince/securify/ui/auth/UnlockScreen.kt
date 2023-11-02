@@ -95,7 +95,6 @@ fun UnlockScreen(
             }
 
             // FIXME add if else for backwards compatibility
-            @RequiresApi(Build.VERSION_CODES.R)
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
                 navigator.navigate(HomeScreenDestination)

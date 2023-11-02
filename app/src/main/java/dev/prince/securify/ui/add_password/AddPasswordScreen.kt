@@ -1,8 +1,6 @@
 package dev.prince.securify.ui.add_password
 
-import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,7 +65,6 @@ import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.clickWithRipple
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Destination
 @Composable
 fun AddPasswordScreen(

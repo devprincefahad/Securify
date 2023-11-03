@@ -86,7 +86,7 @@ fun HomeScreen(
 
     val context = LocalContext.current
 
-    var searchQuery by remember { mutableStateOf("") }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
 
     val combinedData by viewModel.combinedData.collectAsState(emptyList())
 
@@ -226,7 +226,7 @@ fun HomeScreen(
                     )
 
                     if (combinedData.isEmpty()) {
-                        EmptyListPlaceholder(false)
+                        EmptyListPlaceholder(searchQuery.isNotEmpty())
                     } else {
                         LazyColumn(
                             modifier = Modifier

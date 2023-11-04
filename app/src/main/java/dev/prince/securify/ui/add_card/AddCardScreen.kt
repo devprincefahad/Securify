@@ -155,7 +155,12 @@ fun AddCardScreen(
                     value = viewModel.cardNumber,
                     label = {
                         Text(
-                            text = "Card Number"
+                            text = "Card Number",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
                         )
                     },
                     shape = RoundedCornerShape(8.dp),
@@ -202,7 +207,12 @@ fun AddCardScreen(
                     value = viewModel.cardHolderName,
                     label = {
                         Text(
-                            text = "Card Holder Name"
+                            text = "Card Holder Name",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
                         )
                     },
                     shape = RoundedCornerShape(8.dp),
@@ -391,7 +401,14 @@ fun TextFieldDropDown(
             value = viewModel.cardProviderName,
             onValueChange = {},
             label = {
-                Text(text = "Card Provider")
+                Text(
+                    text = "Card Provider",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontFamily = poppinsFamily,
+                        color = Gray
+                    )
+                )
             },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(

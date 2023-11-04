@@ -268,7 +268,6 @@ fun AccountRow(
     account: AccountEntity,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    Log.d("home-data", "account:- $account")
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
@@ -324,7 +323,7 @@ fun AccountRow(
                     account.email.isNotBlank() -> viewModel.decryptInput(account.email)
                     account.userName.isNotBlank() -> viewModel.decryptInput(account.userName)
                     account.mobileNumber.isNotBlank() -> viewModel.decryptInput(account.mobileNumber)
-                    else -> "blank"
+                    else -> ""
                 }
 
                 Text(
@@ -445,7 +444,6 @@ fun CardRow(
     card: CardEntity,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    Log.d("home-data", "card:- $card")
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp

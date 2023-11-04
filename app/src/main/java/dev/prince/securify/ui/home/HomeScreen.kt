@@ -1,6 +1,7 @@
 package dev.prince.securify.ui.home
 
 import MultiFloatingActionButton
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -26,12 +27,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,7 +44,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -248,7 +246,8 @@ fun HomeScreen(
                                         CardRow(navigator, item.card)
                                     }
 
-                                    else -> {/**/}
+                                    else -> {/**/
+                                    }
                                 }
                             }
                         }
@@ -269,6 +268,7 @@ fun AccountRow(
     account: AccountEntity,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    Log.d("home-data", "account:- $account")
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
@@ -321,9 +321,10 @@ fun AccountRow(
                 )
 
                 val displayInfo = when {
-                    account.email.isNotBlank() -> account.email
-                    account.userName.isNotBlank() -> account.userName
-                    else -> account.mobileNumber
+                    account.email.isNotBlank() -> viewModel.decryptInput(account.email)
+                    account.userName.isNotBlank() -> viewModel.decryptInput(account.userName)
+                    account.mobileNumber.isNotBlank() -> viewModel.decryptInput(account.mobileNumber)
+                    else -> "blank"
                 }
 
                 Text(
@@ -344,7 +345,7 @@ fun AccountRow(
 
                 IconButton(
                     onClick = {
-                        val password = viewModel.decryptPassword(account.password)
+                        val password = viewModel.decryptInput(account.password)
                         clipboardManager.setText(
                             AnnotatedString(password)
                         )
@@ -444,6 +445,7 @@ fun CardRow(
     card: CardEntity,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    Log.d("home-data", "card:- $card")
     Card(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
@@ -471,7 +473,8 @@ fun CardRow(
             Color.Unspecified
         }
 
-        val cardNumber = card.cardNumber.takeLast(4).padStart(card.cardNumber.length, '*')
+        val decryptedCardNumber = viewModel.decryptInput(card.cardNumber)
+        val cardNumber = decryptedCardNumber.takeLast(4).padStart(decryptedCardNumber.length, '*')
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -498,7 +501,7 @@ fun CardRow(
             ) {
 
                 Text(
-                    text = card.cardHolderName,
+                    text = viewModel.decryptInput(card.cardHolderName),
                     color = Color.Black,
                     style = TextStyle(
                         fontSize = 18.sp,
@@ -526,7 +529,7 @@ fun CardRow(
                 IconButton(
                     onClick = {
                         clipboardManager.setText(
-                            AnnotatedString(card.cardNumber)
+                            AnnotatedString(viewModel.decryptInput(card.cardNumber))
                         )
                         viewModel.showCopyMsg()
                     },
@@ -640,6 +643,9 @@ private fun ConfirmAccountDeletionDialog(
 private fun ConfirmCardDeletionDialog(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val name = viewModel.cardToDelete.cardHolderName
+    val decryptedName = viewModel.decryptInput(name)
+
     AlertDialogContent(
         onDismissRequest = {
             viewModel.showCardDeleteDialog = false
@@ -648,7 +654,7 @@ private fun ConfirmCardDeletionDialog(
             viewModel.deleteCard()
         },
         dialogTitle = "Delete Card?",
-        dialogText = "Are you sure you want to delete ${viewModel.cardToDelete.cardHolderName}'s Card?",
+        dialogText = "Are you sure you want to delete ${decryptedName}'s Card?",
         confirmTitle = "Delete"
     )
 }

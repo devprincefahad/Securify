@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.prince.securify.database.CardDao
 import dev.prince.securify.database.CardEntity
+import dev.prince.securify.encryption.EncryptionManager
 import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.launch
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddCardViewModel @Inject constructor(
-    private val db: CardDao
+    private val db: CardDao,
+    private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
     val messages = oneShotFlow<String>()
@@ -85,14 +87,13 @@ class AddCardViewModel @Inject constructor(
         if (validateFields()) {
 
             val currentTimeInMillis = System.currentTimeMillis()
-//            val formattedExpiryDate = formatExpiryDate(cardExpiryDate)
 
             val card = CardEntity(
                 id = 0,
-                cardHolderName = cardHolderName.trim(),
-                cardNumber = cardNumber,
-                cardExpiryDate = cardExpiryDate,
-                cardCvv = cardCVV,
+                cardHolderName = encryptionManager.encrypt(cardHolderName.trim()),
+                cardNumber = encryptionManager.encrypt(cardNumber),
+                cardExpiryDate = encryptionManager.encrypt(cardExpiryDate),
+                cardCvv = encryptionManager.encrypt(cardCVV),
                 cardProvider = cardProviderName,
                 createdAt = currentTimeInMillis
             )

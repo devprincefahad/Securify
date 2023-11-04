@@ -1,7 +1,5 @@
 package dev.prince.securify.ui.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -109,8 +107,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun decryptPassword(password: String): String {
-        return encryptionManager.decrypt(password)
+    fun decryptInput(input: String): String {
+        return encryptionManager.decrypt(input)
     }
 
     fun showCopyMsg() {

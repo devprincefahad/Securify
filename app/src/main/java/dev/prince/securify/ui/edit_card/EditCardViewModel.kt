@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.prince.securify.database.CardDao
 import dev.prince.securify.database.CardEntity
+import dev.prince.securify.encryption.EncryptionManager
 import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.oneShotFlow
 import kotlinx.coroutines.launch
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditCardViewModel @Inject constructor(
-    private val db: CardDao
+    private val db: CardDao,
+    private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
     val messages = oneShotFlow<String>()
@@ -44,11 +46,11 @@ class EditCardViewModel @Inject constructor(
     fun getAccountById(cardId: Int) {
         viewModelScope.launch {
             db.getCardsById(cardId).collect {
-                cardNumber = it.cardNumber
-                cardHolderName = it.cardHolderName
+                cardNumber = encryptionManager.decrypt(it.cardNumber)
+                cardHolderName = encryptionManager.decrypt(it.cardHolderName)
                 cardProviderName = it.cardProvider
-                cardCVV = it.cardCvv
-                cardExpiryDate = it.cardExpiryDate
+                cardCVV = encryptionManager.decrypt(it.cardCvv)
+                cardExpiryDate = encryptionManager.decrypt(it.cardExpiryDate)
                 it.createdAt
             }
         }
@@ -61,10 +63,10 @@ class EditCardViewModel @Inject constructor(
 
             val card = CardEntity(
                 id = id,
-                cardHolderName = cardHolderName.trim(),
-                cardNumber = cardNumber,
-                cardExpiryDate = cardExpiryDate,
-                cardCvv = cardCVV,
+                cardHolderName = encryptionManager.encrypt(cardHolderName.trim()),
+                cardNumber = encryptionManager.encrypt(cardNumber),
+                cardExpiryDate = encryptionManager.encrypt(cardExpiryDate),
+                cardCvv = encryptionManager.encrypt(cardCVV),
                 cardProvider = cardProviderName,
                 createdAt = currentTimeInMillis
             )

@@ -1,8 +1,6 @@
 package dev.prince.securify.ui.add_password
 
-import android.os.Build
 import android.util.Patterns
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -59,7 +57,7 @@ class AddPasswordViewModel @Inject constructor(
             messages.tryEmit("Password cannot be empty")
             return false
         }
-        if (password.trim().isEmpty() || password.contains("\\s+".toRegex())){
+        if (password.trim().isEmpty() || password.contains("\\s+".toRegex())) {
             messages.tryEmit("Password cannot contain whitespace")
             return false
         }
@@ -67,7 +65,7 @@ class AddPasswordViewModel @Inject constructor(
             messages.tryEmit("Invalid email address")
             return false
         }
-        if(!mobileNumber.isDigitsOnly()){
+        if (!mobileNumber.isDigitsOnly()) {
             messages.tryEmit("Invalid mobile number")
             return false
         }
@@ -77,15 +75,14 @@ class AddPasswordViewModel @Inject constructor(
     fun validateAndInsert() {
 
         if (validateFields()) {
-            val encryptedPassword = encryptionManager.encrypt(password)
             val currentTimeInMillis = System.currentTimeMillis()
             val account = AccountEntity(
                 id = 0,
                 accountName = accountName.trim(),
-                userName = username.trim(),
-                email = email.trim(),
-                mobileNumber = mobileNumber,
-                password = encryptedPassword.trim(),
+                userName = encryptionManager.encrypt(username).trim(),
+                email = encryptionManager.encrypt(email).trim(),
+                mobileNumber = encryptionManager.encrypt(mobileNumber).trim(),
+                password = encryptionManager.encrypt(password).trim(),
                 note = note.trim(),
                 createdAt = currentTimeInMillis
             )

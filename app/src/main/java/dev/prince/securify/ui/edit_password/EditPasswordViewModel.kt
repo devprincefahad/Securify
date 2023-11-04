@@ -1,8 +1,6 @@
 package dev.prince.securify.ui.edit_password
 
-import android.os.Build
 import android.util.Patterns
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -44,24 +42,16 @@ class EditPasswordViewModel @Inject constructor(
     var password by mutableStateOf("")
     var note by mutableStateOf("")
 
-    private fun decryptPassword(password: String): String {
-        return encryptionManager.decrypt(password)
-    }
-
     fun getAccountById(accountId: Int) {
         viewModelScope.launch {
             db.getAccountById(accountId).collect {
                 accountName = it.accountName
-                userName = it.userName
-                email = it.email
-                mobileNumber = it.mobileNumber
-                password = decryptPassword(it.password)
+                userName = encryptionManager.decrypt(it.userName)
+                email = encryptionManager.decrypt(it.email)
+                mobileNumber = encryptionManager.decrypt(it.mobileNumber)
+                password = encryptionManager.decrypt(it.password)
             }
         }
-    }
-
-    private fun encryptPassword(password: String): String {
-        return encryptionManager.encrypt(password)
     }
 
     fun validationAndUpdateDetails(id: Int) {
@@ -69,14 +59,14 @@ class EditPasswordViewModel @Inject constructor(
             viewModelScope.launch {
                 val currentTimeInMillis = System.currentTimeMillis()
                 val accountEntity = AccountEntity(
-                    id,
-                    accountName.trim(),
-                    userName.trim(),
-                    email.trim(),
-                    mobileNumber,
-                    encryptPassword(password.trim()),
-                    note.trim(),
-                    currentTimeInMillis
+                    id = id,
+                    accountName = accountName.trim(),
+                    userName = encryptionManager.encrypt(userName.trim()),
+                    email = encryptionManager.encrypt(email.trim()),
+                    mobileNumber = encryptionManager.encrypt(mobileNumber),
+                    password = encryptionManager.encrypt(password.trim()),
+                    note = note.trim(),
+                    createdAt = currentTimeInMillis
                 )
                 db.updateAccount(accountEntity)
                 messages.tryEmit("Successfully Updated!")

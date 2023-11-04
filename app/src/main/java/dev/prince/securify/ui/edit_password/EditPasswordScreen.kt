@@ -165,6 +165,16 @@ fun EditPassowrdScreen(
                             viewModel.userName = it
                         }
                     },
+                    placeholder = {
+                        Text(
+                            "John Doe",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
+                    },
                     supportingText = {
                         Text(text = "${viewModel.userName.length}/35")
                     },
@@ -217,7 +227,14 @@ fun EditPassowrdScreen(
                         .fillMaxWidth(),
                     value = viewModel.email,
                     placeholder = {
-                        Text("john@example.com")
+                        Text(
+                            "john@example.com",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -279,7 +296,13 @@ fun EditPassowrdScreen(
                         .fillMaxWidth(),
                     value = viewModel.mobileNumber,
                     placeholder = {
-                        Text("XXXXXXXXXX")
+                        Text(
+                            "XXXXXXXXXX", style = TextStyle(
+                                fontSize = 16.sp,
+                                fontFamily = poppinsFamily,
+                                color = Gray
+                            )
+                        )
                     },
                     shape = RoundedCornerShape(8.dp),
                     onValueChange = {
@@ -347,7 +370,14 @@ fun EditPassowrdScreen(
                             .padding(end = 6.dp),
                         value = viewModel.password,
                         placeholder = {
-                            Text("**********")
+                            Text(
+                                text = " ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ",
+                                style = TextStyle(
+                                    fontSize = 16.sp,
+                                    fontFamily = poppinsFamily,
+                                    color = Gray
+                                )
+                            )
                         },
                         shape = RoundedCornerShape(8.dp),
                         onValueChange = {

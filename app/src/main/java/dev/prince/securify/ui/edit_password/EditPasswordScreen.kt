@@ -104,7 +104,7 @@ fun EditPassowrdScreen(
                 tint = Color.White,
                 contentDescription = "Go back",
                 modifier = Modifier.clickWithRipple {
-                    navigator.navigate(HomeScreenDestination)
+                    navigator.popBackStack()
                 }
             )
 
@@ -553,14 +553,11 @@ fun EditPassowrdScreen(
                 }
                 if (viewModel.success.value) {
                     LaunchedEffect(Unit) {
-                        navigator.navigate(HomeScreenDestination)
+                        navigator.popBackStack()
                     }
                 }
             }
 
-        }
-        BackHandler {
-            navigator.navigate(HomeScreenDestination)
         }
     }
 }

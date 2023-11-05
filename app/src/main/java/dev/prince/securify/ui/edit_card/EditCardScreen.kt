@@ -47,10 +47,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.ui.add_card.AddCardViewModel
 import dev.prince.securify.ui.components.CardUi
 import dev.prince.securify.ui.components.SheetSurface
-import dev.prince.securify.ui.destinations.HomeScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.Gray
@@ -101,7 +99,7 @@ fun EditCardScreen(
                 tint = Color.White,
                 contentDescription = "Go back",
                 modifier = Modifier.clickWithRipple {
-                    navigator.navigate(HomeScreenDestination)
+                    navigator.popBackStack()
                 }
             )
 
@@ -375,7 +373,7 @@ fun EditCardScreen(
                 }
                 if (viewModel.success.value) {
                     LaunchedEffect(Unit) {
-                        navigator.navigate(HomeScreenDestination)
+                        navigator.popBackStack()
                     }
                 }
             }

@@ -6,10 +6,11 @@ import com.google.android.gms.auth.api.identity.Identity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.prince.securify.local.SharedPrefHelper
 import dev.prince.securify.signin.GoogleAuthUiClient
-import java.security.MessageDigest
+import dev.prince.securify.util.BYTE_SIZE
+import dev.prince.securify.util.TRANSFORMATION
+import dev.prince.securify.util.generateKey
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 import javax.inject.Inject
 
 class EncryptionManager @Inject constructor(
@@ -28,10 +29,13 @@ class EncryptionManager @Inject constructor(
     private val user = googleAuthUiClient.getSignedInUser()
 
     fun encrypt(input: String): String {
+        if (input.isBlank()) {
+            return input
+        }
         return runCatching {
             val key = user?.let { generateKey(it.userId, loginKey) }
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-            val ivBytes = ByteArray(16)
+            val cipher = Cipher.getInstance(TRANSFORMATION)
+            val ivBytes = ByteArray(BYTE_SIZE)
             val ivSpec = IvParameterSpec(ivBytes)
             cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec)
             val encryptedBytes = cipher.doFinal(input.toByteArray(Charsets.UTF_8))
@@ -43,10 +47,13 @@ class EncryptionManager @Inject constructor(
     }
 
     fun decrypt(input: String): String {
+        if (input.isBlank()) {
+            return input
+        }
         return runCatching {
             val key = user?.let { generateKey(it.userId, loginKey) }
-            val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-            val ivBytes = ByteArray(16)
+            val cipher = Cipher.getInstance(TRANSFORMATION)
+            val ivBytes = ByteArray(BYTE_SIZE)
             val ivSpec = IvParameterSpec(ivBytes)
             cipher.init(Cipher.DECRYPT_MODE, key, ivSpec)
             val encryptedBytes = Base64.decode(input, Base64.DEFAULT)
@@ -58,11 +65,4 @@ class EncryptionManager @Inject constructor(
         }
     }
 
-    private fun generateKey(uid: String, masterKey: String): SecretKeySpec {
-        val combinedKey = uid + masterKey
-        val md = MessageDigest.getInstance("SHA-256")
-        val hashBytes = md.digest(combinedKey.toByteArray(Charsets.UTF_8))
-        val keyBytes = hashBytes.copyOf(16) // AES-128 requires a 16-byte key
-        return SecretKeySpec(keyBytes, "AES")
-    }
 }

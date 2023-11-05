@@ -60,15 +60,15 @@ class HomeViewModel @Inject constructor(
                     is AccountOrCard.AccountItem -> {
                         val account = item.account
                         account.accountName.contains(query, ignoreCase = true) ||
-                                account.userName.contains(query, ignoreCase = true) ||
-                                account.email.contains(query, ignoreCase = true) ||
-                                account.mobileNumber.contains(query, ignoreCase = true)
+                                decryptInput(account.userName).contains(query, ignoreCase = true) ||
+                                decryptInput(account.email).contains(query, ignoreCase = true) ||
+                                decryptInput(account.mobileNumber).contains(query, ignoreCase = true)
                     }
 
                     is AccountOrCard.CardItem -> {
                         val card = item.card
-                        card.cardHolderName.contains(query, ignoreCase = true) ||
-                                card.cardNumber.contains(query, ignoreCase = true) ||
+                        decryptInput(card.cardHolderName).contains(query, ignoreCase = true) ||
+                                decryptInput(card.cardNumber).contains(query, ignoreCase = true) ||
                                 card.cardProvider.contains(query, ignoreCase = true)
                     }
                 }

@@ -1,7 +1,7 @@
 package dev.prince.securify.ui.home
 
 import MultiFloatingActionButton
-import android.util.Log
+import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -9,6 +9,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +30,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +62,7 @@ import dev.prince.securify.R
 import dev.prince.securify.database.AccountEntity
 import dev.prince.securify.database.CardEntity
 import dev.prince.securify.ui.components.AlertDialogContent
+import dev.prince.securify.ui.components.BottomSheet
 import dev.prince.securify.ui.components.SheetSurface
 import dev.prince.securify.ui.components.fab.FabButtonItem
 import dev.prince.securify.ui.components.fab.FabButtonMain
@@ -67,6 +71,7 @@ import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.EditCardScreenDestination
 import dev.prince.securify.ui.destinations.EditPassowrdScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
+import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.Gray
 import dev.prince.securify.ui.theme.LightBlack
 import dev.prince.securify.ui.theme.poppinsFamily
@@ -87,6 +92,10 @@ fun HomeScreen(
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
     val combinedData by viewModel.combinedData.collectAsState(emptyList())
+
+    var selectedOption by rememberSaveable { mutableStateOf("All") }
+
+    val isCombinedDataEmpty = remember { derivedStateOf { combinedData.isEmpty() } }
 
     val snackbar = LocalSnackbar.current
 
@@ -148,6 +157,9 @@ fun HomeScreen(
             }
         }
     ) { innerPadding ->
+
+        var showSheet by remember { mutableStateOf(false) }
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -180,51 +192,144 @@ fun HomeScreen(
                         .fillMaxSize()
                         .background(color = Color.White)
                 ) {
-                    // FIXME: search query when switch to different tab does not updates list
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .padding(
-                                start = 16.dp, end = 16.dp,
-                                top = 16.dp, bottom = 8.dp
-                            )
-                            .fillMaxWidth(),
-                        value = searchQuery,
-                        onValueChange = {
-                            if (it.length <= 25) {
-                                searchQuery = it
-                                viewModel.setSearchQuery(it)
-                            }
-                        },
-                        placeholder = {
-                            Text(
-                                "Search in Vault",
-                                style = TextStyle(
-                                    fontSize = 14.sp,
-                                    fontFamily = poppinsFamily,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.icon_search),
-                                contentDescription = null
-                            )
-                        },
-                        shape = RoundedCornerShape(16.dp),
-                        singleLine = true,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            focusedBorderColor = LightBlack,
-                            focusedLabelColor = Color.Black,
-                            unfocusedLabelColor = Color.Gray,
-                            cursorColor = Color.Gray
-                        )
-                    )
 
-                    if (combinedData.isEmpty()) {
-                        EmptyListPlaceholder(searchQuery.isNotEmpty())
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .padding(
+                                    start = 16.dp, end = 6.dp,
+                                    top = 16.dp, bottom = 8.dp
+                                )
+                                .weight(1f),
+                            value = searchQuery,
+                            onValueChange = {
+                                if (it.length <= 25) {
+                                    searchQuery = it
+                                    viewModel.setSearchQuery(it)
+                                }
+                            },
+                            placeholder = {
+                                Text(
+                                    "Search in Vault",
+                                    style = TextStyle(
+                                        fontSize = 14.sp,
+                                        fontFamily = poppinsFamily,
+                                        fontWeight = FontWeight.Normal
+                                    )
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.icon_search),
+                                    contentDescription = null
+                                )
+                            },
+                            shape = RoundedCornerShape(16.dp),
+                            singleLine = true,
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                focusedBorderColor = LightBlack,
+                                focusedLabelColor = Color.Black,
+                                unfocusedLabelColor = Color.Gray,
+                                cursorColor = Color.Gray
+                            )
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .padding(
+                                    start = 6.dp, end = 16.dp,
+                                    top = 16.dp, bottom = 8.dp
+                                )
+                                .size(54.dp)
+                                .background(Blue, shape = RoundedCornerShape(16.dp))
+                                .clip(RoundedCornerShape(16.dp))
+                                .clickable {
+                                    showSheet = true
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(28.dp),
+                                painter = painterResource(R.drawable.icon_filter),
+                                contentDescription = "Filter Icon",
+                                tint = Color.White
+                            )
+                        }
+                    }
+
+                    if (showSheet) {
+                        BottomSheet(
+                            onDismiss = { showSheet = false },
+                            content = {
+                                val filterOptions = listOf(
+                                    "All",
+                                    "Passwords",
+                                    "Cards",
+                                    "Other Passwords",
+                                    "Other Cards"
+                                )
+
+                                LazyColumn {
+                                    items(filterOptions) { option ->
+                                        Text(
+                                            text = option,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clickable {
+                                                    selectedOption = option
+                                                    showSheet = false
+                                                    /*when (option) {
+                                                        "All" -> {
+                                                            // Handle "All" option
+                                                        }
+                                                        "Passwords" -> {
+                                                            // Handle "Passwords" option
+                                                        }
+                                                        "Cards" -> {
+                                                            // Handle "Cards" option
+                                                        }
+                                                        "Other Passwords" -> {
+                                                            // Handle "Other Passwords" option
+                                                        }
+                                                        "Other Cards" -> {
+                                                            // Handle "Other Cards" option
+                                                        }
+                                                    }*/
+                                                }
+                                                .padding(16.dp),
+                                            fontSize = 16.sp,
+                                            style = TextStyle(
+                                                fontSize = 16.sp,
+                                                fontFamily = poppinsFamily,
+                                                fontWeight = FontWeight.Medium
+                                            ),
+                                            color = Color.Black
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.navigationBarsPadding())
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .fillMaxWidth()
+                                        .background(color = BgBlack)
+                                )
+                            }
+                        )
+                    }
+
+                    if (isCombinedDataEmpty.value) {
+                        EmptyListPlaceholder(
+                            searchQuery.isNotEmpty(),
+                            selectedOption,
+                            isCombinedDataEmpty.value
+                        )
                     } else {
                         LazyColumn(
                             modifier = Modifier
@@ -239,14 +344,15 @@ fun HomeScreen(
                             items(combinedData) { item ->
                                 when (item) {
                                     is AccountOrCard.AccountItem -> {
-                                        AccountRow(navigator, item.account)
+                                        if (selectedOption == "All" || selectedOption == "Passwords") {
+                                            AccountRow(navigator, item.account)
+                                        }
                                     }
 
                                     is AccountOrCard.CardItem -> {
-                                        CardRow(navigator, item.card)
-                                    }
-
-                                    else -> {/**/
+                                        if (selectedOption == "All" || selectedOption == "Cards") {
+                                            CardRow(navigator, item.card)
+                                        }
                                     }
                                 }
                             }
@@ -657,9 +763,11 @@ private fun ConfirmCardDeletionDialog(
     )
 }
 
-@Composable
+/*@Composable
 fun EmptyListPlaceholder(
-    isSearch: Boolean
+    isSearch: Boolean,
+    selectedOption: String,
+    combinedData: List<AccountOrCard>
 ) {
     Column(
         modifier = Modifier
@@ -675,7 +783,15 @@ fun EmptyListPlaceholder(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = if (isSearch) "Sorry, Nothing\n found!" else "Vault is empty",
+            text = if (isSearch) {
+                "Sorry, Nothing\n found!"
+            } else if (selectedOption == "Passwords") {
+                "No Passwords found!"
+            } else if (selectedOption == "Cards") {
+                "No Cards found!"
+            } else {
+                "Vault is empty"
+            },
             style = TextStyle(
                 fontSize = 18.sp,
                 fontFamily = poppinsFamily,
@@ -684,4 +800,105 @@ fun EmptyListPlaceholder(
             )
         )
     }
+}*/
+
+@Composable
+fun EmptyListPlaceholder(
+    isSearch: Boolean,
+    selectedOption: String,
+    isCombinedDataEmpty: Boolean,
+) {
+
+    if (isSearch) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                modifier = Modifier.size(120.dp),
+                painter = painterResource(R.drawable.img_empty_box),
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = if (isSearch) {
+                    "Sorry, Nothing\n found!"
+                } else {
+                    "Vault is empty"
+                },
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = poppinsFamily,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+            )
+        }
+    } else {
+        when (selectedOption) {
+            "Passwords" -> {
+                if (isCombinedDataEmpty) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier.size(120.dp),
+                            painter = painterResource(R.drawable.img_empty_box),
+                            contentDescription = null,
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No Passwords found!",
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontFamily = poppinsFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+                }
+            }
+
+            "Cards" -> {
+                if (isCombinedDataEmpty) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            modifier = Modifier.size(120.dp),
+                            painter = painterResource(R.drawable.img_empty_box),
+                            contentDescription = null,
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "No Cards found!",
+                            style = TextStyle(
+                                fontSize = 18.sp,
+                                fontFamily = poppinsFamily,
+                                fontWeight = FontWeight.Medium,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+                    }
+                }
+            }
+
+            else -> {
+                // Handle other cases if needed
+            }
+        }
+    }
 }
+

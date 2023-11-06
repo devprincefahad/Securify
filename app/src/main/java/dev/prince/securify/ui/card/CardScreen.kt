@@ -60,8 +60,8 @@ import dev.prince.securify.util.visualTransformation
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalComposeUiApi::class)
-@Composable
 @Destination
+@Composable
 fun CardScreen(
     navigator: DestinationsNavigator,
     viewModel: CardViewModel = hiltViewModel(),

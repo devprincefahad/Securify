@@ -1,6 +1,5 @@
-package dev.prince.securify.ui.add_password
+package dev.prince.securify.ui.password
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,9 +65,10 @@ import dev.prince.securify.util.clickWithRipple
 
 @Destination
 @Composable
-fun AddPasswordScreen(
+fun PasswordScreen(
     navigator: DestinationsNavigator,
-    viewModel: AddPasswordViewModel = hiltViewModel()
+    viewModel: PasswordViewModel = hiltViewModel(),
+    accountId: Int
 ) {
 
     val snackbar = LocalSnackbar.current
@@ -105,7 +105,7 @@ fun AddPasswordScreen(
                     top = 18.dp, bottom = 12.dp,
                     start = 16.dp, end = 16.dp
                 ),
-                text = "Add New Password",
+                text = if (viewModel.isEditScreen) "Edit Password" else "Add New Password",
                 color = Color.White,
                 style = TextStyle(
                     fontSize = 24.sp,
@@ -160,7 +160,7 @@ fun AddPasswordScreen(
                     value = viewModel.username,
                     placeholder = {
                         Text(
-                            "John Doe",
+                            text = "John Doe",
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFamily,
@@ -231,7 +231,7 @@ fun AddPasswordScreen(
                     value = viewModel.email,
                     placeholder = {
                         Text(
-                            "john@example.com",
+                            text = "john@example.com",
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFamily,
@@ -535,7 +535,11 @@ fun AddPasswordScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            viewModel.validateAndInsert()
+                            if (viewModel.isEditScreen) {
+                                viewModel.validationAndUpdateDetails(accountId)
+                            } else {
+                                viewModel.validateAndInsert()
+                            }
                         }
                     )
                 )
@@ -547,7 +551,11 @@ fun AddPasswordScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     onClick = {
-                        viewModel.validateAndInsert()
+                        if (viewModel.isEditScreen) {
+                            viewModel.validationAndUpdateDetails(accountId)
+                        } else {
+                            viewModel.validateAndInsert()
+                        }
                     },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -556,7 +564,7 @@ fun AddPasswordScreen(
                     )
                 ) {
                     Text(
-                        text = "Save Password",
+                        text = if (viewModel.isEditScreen) "Update Password" else "Save Password",
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontFamily = poppinsFamily,
@@ -577,7 +585,7 @@ fun AddPasswordScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchOutlinedTextFieldWithDropdown(
-    viewModel: AddPasswordViewModel = hiltViewModel()
+    viewModel: PasswordViewModel = hiltViewModel()
 ) {
 
     val focusManager = LocalFocusManager.current
@@ -585,7 +593,7 @@ fun SearchOutlinedTextFieldWithDropdown(
 //    Adjustment for dropdown height to display
 //    single item in dropdown instead of empty list space.
 
-    val DropdownMenuVerticalPadding = 8.dp
+    val dropDownMenuVerticalPadding = 8.dp
     val itemHeights = remember { mutableStateMapOf<Int, Int>() }
     val baseHeight = 330.dp
     val density = LocalDensity.current
@@ -597,7 +605,7 @@ fun SearchOutlinedTextFieldWithDropdown(
         val baseHeightInt = with(density) { baseHeight.toPx().toInt() }
 
         // top+bottom system padding
-        var sum = with(density) { DropdownMenuVerticalPadding.toPx().toInt() } * 2
+        var sum = with(density) { dropDownMenuVerticalPadding.toPx().toInt() } * 2
         for ((i, itemSize) in itemHeights.toSortedMap()) {
             sum += itemSize
             if (sum >= baseHeightInt) {

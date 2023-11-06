@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.edit_password
+package dev.prince.securify.ui.password
 
 import android.util.Patterns
 import androidx.compose.runtime.getValue
@@ -20,88 +20,38 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EditPasswordViewModel @Inject constructor(
+class PasswordViewModel @Inject constructor(
     private val db: AccountDao,
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
+    val isEditScreen by mutableStateOf(true)
+
     val messages = oneShotFlow<String>()
 
     var expanded by mutableStateOf(false)
-
-    var keyVisible by mutableStateOf(false)
-
-    val success = mutableStateOf(false)
-
+    var accountName by mutableStateOf("")
     var suggestions = SnapshotStateList<String>()
 
-    var accountName by mutableStateOf("")
-    var userName by mutableStateOf("")
+    var username by mutableStateOf("")
+
     var email by mutableStateOf("")
-    var mobileNumber by mutableStateOf("")
-    var password by mutableStateOf("")
+
     var note by mutableStateOf("")
 
-    fun getAccountById(accountId: Int) {
-        viewModelScope.launch {
-            db.getAccountById(accountId).collect {
-                accountName = it.accountName
-                userName = encryptionManager.decrypt(it.userName)
-                email = encryptionManager.decrypt(it.email)
-                mobileNumber = encryptionManager.decrypt(it.mobileNumber)
-                password = encryptionManager.decrypt(it.password)
-            }
-        }
-    }
+    var mobileNumber by mutableStateOf("")
+    var keyVisible by mutableStateOf(false)
 
-    fun validationAndUpdateDetails(id: Int) {
-        if (validateFields()) {
-            viewModelScope.launch {
-                val currentTimeInMillis = System.currentTimeMillis()
-                val accountEntity = AccountEntity(
-                    id = id,
-                    accountName = accountName.trim(),
-                    userName = encryptionManager.encrypt(userName.trim()),
-                    email = encryptionManager.encrypt(email.trim()),
-                    mobileNumber = encryptionManager.encrypt(mobileNumber),
-                    password = encryptionManager.encrypt(password.trim()),
-                    note = note.trim(),
-                    createdAt = currentTimeInMillis
-                )
-                db.updateAccount(accountEntity)
-                messages.tryEmit("Successfully Updated!")
-                success.value = true
-            }
-        }
-    }
+    var password by mutableStateOf("")
 
-    fun filter(accountName: String) {
-        suggestions.clear()
-        if (accountName.isNotEmpty()) {
-            suggestions.addAll(accountSuggestions.filter { it.contains(accountName, true) })
-        }
-    }
-
-    fun resetSuggestions() {
-        suggestions.clear()
-    }
-
-    fun generateRandomPassword() {
-        password = generatePassword(
-            length = getRandomNumber(),
-            lowerCase = true,
-            upperCase = true,
-            digits = true,
-            specialCharacters = true
-        )
-    }
+    val success = mutableStateOf(false)
 
     private fun validateFields(): Boolean {
         if (accountName.isBlank()) {
             messages.tryEmit("Please provide an account name")
             return false
         }
-        if (userName.isEmpty() && email.isBlank() && mobileNumber.isBlank()) {
+        if (username.isEmpty() && email.isBlank() && mobileNumber.isBlank()) {
             messages.tryEmit("Please provide a username, email, or mobile number")
             return false
         }
@@ -124,5 +74,69 @@ class EditPasswordViewModel @Inject constructor(
         return true
     }
 
+    fun validateAndInsert() {
+
+        if (validateFields()) {
+            val currentTimeInMillis = System.currentTimeMillis()
+            val account = AccountEntity(
+                id = 0,
+                accountName = accountName.trim(),
+                userName = encryptionManager.encrypt(username).trim(),
+                email = encryptionManager.encrypt(email).trim(),
+                mobileNumber = encryptionManager.encrypt(mobileNumber).trim(),
+                password = encryptionManager.encrypt(password).trim(),
+                note = note.trim(),
+                createdAt = currentTimeInMillis
+            )
+
+            viewModelScope.launch {
+                db.insertAccount(account)
+                messages.tryEmit("Credentials Added!")
+                success.value = true
+            }
+        }
+
+    }
+
+    fun validationAndUpdateDetails(id: Int) {
+        if (validateFields()) {
+            viewModelScope.launch {
+                val currentTimeInMillis = System.currentTimeMillis()
+                val accountEntity = AccountEntity(
+                    id = id,
+                    accountName = accountName.trim(),
+                    userName = encryptionManager.encrypt(username.trim()),
+                    email = encryptionManager.encrypt(email.trim()),
+                    mobileNumber = encryptionManager.encrypt(mobileNumber),
+                    password = encryptionManager.encrypt(password.trim()),
+                    note = note.trim(),
+                    createdAt = currentTimeInMillis
+                )
+                db.updateAccount(accountEntity)
+                messages.tryEmit("Successfully Updated!")
+                success.value = true
+            }
+        }
+    }
+    fun filter(accountName: String) {
+        suggestions.clear()
+        if (accountName.isNotEmpty()) {
+            suggestions.addAll(accountSuggestions.filter { it.contains(accountName, true) })
+        }
+    }
+
+    fun resetSuggestions() {
+        suggestions.clear()
+    }
+
+    fun generateRandomPassword() {
+        password = generatePassword(
+            length = getRandomNumber(),
+            lowerCase = true,
+            upperCase = true,
+            digits = true,
+            specialCharacters = true
+        )
+    }
 
 }

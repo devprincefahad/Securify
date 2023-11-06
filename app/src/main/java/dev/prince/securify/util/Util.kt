@@ -9,22 +9,14 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
-import dev.prince.securify.ui.destinations.AddCardScreenDestination
-import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.CardScreenDestination
 import dev.prince.securify.ui.destinations.Destination
-import dev.prince.securify.ui.destinations.EditCardScreenDestination
-import dev.prince.securify.ui.destinations.EditPassowrdScreenDestination
 import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
+import dev.prince.securify.ui.destinations.PasswordScreenDestination
 import dev.prince.securify.ui.destinations.UnlockScreenDestination
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlin.math.absoluteValue
 
 fun <T> oneShotFlow() = MutableSharedFlow<T>(
     extraBufferCapacity = 1,
@@ -37,8 +29,7 @@ fun Destination.shouldShowBottomBar(): Boolean {
         IntroScreenDestination,
         UnlockScreenDestination,
         MasterKeyScreenDestination,
-        AddPasswordScreenDestination,
-        EditPassowrdScreenDestination,
+        PasswordScreenDestination,
         CardScreenDestination
     ))
 }

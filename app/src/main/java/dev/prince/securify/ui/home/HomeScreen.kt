@@ -66,10 +66,8 @@ import dev.prince.securify.ui.components.BottomSheet
 import dev.prince.securify.ui.components.SheetSurface
 import dev.prince.securify.ui.components.fab.FabButtonItem
 import dev.prince.securify.ui.components.fab.FabButtonMain
-import dev.prince.securify.ui.destinations.AddCardScreenDestination
-import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
 import dev.prince.securify.ui.destinations.CardScreenDestination
-import dev.prince.securify.ui.destinations.EditPassowrdScreenDestination
+import dev.prince.securify.ui.destinations.PasswordScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.Gray
@@ -144,7 +142,7 @@ fun HomeScreen(
             ) {
                 val items = listOf(
                     FabButtonItem(R.drawable.icon_card, label = "Add Card"),
-                    FabButtonItem(R.drawable.icon_pass, "Add Password")
+                    FabButtonItem(R.drawable.icon_pass, label = "Add Password")
                 )
                 val fabIcon = FabButtonMain(R.drawable.icon_add)
                 MultiFloatingActionButton(
@@ -152,8 +150,8 @@ fun HomeScreen(
                     fabIcon = fabIcon,
                     onFabItemClicked = {
                         when (it.label) {
-                            "Add Card" -> navigator.navigate(AddCardScreenDestination)
-                            "Add Password" -> navigator.navigate(AddPasswordScreenDestination)
+                            "Add Card" -> navigator.navigate(CardScreenDestination)
+                            "Add Password" -> navigator.navigate(PasswordScreenDestination)
                             else -> {
                                 // To handle other cases if needed
                             }
@@ -502,7 +500,7 @@ fun AccountRow(
                                 )
                             },
                             onClick = {
-                                navigator.navigate(EditPassowrdScreenDestination(account.id))
+                                navigator.navigate(PasswordScreenDestination(account.id))
                                 expanded = false
                             },
                             trailingIcon = {

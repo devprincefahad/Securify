@@ -15,6 +15,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import dev.prince.securify.ui.destinations.AddCardScreenDestination
 import dev.prince.securify.ui.destinations.AddPasswordScreenDestination
+import dev.prince.securify.ui.destinations.CardScreenDestination
 import dev.prince.securify.ui.destinations.Destination
 import dev.prince.securify.ui.destinations.EditCardScreenDestination
 import dev.prince.securify.ui.destinations.EditPassowrdScreenDestination
@@ -38,8 +39,7 @@ fun Destination.shouldShowBottomBar(): Boolean {
         MasterKeyScreenDestination,
         AddPasswordScreenDestination,
         EditPassowrdScreenDestination,
-        AddCardScreenDestination,
-        EditCardScreenDestination
+        CardScreenDestination
     ))
 }
 

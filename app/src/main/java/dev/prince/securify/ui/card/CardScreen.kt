@@ -1,4 +1,4 @@
-package dev.prince.securify.ui.edit_card
+package dev.prince.securify.ui.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +47,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
-import dev.prince.securify.ui.components.CardUi
 import dev.prince.securify.ui.components.SheetSurface
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
@@ -63,14 +62,16 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Destination
-fun EditCardScreen(
+fun CardScreen(
     navigator: DestinationsNavigator,
-    viewModel: EditCardViewModel = hiltViewModel(),
+    viewModel: CardViewModel = hiltViewModel(),
     cardId: Int
 ) {
 
-    LaunchedEffect(Unit) {
-        viewModel.getAccountById(cardId)
+    if (viewModel.isEditScreen) {
+        LaunchedEffect(Unit) {
+            viewModel.getAccountById(cardId)
+        }
     }
 
     val snackbar = LocalSnackbar.current
@@ -108,7 +109,7 @@ fun EditCardScreen(
                     top = 18.dp, bottom = 12.dp,
                     start = 16.dp, end = 16.dp
                 ),
-                text = "Edit Card",
+                text = if (viewModel.isEditScreen) "Edit Card" else "Add New Card",
                 color = Color.White,
                 style = TextStyle(
                     fontSize = 24.sp,
@@ -340,7 +341,7 @@ fun EditCardScreen(
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 keyboardController?.hide()
-                                viewModel.validateAndUpdate(cardId)
+                                if(viewModel.isEditScreen) viewModel.validateAndUpdate(cardId) else viewModel.validateAndInsert()
                             }
                         )
                     )
@@ -363,7 +364,7 @@ fun EditCardScreen(
                     )
                 ) {
                     Text(
-                        text = "Update Card",
+                        text = if (viewModel.isEditScreen) "Update Card" else "Save Card",
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontFamily = poppinsFamily,
@@ -384,7 +385,7 @@ fun EditCardScreen(
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldDropDown(
-    viewModel: EditCardViewModel = hiltViewModel()
+    viewModel: CardViewModel = hiltViewModel()
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current

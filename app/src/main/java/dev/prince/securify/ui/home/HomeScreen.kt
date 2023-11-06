@@ -79,6 +79,7 @@ import dev.prince.securify.util.AccountOrCard
 import dev.prince.securify.util.LocalSnackbar
 import dev.prince.securify.util.cardSuggestions
 import dev.prince.securify.util.suggestionsWithImages
+import kotlinx.coroutines.delay
 
 @Destination
 @Composable
@@ -95,12 +96,19 @@ fun HomeScreen(
 
     val isCombinedDataEmpty = remember { derivedStateOf { combinedData.isEmpty() } }
 
+    var isLoading by remember { mutableStateOf(true) }
+
     val snackbar = LocalSnackbar.current
 
     LaunchedEffect(Unit) {
         viewModel.messages.collect {
             snackbar(it)
         }
+    }
+
+    LaunchedEffect(true) {
+        delay(400)
+        isLoading = false
     }
 
     val isVisible = rememberSaveable { mutableStateOf(true) }
@@ -265,7 +273,6 @@ fun HomeScreen(
                         BottomSheet(
                             onDismiss = { showSheet = false },
                             content = {
-
                                 LazyColumn {
                                     items(viewModel.filterOptions) { option ->
                                         Row(
@@ -315,8 +322,9 @@ fun HomeScreen(
                             }
                         )
                     }
-
-                    if (isCombinedDataEmpty.value) {
+                    if (isLoading) {
+                        ColumnProgressIndicator()
+                    } else if (isCombinedDataEmpty.value) {
                         EmptyListPlaceholder(
                             searchQuery.isNotEmpty(),
                             viewModel.selectedOption
@@ -796,6 +804,22 @@ fun CommonColumnPlaceHolder(
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center
             )
+        )
+    }
+}
+
+@Composable
+fun ColumnProgressIndicator(){
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            color = Blue,
+            modifier = Modifier
+                .size(36.dp)
         )
     }
 }

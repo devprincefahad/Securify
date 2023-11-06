@@ -1,7 +1,6 @@
 package dev.prince.securify.ui.home
 
 import MultiFloatingActionButton
-import android.annotation.SuppressLint
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -92,8 +92,6 @@ fun HomeScreen(
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
     val combinedData by viewModel.combinedData.collectAsState(emptyList())
-
-    var selectedOption by rememberSaveable { mutableStateOf("All") }
 
     val isCombinedDataEmpty = remember { derivedStateOf { combinedData.isEmpty() } }
 
@@ -267,50 +265,44 @@ fun HomeScreen(
                         BottomSheet(
                             onDismiss = { showSheet = false },
                             content = {
-                                val filterOptions = listOf(
-                                    "All",
-                                    "Passwords",
-                                    "Cards",
-                                    "Other Passwords",
-                                    "Other Cards"
-                                )
 
                                 LazyColumn {
-                                    items(filterOptions) { option ->
-                                        Text(
-                                            text = option,
+                                    items(viewModel.filterOptions) { option ->
+                                        Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .clickable {
-                                                    selectedOption = option
+                                                    viewModel.selectedOption = option
+                                                    searchQuery = ""
+                                                    viewModel.setSearchQuery("")
                                                     showSheet = false
-                                                    /*when (option) {
-                                                        "All" -> {
-                                                            // Handle "All" option
-                                                        }
-                                                        "Passwords" -> {
-                                                            // Handle "Passwords" option
-                                                        }
-                                                        "Cards" -> {
-                                                            // Handle "Cards" option
-                                                        }
-                                                        "Other Passwords" -> {
-                                                            // Handle "Other Passwords" option
-                                                        }
-                                                        "Other Cards" -> {
-                                                            // Handle "Other Cards" option
-                                                        }
-                                                    }*/
                                                 }
                                                 .padding(16.dp),
-                                            fontSize = 16.sp,
-                                            style = TextStyle(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            val isSelected = viewModel.selectedOption == option
+                                            val icon =
+                                                if (isSelected) R.drawable.icon_selected else R.drawable.icon_unselected
+
+                                            Icon(
+                                                painter = painterResource(icon),
+                                                contentDescription = "Option Icon",
+                                                tint = Blue
+                                            )
+
+                                            Spacer(modifier = Modifier.width(8.dp))
+
+                                            Text(
+                                                text = option,
                                                 fontSize = 16.sp,
-                                                fontFamily = poppinsFamily,
-                                                fontWeight = FontWeight.Medium
-                                            ),
-                                            color = Color.Black
-                                        )
+                                                style = TextStyle(
+                                                    fontSize = 16.sp,
+                                                    fontFamily = poppinsFamily,
+                                                    fontWeight = FontWeight.Medium
+                                                ),
+                                                color = Color.Black
+                                            )
+                                        }
                                     }
                                 }
                                 Spacer(modifier = Modifier.navigationBarsPadding())
@@ -327,8 +319,7 @@ fun HomeScreen(
                     if (isCombinedDataEmpty.value) {
                         EmptyListPlaceholder(
                             searchQuery.isNotEmpty(),
-                            selectedOption,
-                            isCombinedDataEmpty.value
+                            viewModel.selectedOption
                         )
                     } else {
                         LazyColumn(
@@ -344,13 +335,13 @@ fun HomeScreen(
                             items(combinedData) { item ->
                                 when (item) {
                                     is AccountOrCard.AccountItem -> {
-                                        if (selectedOption == "All" || selectedOption == "Passwords") {
+                                        if (viewModel.selectedOption == "All" || viewModel.selectedOption == "Passwords") {
                                             AccountRow(navigator, item.account)
                                         }
                                     }
 
                                     is AccountOrCard.CardItem -> {
-                                        if (selectedOption == "All" || selectedOption == "Cards") {
+                                        if (viewModel.selectedOption == "All" || viewModel.selectedOption == "Cards") {
                                             CardRow(navigator, item.card)
                                         }
                                     }
@@ -763,11 +754,26 @@ private fun ConfirmCardDeletionDialog(
     )
 }
 
-/*@Composable
+@Composable
 fun EmptyListPlaceholder(
     isSearch: Boolean,
-    selectedOption: String,
-    combinedData: List<AccountOrCard>
+    selectedOption: String
+) {
+
+    if (isSearch) {
+        CommonColumnPlaceHolder(text = "Sorry, Nothing found!")
+    } else {
+        when (selectedOption) {
+            "Passwords" -> CommonColumnPlaceHolder(text = "No Passwords found!")
+            "Cards" -> CommonColumnPlaceHolder(text = "No Cards found!")
+            else -> CommonColumnPlaceHolder(text = "Vault is empty")
+        }
+    }
+}
+
+@Composable
+fun CommonColumnPlaceHolder(
+    text: String
 ) {
     Column(
         modifier = Modifier
@@ -783,15 +789,7 @@ fun EmptyListPlaceholder(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = if (isSearch) {
-                "Sorry, Nothing\n found!"
-            } else if (selectedOption == "Passwords") {
-                "No Passwords found!"
-            } else if (selectedOption == "Cards") {
-                "No Cards found!"
-            } else {
-                "Vault is empty"
-            },
+            text = text,
             style = TextStyle(
                 fontSize = 18.sp,
                 fontFamily = poppinsFamily,
@@ -800,105 +798,4 @@ fun EmptyListPlaceholder(
             )
         )
     }
-}*/
-
-@Composable
-fun EmptyListPlaceholder(
-    isSearch: Boolean,
-    selectedOption: String,
-    isCombinedDataEmpty: Boolean,
-) {
-
-    if (isSearch) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                modifier = Modifier.size(120.dp),
-                painter = painterResource(R.drawable.img_empty_box),
-                contentDescription = null,
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = if (isSearch) {
-                    "Sorry, Nothing\n found!"
-                } else {
-                    "Vault is empty"
-                },
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontFamily = poppinsFamily,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center
-                )
-            )
-        }
-    } else {
-        when (selectedOption) {
-            "Passwords" -> {
-                if (isCombinedDataEmpty) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            modifier = Modifier.size(120.dp),
-                            painter = painterResource(R.drawable.img_empty_box),
-                            contentDescription = null,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No Passwords found!",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.Medium,
-                                textAlign = TextAlign.Center
-                            )
-                        )
-                    }
-                }
-            }
-
-            "Cards" -> {
-                if (isCombinedDataEmpty) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            modifier = Modifier.size(120.dp),
-                            painter = painterResource(R.drawable.img_empty_box),
-                            contentDescription = null,
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No Cards found!",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontFamily = poppinsFamily,
-                                fontWeight = FontWeight.Medium,
-                                textAlign = TextAlign.Center
-                            )
-                        )
-                    }
-                }
-            }
-
-            else -> {
-                // Handle other cases if needed
-            }
-        }
-    }
 }
-

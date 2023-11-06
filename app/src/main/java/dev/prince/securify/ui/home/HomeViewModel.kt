@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,6 +30,14 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val messages = oneShotFlow<String>()
+
+    var selectedOption by mutableStateOf("All")
+
+    val filterOptions = listOf(
+        "All",
+        "Passwords",
+        "Cards"
+    )
 
     var showAccountDeleteDialog by mutableStateOf(false)
 
@@ -56,6 +65,12 @@ class HomeViewModel @Inject constructor(
 
         val filteredItems = if (query.isNotBlank()) {
             sortedItems.filter { (item, _) ->
+                when (selectedOption) {
+                    "All" -> true
+                    "Passwords" -> item is AccountOrCard.AccountItem
+                    "Cards" -> item is AccountOrCard.CardItem
+                    else -> true
+                } &&
                 when (item) {
                     is AccountOrCard.AccountItem -> {
                         val account = item.account

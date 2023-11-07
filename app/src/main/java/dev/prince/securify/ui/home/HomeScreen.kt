@@ -1,6 +1,7 @@
 package dev.prince.securify.ui.home
 
 import MultiFloatingActionButton
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -150,8 +151,8 @@ fun HomeScreen(
                     fabIcon = fabIcon,
                     onFabItemClicked = {
                         when (it.label) {
-                            "Add Card" -> navigator.navigate(CardScreenDestination)
-                            "Add Password" -> navigator.navigate(PasswordScreenDestination)
+                            "Add Card" -> navigator.navigate(CardScreenDestination(-1))
+                            "Add Password" -> navigator.navigate(PasswordScreenDestination(-1))
                             else -> {
                                 // To handle other cases if needed
                             }

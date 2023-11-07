@@ -1,5 +1,6 @@
 package dev.prince.securify.ui.card
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +25,7 @@ class CardViewModel @Inject constructor(
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
-    val isEditScreen by mutableStateOf(true)
+    var isEditScreen by mutableStateOf(false)
 
     val messages = oneShotFlow<String>()
 
@@ -46,7 +47,7 @@ class CardViewModel @Inject constructor(
 
     val success = mutableStateOf(false)
 
-    fun getAccountById(cardId: Int) {
+    fun getCardById(cardId: Int) {
         viewModelScope.launch {
             db.getCardsById(cardId).collect {
                 cardNumber = encryptionManager.decrypt(it.cardNumber)

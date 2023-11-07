@@ -68,9 +68,13 @@ fun CardScreen(
     cardId: Int
 ) {
 
+    if (cardId != -1) {
+        viewModel.isEditScreen = true
+    }
+
     if (viewModel.isEditScreen) {
         LaunchedEffect(Unit) {
-            viewModel.getAccountById(cardId)
+            viewModel.getCardById(cardId)
         }
     }
 
@@ -341,7 +345,11 @@ fun CardScreen(
                         keyboardActions = KeyboardActions(
                             onDone = {
                                 keyboardController?.hide()
-                                if(viewModel.isEditScreen) viewModel.validateAndUpdate(cardId) else viewModel.validateAndInsert()
+                                if (viewModel.isEditScreen) {
+                                    viewModel.validateAndUpdate(cardId)
+                                } else {
+                                    viewModel.validateAndInsert()
+                                }
                             }
                         )
                     )
@@ -355,7 +363,11 @@ fun CardScreen(
                         .fillMaxWidth()
                         .height(50.dp),
                     onClick = {
-                        viewModel.validateAndUpdate(cardId)
+                        if (viewModel.isEditScreen) {
+                            viewModel.validateAndUpdate(cardId)
+                        } else {
+                            viewModel.validateAndInsert()
+                        }
                     },
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors(

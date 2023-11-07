@@ -71,6 +71,16 @@ fun PasswordScreen(
     accountId: Int
 ) {
 
+    if (accountId != -1) {
+        viewModel.isEditScreen = true
+    }
+
+    if (viewModel.isEditScreen) {
+        LaunchedEffect(Unit) {
+            viewModel.getAccountById(accountId)
+        }
+    }
+
     val snackbar = LocalSnackbar.current
 
     LaunchedEffect(Unit) {
@@ -536,7 +546,7 @@ fun PasswordScreen(
                     keyboardActions = KeyboardActions(
                         onDone = {
                             if (viewModel.isEditScreen) {
-                                viewModel.validationAndUpdateDetails(accountId)
+                                viewModel.validationAndUpdate(accountId)
                             } else {
                                 viewModel.validateAndInsert()
                             }
@@ -552,7 +562,7 @@ fun PasswordScreen(
                         .height(50.dp),
                     onClick = {
                         if (viewModel.isEditScreen) {
-                            viewModel.validationAndUpdateDetails(accountId)
+                            viewModel.validationAndUpdate(accountId)
                         } else {
                             viewModel.validateAndInsert()
                         }

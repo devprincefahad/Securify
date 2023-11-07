@@ -1,5 +1,6 @@
 package dev.prince.securify.ui.password
 
+import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +26,7 @@ class PasswordViewModel @Inject constructor(
     private val encryptionManager: EncryptionManager
 ) : ViewModel() {
 
-    val isEditScreen by mutableStateOf(true)
+    var isEditScreen by mutableStateOf(false)
 
     val messages = oneShotFlow<String>()
 
@@ -45,6 +46,18 @@ class PasswordViewModel @Inject constructor(
     var password by mutableStateOf("")
 
     val success = mutableStateOf(false)
+
+    fun getAccountById(accountId: Int) {
+        viewModelScope.launch {
+            db.getAccountById(accountId).collect {
+                accountName = it.accountName
+                username = encryptionManager.decrypt(it.userName)
+                email = encryptionManager.decrypt(it.email)
+                mobileNumber = encryptionManager.decrypt(it.mobileNumber)
+                password = encryptionManager.decrypt(it.password)
+            }
+        }
+    }
 
     private fun validateFields(): Boolean {
         if (accountName.isBlank()) {
@@ -98,7 +111,7 @@ class PasswordViewModel @Inject constructor(
 
     }
 
-    fun validationAndUpdateDetails(id: Int) {
+    fun validationAndUpdate(id: Int) {
         if (validateFields()) {
             viewModelScope.launch {
                 val currentTimeInMillis = System.currentTimeMillis()

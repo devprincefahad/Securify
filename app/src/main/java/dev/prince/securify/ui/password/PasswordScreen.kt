@@ -139,38 +139,19 @@ fun PasswordScreen(
             ) {
 
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "Account Name",
-                    textAlign = TextAlign.Left,
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFamily
-                    ),
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(12.dp))
 
                 SearchOutlinedTextFieldWithDropdown()
 
-                Text(
-                    text = "Username",
-                    textAlign = TextAlign.Left,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFamily
-                    )
-                )
                 Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
                     value = viewModel.username,
-                    placeholder = {
+                    label = {
                         Text(
-                            text = "John Doe",
+                            text = "Username",
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFamily,
@@ -203,6 +184,7 @@ fun PasswordScreen(
                             painter = painterResource(
                                 id = R.drawable.icon_username
                             ),
+                            tint = Color.Gray,
                             contentDescription = null
                         )
                     },
@@ -223,25 +205,16 @@ fun PasswordScreen(
                     )
                 )
 
-                Text(
-                    text = "Email ID",
-                    textAlign = TextAlign.Left,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFamily
-                    )
-                )
                 Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
                     value = viewModel.email,
-                    placeholder = {
+                    label = {
                         Text(
-                            text = "john@example.com",
+                            text = "Email ID",
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFamily,
@@ -270,6 +243,7 @@ fun PasswordScreen(
                             painter = painterResource(
                                 id = R.drawable.icon_email
                             ),
+                            tint = Color.Gray,
                             contentDescription = null
                         )
                     },
@@ -296,25 +270,17 @@ fun PasswordScreen(
                     )
                 )
 
-                Text(
-                    text = "Mobile Number",
-                    textAlign = TextAlign.Left,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFamily
-                    )
-                )
                 Spacer(modifier = Modifier.height(12.dp))
+
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
                     value = viewModel.mobileNumber,
-                    placeholder = {
+                    label = {
                         Text(
-                            "XXXXXXXXXX", style = TextStyle(
+                            text = "Mobile Number",
+                            style = TextStyle(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFamily,
                                 color = Gray
@@ -350,6 +316,7 @@ fun PasswordScreen(
                             painter = painterResource(
                                 id = R.drawable.icon_call
                             ),
+                            tint = Color.Gray,
                             contentDescription = null
                         )
                     },
@@ -369,17 +336,8 @@ fun PasswordScreen(
                     )
                 )
 
-                Text(
-                    text = "Password",
-                    textAlign = TextAlign.Left,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFamily
-                    )
-                )
                 Spacer(modifier = Modifier.height(12.dp))
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -391,9 +349,9 @@ fun PasswordScreen(
                             .weight(1f)
                             .padding(end = 6.dp),
                         value = viewModel.password,
-                        placeholder = {
+                        label = {
                             Text(
-                                text = " ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ∗ ",
+                                text = "Password",
                                 style = TextStyle(
                                     fontSize = 16.sp,
                                     fontFamily = poppinsFamily,
@@ -427,6 +385,7 @@ fun PasswordScreen(
                                     painter = if (viewModel.keyVisible)
                                         painterResource(R.drawable.icon_visibility)
                                     else painterResource(R.drawable.icon_visibility_off),
+                                    tint = Color.Gray,
                                     contentDescription = null
                                 )
                             }
@@ -445,6 +404,7 @@ fun PasswordScreen(
                                 painter = painterResource(
                                     id = R.drawable.icon_lock
                                 ),
+                                tint = Color.Gray,
                                 contentDescription = null
                             )
                         },
@@ -463,27 +423,17 @@ fun PasswordScreen(
                     )
                     Icon(
                         modifier = Modifier
-                            .padding(top = 14.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
+                            .padding(top = 18.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
                             .size(34.dp)
                             .clickWithRipple {
                                 viewModel.generateRandomPassword()
                             },
                         painter = painterResource(R.drawable.icon_regenerate),
-                        contentDescription = null,
-                        tint = Color.Black
+                        tint = Color.Black,
+                        contentDescription = null
                     )
                 }
 
-                Text(
-                    text = "Note",
-                    textAlign = TextAlign.Left,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                    style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = poppinsFamily
-                    )
-                )
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
@@ -492,9 +442,9 @@ fun PasswordScreen(
                         .fillMaxWidth()
                         .height(200.dp),
                     value = viewModel.note,
-                    placeholder = {
+                    label = {
                         Text(
-                            "Add a Note Here...",
+                            text = "Note",
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontFamily = poppinsFamily,
@@ -524,6 +474,7 @@ fun PasswordScreen(
                             painter = painterResource(
                                 id = R.drawable.icon_note
                             ),
+                            tint = Color.Gray,
                             contentDescription = null
                         )
                     },
@@ -637,7 +588,7 @@ fun SearchOutlinedTextFieldWithDropdown(
                 .fillMaxWidth()
                 .menuAnchor(),
             value = viewModel.accountName,
-            placeholder = {
+            label = {
                 Text(
                     "Type Account Name ...",
                     style = TextStyle(

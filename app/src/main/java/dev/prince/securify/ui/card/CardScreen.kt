@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +49,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import dev.prince.securify.R
 import dev.prince.securify.ui.components.SheetSurface
+import dev.prince.securify.ui.password.TextFieldSeparator
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
 import dev.prince.securify.ui.theme.Gray
@@ -192,6 +194,23 @@ fun CardScreen(
                     ),
                     visualTransformation = visualTransformation,
                     singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp),
+                            painter = painterResource(
+                                id = R.drawable.icon_card_number
+                            ),
+                            tint = Color.Gray,
+                            contentDescription = null
+                        )
+                    },
+                    prefix = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextFieldSeparator(24)
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
                     ),
@@ -240,6 +259,23 @@ fun CardScreen(
                         cursorColor = Color.Gray
                     ),
                     singleLine = true,
+                    leadingIcon = {
+                        Icon(
+                            modifier = Modifier.size(22.dp),
+                            painter = painterResource(
+                                id = R.drawable.icon_username
+                            ),
+                            tint = Color.Gray,
+                            contentDescription = null
+                        )
+                    },
+                    prefix = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextFieldSeparator(24)
+                        }
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text
                     ),
@@ -266,7 +302,7 @@ fun CardScreen(
 
                     OutlinedTextField(
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(1.4f)
                             .padding(end = 6.dp),
                         value = viewModel.cardExpiryDate,
                         onValueChange = { if (it.length <= 4) viewModel.cardExpiryDate = it },
@@ -295,6 +331,23 @@ fun CardScreen(
                             cursorColor = Color.Gray
                         ),
                         singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                modifier = Modifier.size(22.dp),
+                                painter = painterResource(
+                                    id = R.drawable.icon_date
+                                ),
+                                tint = Color.Gray,
+                                contentDescription = null
+                            )
+                        },
+                        prefix = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                TextFieldSeparator(24)
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
@@ -339,6 +392,23 @@ fun CardScreen(
                             cursorColor = Color.Gray
                         ),
                         singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                modifier = Modifier.size(22.dp),
+                                painter = painterResource(
+                                    id = R.drawable.icon_cvv
+                                ),
+                                tint = Color.Gray,
+                                contentDescription = null
+                            )
+                        },
+                        prefix = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                TextFieldSeparator(24)
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),

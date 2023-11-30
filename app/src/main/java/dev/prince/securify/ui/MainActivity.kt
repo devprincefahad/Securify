@@ -12,6 +12,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import com.farimarwat.maxguard.MaxGuard
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -26,6 +27,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen() // Complying with Android 12 Splash Screen guidelines
         super.onCreate(savedInstanceState)
 
         MaxGuard().startMaxGuard()

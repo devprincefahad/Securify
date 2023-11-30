@@ -115,6 +115,9 @@ dependencies {
     // MaxGuard
     implementation("io.github.farimarwat:maxguard:1.1")
 
+    // SplashScreen
+    implementation("androidx.core:core-splashscreen:1.0.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -12,5 +12,6 @@
     <string name="get_started">Get Started</string>
     <string name="reset_master_key">Reset Master Key</string>
     <string name="reset_key_tagline">Reset your Master Key to secure your credentials with end-to-end encryption</string>
+    <string name="web_client_id">392611333096-pued9mjnmvfkfnvs6vqulkrd44c19rvl.apps.googleusercontent.com</string>
 
 </resources>

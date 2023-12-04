@@ -1,17 +1,16 @@
 <resources>
     <string name="app_name">Securify</string>
-    <string name="intro_tagline_1">Monitoring Password From Anywhere</string>
-    <string name="intro_tagline_2">You can manage your Passwords Anywhere, Anytime.</string>
+    <string name="intro_tagline_1">Securely Managing Digital Life</string>
+    <string name="intro_tagline_2">You can now manage your Passwords, Cards from Anywhere, Anytime.</string>
     <string name="setup_key_tagline_1">Let\'s make your digital data secured</string>
     <string name="setup_master_key">Setup Master Key</string>
     <string name="setup_key_tagline_2">Create a Master Key to secure your credentials with end-to-end encryption</string>
     <string name="home">Home</string>
     <string name="settings">Settings</string>
     <string name="generate">Generate</string>
-    <string name="about_info">Securify is a trusted password management app designed to simplify your online security. With Securify, you no longer need to remember countless passwords for your accounts. Our app provides a secure vault where you can store and organize your passwords with ease. Rest assured knowing your sensitive information is encrypted and safeguarded. Securify ensures quick and seamless access to your accounts, making your online experience hassle-free. Elevate your digital security with Securify, and experience peace of mind in the digital world.</string>
+    <string name="about_info">Securify: Elevating Your Digital Security for Passwords and Banking Cards. Simplify your online life with our trusted app, where passwords and financial details coexist in a secure vault. No more juggling countless credentials – Securify is your solution. Enjoy hassle-free access to both your accounts and banking cards, all within an encrypted and safeguarded environment. Elevate your digital security and experience peace of mind in the online and financial realms with Securify.</string>
     <string name="get_started">Get Started</string>
     <string name="reset_master_key">Reset Master Key</string>
     <string name="reset_key_tagline">Reset your Master Key to secure your credentials with end-to-end encryption</string>
-    <string name="web_client_id">392611333096-pued9mjnmvfkfnvs6vqulkrd44c19rvl.apps.googleusercontent.com</string>
 
 </resources>

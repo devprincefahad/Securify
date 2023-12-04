@@ -26,4 +26,7 @@ interface CardDao {
     @Query("SELECT * FROM `card` WHERE id = :id")
     fun getCardsById(id: Int): Flow<CardEntity>
 
+    @Query("DELETE FROM card")
+    fun deleteAllCards()
+
 }

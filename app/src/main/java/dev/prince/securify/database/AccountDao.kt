@@ -26,4 +26,7 @@ interface AccountDao {
     @Query("SELECT * FROM `account` WHERE id = :id")
     fun getAccountById(id: Int): Flow<AccountEntity>
 
+    @Query("DELETE FROM account")
+    fun deleteAllAccounts()
+
 }

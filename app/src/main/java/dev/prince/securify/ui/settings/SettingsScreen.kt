@@ -48,12 +48,15 @@ import coil.compose.AsyncImage
 import com.google.android.gms.auth.api.identity.Identity
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 import dev.prince.securify.R
 import dev.prince.securify.signin.GoogleAuthUiClient
 import dev.prince.securify.signin.UserData
 import dev.prince.securify.ui.auth.NavigationSource
+import dev.prince.securify.ui.components.AlertDialogContent
 import dev.prince.securify.ui.components.BottomSheet
 import dev.prince.securify.ui.components.SheetSurface
+import dev.prince.securify.ui.destinations.IntroScreenDestination
 import dev.prince.securify.ui.destinations.MasterKeyScreenDestination
 import dev.prince.securify.ui.theme.BgBlack
 import dev.prince.securify.ui.theme.Blue
@@ -62,6 +65,7 @@ import dev.prince.securify.ui.theme.Red
 import dev.prince.securify.ui.theme.White
 import dev.prince.securify.ui.theme.poppinsFamily
 import dev.prince.securify.util.isBiometricSupported
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 data class SettingsItem(
@@ -88,7 +92,7 @@ fun SettingsScreen(
     }
     val user = googleAuthUiClient.getSignedInUser()
 
-    val scope = rememberCoroutineScope()
+    if (viewModel.showAllDataDeleteDialog) ConfirmDataDeletionDialog(navigator)
 
     Column(
         modifier = Modifier
@@ -134,7 +138,7 @@ fun SettingsScreen(
                     text = "Logout",
                     icon = R.drawable.icon_logout,
                     onClick = {
-                        scope.launch { googleAuthUiClient.signOut() }
+                        viewModel.showAllDataDeleteDialog = true
                     }
                 )
             )
@@ -296,7 +300,7 @@ fun SettingsItemRow(
                 painter = painterResource(settingsItem.icon),
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
-                tint = if (settingsItem.text == "Logout") Red else Color.Black
+                tint = if (settingsItem.text == "Logout") Red else Color.Gray
             )
 
             Text(
@@ -330,4 +334,43 @@ fun SettingsItemRow(
             }
         }
     }
+}
+
+@Composable
+private fun ConfirmDataDeletionDialog(
+    navigator: DestinationsNavigator,
+    viewModel: SettingsViewModel = hiltViewModel(),
+) {
+
+    val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+
+    val googleAuthUiClient by lazy {
+        GoogleAuthUiClient(
+            context = context,
+            oneTapClient = Identity.getSignInClient(context)
+        )
+    }
+    AlertDialogContent(
+        onDismissRequest = {
+            viewModel.showAllDataDeleteDialog = false
+        },
+        onConfirmation = {
+            scope.launch(Dispatchers.IO) {
+                googleAuthUiClient.signOut()
+            }
+            viewModel.deleteAll()
+            viewModel.showAllDataDeleteDialog = false
+            navigator.navigate(IntroScreenDestination) {
+                popUpTo(IntroScreenDestination) {
+                    inclusive = true
+                }
+            }
+        },
+        dialogTitle = "Logout from Securify?",
+        dialogText = "Logging out will delete all your saved data including cards and passwords." +
+                "\n\nAre you sure you want to proceed?",
+        confirmTitle = "Logout"
+    )
 }

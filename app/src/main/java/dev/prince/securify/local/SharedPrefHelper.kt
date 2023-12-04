@@ -9,6 +9,7 @@ class SharedPrefHelper @Inject constructor(
 ) {
 
     private val KEY_AUTH = "auth_key"
+    private val KEY_SWITCH_STATE = "switchState"
 
     var masterKey: String
         get() = getString(KEY_AUTH)
@@ -26,12 +27,19 @@ class SharedPrefHelper @Inject constructor(
         }
     }
 
+    fun resetMasterKeyAndSwitch() {
+        pref.edit {
+            remove(KEY_AUTH)
+            remove(KEY_SWITCH_STATE)
+        }
+    }
+
     fun getSwitchState(): Boolean {
-        return pref.getBoolean("switchState", false)
+        return pref.getBoolean(KEY_SWITCH_STATE, false)
     }
 
     fun setSwitchState(state: Boolean) {
-        pref.edit { putBoolean("switchState", state) }
+        pref.edit { putBoolean(KEY_SWITCH_STATE, state) }
     }
 
 }

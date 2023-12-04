@@ -61,7 +61,9 @@ class GoogleAuthUiClient(
 
     suspend fun signOut() {
         try {
+            //google sign out
             oneTapClient.signOut().await()
+            //firebase sign out
             auth.signOut()
         } catch(e: Exception) {
             e.printStackTrace()

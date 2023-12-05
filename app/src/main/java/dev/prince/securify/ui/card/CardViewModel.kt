@@ -116,7 +116,11 @@ class CardViewModel @Inject constructor(
             messages.tryEmit("Please provide Card CVV")
             return false
         }
-        if (cardNumber.length < 3) {
+        if (!cardCVV.isDigitsOnly()) {
+            messages.tryEmit("Invalid Card CVV")
+            return false
+        }
+        if (cardCVV.length < 3) {
             messages.tryEmit("Card cvv must be 3 digits")
             return false
         }

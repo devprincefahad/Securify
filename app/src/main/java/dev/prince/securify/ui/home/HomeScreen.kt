@@ -238,7 +238,8 @@ fun HomeScreen(
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedTextColor = Color.Black,
                                 unfocusedTextColor = Color.Black,
-                                focusedBorderColor = LightBlack,
+                                focusedBorderColor = Color.Black,
+                                unfocusedBorderColor = Color.Black,
                                 focusedLabelColor = Color.Black,
                                 unfocusedLabelColor = Color.Gray,
                                 cursorColor = Color.Gray

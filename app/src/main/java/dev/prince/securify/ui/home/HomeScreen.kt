@@ -93,8 +93,16 @@ fun HomeScreen(
 
     val combinedData by viewModel.combinedData.collectAsState(emptyList())
 
-    val isCombinedDataEmpty = remember { derivedStateOf { combinedData.isEmpty() } }
-
+    val isCombinedDataEmpty = remember {
+        derivedStateOf {
+            when (viewModel.selectedOption) {
+                "All" -> combinedData.isEmpty()
+                "Passwords" -> combinedData.filterIsInstance<AccountOrCard.AccountItem>().isEmpty()
+                "Cards" -> combinedData.filterIsInstance<AccountOrCard.CardItem>().isEmpty()
+                else -> {}
+            }
+        }
+    }
     var isLoading by remember { mutableStateOf(true) }
 
     val snackbar = LocalSnackbar.current
@@ -324,7 +332,7 @@ fun HomeScreen(
                     }
                     if (isLoading) {
                         ColumnProgressIndicator()
-                    } else if (isCombinedDataEmpty.value) {
+                    } else if (isCombinedDataEmpty.value as Boolean) {
                         EmptyListPlaceholder(
                             searchQuery.isNotEmpty(),
                             viewModel.selectedOption
@@ -809,7 +817,7 @@ fun CommonColumnPlaceHolder(
 }
 
 @Composable
-fun ColumnProgressIndicator(){
+fun ColumnProgressIndicator() {
     Column(
         modifier = Modifier
             .fillMaxSize(),

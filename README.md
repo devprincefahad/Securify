@@ -1,5 +1,5 @@
 # Securify
 Securify is a password and credit/debit card manager app, with advanced encryption. Features include Fingerprint unlock, one-tap sign-in and generate password
 
-## Note:-
-This project is currently under development and is a work in progress. New features and improvements are being added regularly.
+## 🎥 Demo
+https://github.com/devprincefahad/Securify/assets/94643962/6f3e5ce8-8f33-4aa0-940a-300ceae96aa7

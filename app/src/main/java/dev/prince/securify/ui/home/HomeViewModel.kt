@@ -126,8 +126,8 @@ class HomeViewModel @Inject constructor(
         return encryptionManager.decrypt(input)
     }
 
-    fun showCopyMsg() {
-        messages.tryEmit("Password copied to clipboard.")
+    fun showCopyMsg(stringType: String) {
+        messages.tryEmit("$stringType copied to clipboard.")
     }
 
 }

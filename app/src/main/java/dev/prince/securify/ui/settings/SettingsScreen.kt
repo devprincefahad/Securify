@@ -1,5 +1,6 @@
 package dev.prince.securify.ui.settings
 
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -82,6 +83,13 @@ fun SettingsScreen(
 ) {
 
     val context = LocalContext.current
+
+    // intent for sharing app
+    val shareIntent = Intent(Intent.ACTION_SEND)
+    shareIntent.type = "text/plain"
+    val appPackageName = context.packageName
+    val shareMessage = context.getString(R.string.share_message, appPackageName)
+
     var showSheet by remember { mutableStateOf(false) }
 
     val googleAuthUiClient by lazy {
@@ -127,7 +135,10 @@ fun SettingsScreen(
                 SettingsItem(
                     text = "Share",
                     icon = R.drawable.icon_share,
-                    onClick = { /* TODO hook up Firebase Remote Config for Share Securify  */ }
+                    onClick = {
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
+                        context.startActivity(Intent.createChooser(shareIntent, "Share app link"))
+                    }
                 ),
                 SettingsItem(
                     text = "About",

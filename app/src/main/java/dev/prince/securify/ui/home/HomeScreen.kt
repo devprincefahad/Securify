@@ -461,7 +461,7 @@ fun AccountRow(
                         clipboardManager.setText(
                             AnnotatedString(password)
                         )
-                        viewModel.showCopyMsg()
+                        viewModel.showCopyMsg(stringType = "Password")
                     },
                     modifier = Modifier.size(32.dp)
                 ) {
@@ -642,7 +642,7 @@ fun CardRow(
                         clipboardManager.setText(
                             AnnotatedString(viewModel.decryptInput(card.cardNumber))
                         )
-                        viewModel.showCopyMsg()
+                        viewModel.showCopyMsg(stringType = "Card Number")
                     },
                     modifier = Modifier.size(32.dp)
                 ) {

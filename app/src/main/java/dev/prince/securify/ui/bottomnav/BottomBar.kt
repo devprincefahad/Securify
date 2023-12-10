@@ -44,7 +44,7 @@ fun BottomBar(
                         // Restore state when reselecting a previously selected item
                         .navigate(destination.direction, fun NavOptionsBuilder.() {
                             launchSingleTop = true
-                            val navigationRoutes = BottomBarDestination.entries.toTypedArray()
+                            /*val navigationRoutes = BottomBarDestination.entries.toTypedArray()
 
                             val firstBottomBarDestination = navController.currentBackStack.value
                                 .firstOrNull { navBackStackEntry ->
@@ -66,7 +66,7 @@ fun BottomBar(
                             // reselecting the same item
                             launchSingleTop = true
                             // Restore state when reselecting a previously selected item
-                            restoreState = true
+                            restoreState = true*/
                         })
                 },
                 icon = {

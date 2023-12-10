@@ -1,5 +1,7 @@
 package dev.prince.securify.ui.intro
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.prince.securify.signin.SignInResult
@@ -33,6 +35,12 @@ class IntroViewModel @Inject constructor() : ViewModel() {
 
     fun showSnackBar(text: String) {
         messages.tryEmit(text)
+    }
+
+    fun isNetworkConnected(connectivityManager: ConnectivityManager): Boolean {
+        val network = connectivityManager.activeNetwork
+        val capabilities = connectivityManager.getNetworkCapabilities(network)
+        return capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
     }
 
 }

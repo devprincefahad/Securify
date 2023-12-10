@@ -2,6 +2,8 @@ package dev.prince.securify.ui.intro
 
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -110,7 +112,11 @@ fun IntroScreen(
         }
     }
 
-    IntroScreenContent(navigator,googleAuthUiClient,launcher)
+    IntroScreenContent(
+        navigator = navigator,
+        googleAuthUiClient = googleAuthUiClient,
+        launcher = launcher
+    )
 
     BackHandler {
         (context as ComponentActivity).finish()
@@ -119,13 +125,17 @@ fun IntroScreen(
 
 @Composable
 fun IntroScreenContent(
+    viewModel: IntroViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
     googleAuthUiClient: GoogleAuthUiClient,
     launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>
 ) {
 
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -177,13 +187,17 @@ fun IntroScreenContent(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
                 onClick = {
-                    scope.launch {
-                        val signInIntentSender = googleAuthUiClient.signIn()
-                        launcher.launch(
-                            IntentSenderRequest.Builder(
-                                signInIntentSender ?: return@launch
-                            ).build()
-                        )
+                    if (viewModel.isNetworkConnected(connectivityManager)) {
+                        scope.launch {
+                            val signInIntentSender = googleAuthUiClient.signIn()
+                            launcher.launch(
+                                IntentSenderRequest.Builder(
+                                    signInIntentSender ?: return@launch
+                                ).build()
+                            )
+                        }
+                    } else {
+                        viewModel.showSnackBar("Not connected to the internet")
                     }
                     /*navigator.navigate(
                         MasterKeyScreenDestination(NavigationSource.INTRO)

@@ -112,9 +112,6 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     implementation(libs.play.services.auth)
 
-    // MaxGuard
-    implementation("io.github.farimarwat:maxguard:1.1")
-
     // SplashScreen
     implementation("androidx.core:core-splashscreen:1.0.0")
 

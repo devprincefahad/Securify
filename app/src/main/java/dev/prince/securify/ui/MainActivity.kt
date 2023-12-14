@@ -30,8 +30,6 @@ class MainActivity : FragmentActivity() {
         installSplashScreen() // Complying with Android 12 Splash Screen guidelines
         super.onCreate(savedInstanceState)
 
-        MaxGuard().startMaxGuard()
-
         setContent {
             SecurifyTheme {
                 ScaffoldDefaults.contentWindowInsets

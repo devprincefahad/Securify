@@ -10,8 +10,8 @@ const val BLOCK_MODE = "CBC"
 const val PADDING = "PKCS5Padding"
 const val TRANSFORMATION = "$AES_ALGORITHM/$BLOCK_MODE/$PADDING"
 
-fun generateKey(uid: String, masterKey: String): SecretKeySpec {
-    val combinedKey = uid + masterKey
+fun generateKey(uid: String, email: String): SecretKeySpec {
+    val combinedKey = uid + email
     val md = MessageDigest.getInstance(SHA_ALGORITHM)
     val hashBytes = md.digest(combinedKey.toByteArray(Charsets.UTF_8))
     val keyBytes = hashBytes.copyOf(BYTE_SIZE) // AES-128 requires a 16-byte key

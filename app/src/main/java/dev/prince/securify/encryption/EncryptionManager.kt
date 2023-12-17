@@ -14,11 +14,8 @@ import javax.crypto.spec.IvParameterSpec
 import javax.inject.Inject
 
 class EncryptionManager @Inject constructor(
-    @ApplicationContext private val context: Context,
-    prefs: SharedPrefHelper
+    @ApplicationContext private val context: Context
 ) {
-
-    private val loginKey = prefs.masterKey
 
     private val googleAuthUiClient by lazy {
         GoogleAuthUiClient(
@@ -26,6 +23,7 @@ class EncryptionManager @Inject constructor(
             oneTapClient = Identity.getSignInClient(context)
         )
     }
+
     private val user = googleAuthUiClient.getSignedInUser()
 
     fun encrypt(input: String): String {
@@ -33,7 +31,7 @@ class EncryptionManager @Inject constructor(
             return input
         }
         return runCatching {
-            val key = user?.let { generateKey(it.userId, loginKey) }
+            val key = user?.email?.let { generateKey(user.userId, it) }
             val cipher = Cipher.getInstance(TRANSFORMATION)
             val ivBytes = ByteArray(BYTE_SIZE)
             val ivSpec = IvParameterSpec(ivBytes)
@@ -51,7 +49,7 @@ class EncryptionManager @Inject constructor(
             return input
         }
         return runCatching {
-            val key = user?.let { generateKey(it.userId, loginKey) }
+            val key = user?.email?.let { generateKey(user.userId, it) }
             val cipher = Cipher.getInstance(TRANSFORMATION)
             val ivBytes = ByteArray(BYTE_SIZE)
             val ivSpec = IvParameterSpec(ivBytes)

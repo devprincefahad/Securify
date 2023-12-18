@@ -2,10 +2,10 @@
 Securify is a password and credit/debit card manager app, with advanced encryption. Features include Fingerprint unlock, one-tap sign-in and generate password
 
 ## ⬇️ Download from Playstore
-<center>
+
 <a href="https://play.google.com/store/apps/details?id=dev.prince.securify">
-<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Download from Playstore" width="640" height="250">
-</a></center>
+<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Download from Playstore" width="320" height="160">
+</a>
 
 ## 🎥 Demo Video
 https://github.com/devprincefahad/Securify/assets/94643962/6f3e5ce8-8f33-4aa0-940a-300ceae96aa7

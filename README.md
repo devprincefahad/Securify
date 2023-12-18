@@ -4,7 +4,7 @@ Securify is a password and credit/debit card manager app, with advanced encrypti
 ## ⬇️ Download from Playstore
 
 <a href="https://play.google.com/store/apps/details?id=dev.prince.securify">
-<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Download from Playstore" width="320" height="180">
+<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Download from Playstore" width="380" height="160">
 </a>
 
 ## 🎥 Demo Video
